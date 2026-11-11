@@ -1,0 +1,76 @@
+services:
+  # ── Backend: FastAPI on Render Web Service ────────────────────────────────
+  - type: web
+    name: edflow-api
+    runtime: python
+    region: singapore          # closest to India; change to ohio/frankfurt as needed
+    plan: free                 # upgrade to starter for persistent disk
+    rootDir: backend
+    buildCommand: pip install -r requirements-prod.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /healthz
+
+    envVars:
+      # ── Database ────────────────────────────────────────────────────────
+      - key: DATABASE_URL
+        # Set this to a Render Postgres internal connection string.
+        # Create a Render PostgreSQL instance and link it, or set manually:
+        #   postgresql://user:password@host/dbname
+        sync: false
+
+      # ── Application URLs ────────────────────────────────────────────────
+      - key: PUBLIC_BASE_URL
+        # Set to your Render service URL after first deploy, e.g.:
+        # https://edflow-api.onrender.com
+        sync: false
+      - key: FRONTEND_URL
+        # Set to your Vercel deployment URL, e.g.:
+        # https://edflow.vercel.app
+        sync: false
+      - key: CORS_ORIGINS
+        # Comma-separated list of allowed origins.
+        # Must include your Vercel URL. Example:
+        # https://edflow.vercel.app,https://edflow-git-main-yourteam.vercel.app
+        sync: false
+
+      # ── PayPal Sandbox ──────────────────────────────────────────────────
+      - key: PAYPAL_CLIENT_ID
+        sync: false
+      - key: PAYPAL_CLIENT_SECRET
+        sync: false
+      - key: PAYPAL_WEBHOOK_ID
+        sync: false
+      - key: PAYPAL_BASE_URL
+        value: https://api-m.sandbox.paypal.com
+      - key: ALLOW_UNVERIFIED_WEBHOOKS
+        value: "false"
+
+      # ── Admin & Security ────────────────────────────────────────────────
+      - key: DEMO_ADMIN_KEY
+        generateValue: true    # Render generates a random secret on first deploy
+
+      # ── FIRA extraction limits ──────────────────────────────────────────
+      - key: FIRA_MAX_UPLOAD_BYTES
+        value: "5242880"
+      - key: FIRA_CONFIDENCE_THRESHOLD_BP
+        value: "9000"
+
+      # ── AI layer (disabled by default) ─────────────────────────────────
+      - key: AI_ENABLED
+        value: "false"
+      - key: AI_MODE
+        value: "off"
+      - key: AI_PROVIDER
+        value: "none"
+      # Set AI_API_KEY / GEMINI_API_KEY only if enabling AI:
+      # - key: AI_API_KEY
+      #   sync: false
+
+  # ── Database: Render PostgreSQL ──────────────────────────────────────────
+  - type: pserv
+    name: edflow-db
+    runtime: postgres
+    region: singapore
+    plan: free
+    databaseName: edflow
+    databaseUser: edflow

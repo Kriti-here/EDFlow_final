@@ -1,0 +1,14 @@
+# Production dependencies only — excludes test/fixture tooling.
+# Use this file on Render (or any CI that installs for production).
+# Dev deps (pytest, respx, reportlab, pypdf) live in requirements-dev.txt.
+
+fastapi>=0.115,<1.0
+uvicorn[standard]>=0.30,<1.0
+sqlalchemy>=2.0,<3.0
+pydantic-settings>=2.6,<3.0
+httpx>=0.27,<1.0
+pyyaml>=6.0,<7.0
+pdfplumber>=0.11,<1.0
+python-multipart>=0.0.9,<1.0
+# psycopg2 is required when DATABASE_URL points to PostgreSQL (Render default).
+psycopg2-binary>=2.9,<3.0

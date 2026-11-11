@@ -22,3 +22,28 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Environment files — never commit real secrets
+.env
+.env.production
+backend/.env
+backend/.env.production
+# .env.example and .env.production.example are committed (templates only)
+
+# SQLite database — ephemeral; not for version control
+*.sqlite
+*.sqlite3
+*.db
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+*.egg-info/
+.venv/
+venv/
+
+# Build artefacts
+backend/dist/
+
