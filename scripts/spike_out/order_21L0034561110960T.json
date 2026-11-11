@@ -1,0 +1,26 @@
+{
+  "id": "21L0034561110960T",
+  "status": "CREATED",
+  "links": [
+    {
+      "href": "https://api.sandbox.paypal.com/v2/checkout/orders/21L0034561110960T",
+      "rel": "self",
+      "method": "GET"
+    },
+    {
+      "href": "https://www.sandbox.paypal.com/checkoutnow?token=21L0034561110960T",
+      "rel": "approve",
+      "method": "GET"
+    },
+    {
+      "href": "https://api.sandbox.paypal.com/v2/checkout/orders/21L0034561110960T",
+      "rel": "update",
+      "method": "PATCH"
+    },
+    {
+      "href": "https://api.sandbox.paypal.com/v2/checkout/orders/21L0034561110960T/capture",
+      "rel": "capture",
+      "method": "POST"
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "id": "53F57013DH841925A",
+  "status": "CREATED",
+  "links": [
+    {
+      "href": "https://api.sandbox.paypal.com/v2/checkout/orders/53F57013DH841925A",
+      "rel": "self",
+      "method": "GET"
+    },
+    {
+      "href": "https://www.sandbox.paypal.com/checkoutnow?token=53F57013DH841925A",
+      "rel": "approve",
+      "method": "GET"
+    },
+    {
+      "href": "https://api.sandbox.paypal.com/v2/checkout/orders/53F57013DH841925A",
+      "rel": "update",
+      "method": "PATCH"
+    },
+    {
+      "href": "https://api.sandbox.paypal.com/v2/checkout/orders/53F57013DH841925A/capture",
+      "rel": "capture",
+      "method": "POST"
+    }
+  ]
+}

@@ -1,0 +1,162 @@
+{
+  "synthetic": true,
+  "dataset": "SYNTHETIC",
+  "payments": [
+    {
+      "paypal_capture_id": "SYNCAP000001",
+      "invoice_number": "INV-2026-1001",
+      "currency": "USD",
+      "gross": "2500.00",
+      "paypal_fee": "72.50",
+      "net": "2427.50",
+      "received_date": "2026-11-02",
+      "fira_fixture_id": "fira_01_clean",
+      "fira_line_no": 1,
+      "synthetic": true
+    },
+    {
+      "paypal_capture_id": "SYNCAP000002",
+      "invoice_number": "INV-2026-1002",
+      "currency": "USD",
+      "gross": "1800.00",
+      "paypal_fee": "52.20",
+      "net": "1747.80",
+      "received_date": "2026-11-03",
+      "fira_fixture_id": "fira_01_clean",
+      "fira_line_no": 2,
+      "synthetic": true
+    },
+    {
+      "paypal_capture_id": "SYNCAP000003",
+      "invoice_number": "INV-2026-1003",
+      "currency": "GBP",
+      "gross": "1200.00",
+      "paypal_fee": "43.20",
+      "net": "1156.80",
+      "received_date": "2026-11-04",
+      "fira_fixture_id": "fira_01_clean",
+      "fira_line_no": 3,
+      "synthetic": true
+    },
+    {
+      "paypal_capture_id": "SYNCAP000004",
+      "invoice_number": "INV-2026-1004",
+      "currency": "EUR",
+      "gross": "3000.00",
+      "paypal_fee": "87.00",
+      "net": "2913.00",
+      "received_date": "2026-11-02",
+      "fira_fixture_id": "fira_02_fx_variance",
+      "fira_line_no": 1,
+      "synthetic": true
+    },
+    {
+      "paypal_capture_id": "SYNCAP000005",
+      "invoice_number": "INV-2026-1005",
+      "currency": "SGD",
+      "gross": "2200.00",
+      "paypal_fee": "63.80",
+      "net": "2136.20",
+      "received_date": "2026-11-03",
+      "fira_fixture_id": "fira_02_fx_variance",
+      "fira_line_no": 2,
+      "synthetic": true
+    },
+    {
+      "paypal_capture_id": "SYNCAP000006",
+      "invoice_number": "INV-2026-1007",
+      "currency": "USD",
+      "gross": "700.00",
+      "paypal_fee": "20.30",
+      "net": "679.70",
+      "received_date": "2026-11-02",
+      "fira_fixture_id": "fira_03_split_duplicate",
+      "fira_line_no": 1,
+      "synthetic": true
+    },
+    {
+      "paypal_capture_id": "SYNCAP000007",
+      "invoice_number": "INV-2026-1007",
+      "currency": "USD",
+      "gross": "800.00",
+      "paypal_fee": "23.20",
+      "net": "776.80",
+      "received_date": "2026-11-03",
+      "fira_fixture_id": "fira_03_split_duplicate",
+      "fira_line_no": 2,
+      "synthetic": true
+    },
+    {
+      "paypal_capture_id": "SYNCAP000008",
+      "invoice_number": "INV-2026-1006",
+      "currency": "USD",
+      "gross": "950.00",
+      "paypal_fee": "27.55",
+      "net": "922.45",
+      "received_date": "2026-11-04",
+      "fira_fixture_id": "fira_03_split_duplicate",
+      "fira_line_no": 3,
+      "synthetic": true
+    },
+    {
+      "paypal_capture_id": "SYNCAP000009",
+      "invoice_number": "INV-2026-1006",
+      "currency": "USD",
+      "gross": "950.00",
+      "paypal_fee": "27.55",
+      "net": "922.45",
+      "received_date": "2026-11-04",
+      "fira_fixture_id": "fira_03_split_duplicate",
+      "fira_line_no": 4,
+      "synthetic": true
+    },
+    {
+      "paypal_capture_id": "SYNCAP000010",
+      "invoice_number": null,
+      "currency": "USD",
+      "gross": "1250.00",
+      "paypal_fee": "36.25",
+      "net": "1213.75",
+      "received_date": "2026-11-02",
+      "fira_fixture_id": "fira_04_missing_unmatched",
+      "fira_line_no": 1,
+      "synthetic": true
+    },
+    {
+      "paypal_capture_id": "SYNCAP000011",
+      "invoice_number": "INV-2026-9999",
+      "currency": "SGD",
+      "gross": "640.00",
+      "paypal_fee": "18.56",
+      "net": "621.44",
+      "received_date": "2026-11-03",
+      "fira_fixture_id": "fira_04_missing_unmatched",
+      "fira_line_no": 2,
+      "synthetic": true
+    },
+    {
+      "paypal_capture_id": "SYNCAP000012",
+      "invoice_number": null,
+      "currency": "USD",
+      "gross": "2000.00",
+      "paypal_fee": "58.00",
+      "net": "1942.00",
+      "received_date": "2026-11-02",
+      "fira_fixture_id": "fira_05_ambiguous",
+      "fira_line_no": 1,
+      "synthetic": true
+    },
+    {
+      "paypal_capture_id": "SYNCAP000013",
+      "invoice_number": "INV-2026-1008",
+      "currency": "EUR",
+      "gross": "4000.00",
+      "paypal_fee": "116.30",
+      "net": "3883.70",
+      "received_date": "2026-11-05",
+      "fira_fixture_id": null,
+      "fira_line_no": null,
+      "synthetic": true
+    }
+  ]
+}

@@ -1,0 +1,100 @@
+{
+  "synthetic": true,
+  "dataset": "SYNTHETIC",
+  "watermark": "SYNTHETIC - NOT A REAL DOCUMENT",
+  "fixture_id": "fira_04_missing_unmatched",
+  "source": "simulated",
+  "scenarios": [
+    "missing_reference",
+    "unmatched_line"
+  ],
+  "fira": {
+    "fira_reference": "SYN-FIRA-2026-11-0004",
+    "bank": "Synthetic Bank of Exampleland (FICTIONAL)",
+    "ad_code": "00000000000000",
+    "statement_period": "2026-10-31 to 2026-11-06",
+    "generated_on": "2026-11-06"
+  },
+  "fx_rates_simulated": {
+    "USD": "84.00",
+    "GBP": "106.00",
+    "EUR": "91.00",
+    "SGD": "62.00"
+  },
+  "exporter": {
+    "legal_name": "Synthetic Exporter Pvt Ltd (FICTIONAL)",
+    "entity_type": "company",
+    "pan": "AAAAA0000A",
+    "gstin": "00AAAAA0000A1Z0",
+    "lut_number": "SYN-LUT-0001",
+    "ad_bank_name": "Synthetic Bank of Exampleland (FICTIONAL)",
+    "ad_code": "00000000000000"
+  },
+  "lines": [
+    {
+      "line_no": 1,
+      "utr": "SYN-UTR-04-001",
+      "value_date": "2026-11-02",
+      "remitter_name": "Example Software Buyer Inc",
+      "remitter_country": "US",
+      "remitter_email": "buyer.us@example.com",
+      "currency": "USD",
+      "gross_amount": "1250.00",
+      "bank_charges": "36.25",
+      "net_amount_inr": "101955.00",
+      "purpose_code": "P0802",
+      "invoice_reference": null
+    },
+    {
+      "line_no": 2,
+      "utr": "SYN-UTR-04-002",
+      "value_date": "2026-11-03",
+      "remitter_name": "Test Retail Pte Ltd",
+      "remitter_country": "SG",
+      "remitter_email": "retail.sg@example.com",
+      "currency": "SGD",
+      "gross_amount": "640.00",
+      "bank_charges": "18.56",
+      "net_amount_inr": "38529.28",
+      "purpose_code": "P1006",
+      "invoice_reference": "INV-2026-9999"
+    }
+  ],
+  "expected_matching": [
+    {
+      "line_no": 1,
+      "invoice_number": null,
+      "match_type": "missing_reference",
+      "expected_status": "needs_review",
+      "confidence": "low",
+      "candidates": [],
+      "notes": "No invoice reference on the FIRA line; a human must link it."
+    },
+    {
+      "line_no": 2,
+      "invoice_number": null,
+      "match_type": "unmatched",
+      "expected_status": "exception",
+      "confidence": "high",
+      "candidates": [],
+      "missing_invoice_reference": "INV-2026-9999",
+      "notes": "Reference points to an invoice that does not exist in the ledger."
+    }
+  ],
+  "expected_exceptions": [
+    {
+      "line_no": 1,
+      "category": "missing_reference",
+      "severity": "medium"
+    },
+    {
+      "line_no": 2,
+      "category": "unmatched",
+      "severity": "high"
+    }
+  ],
+  "expectations": {
+    "missing_reference_line": 1,
+    "unmatched_reference": "INV-2026-9999"
+  }
+}

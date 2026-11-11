@@ -1,0 +1,5 @@
+{
+  "href": "https://www.sandbox.paypal.com/invoice/p/#INV2-Z4A9-TU46-NKC4-39SD",
+  "rel": "payer-view",
+  "method": "GET"
+}

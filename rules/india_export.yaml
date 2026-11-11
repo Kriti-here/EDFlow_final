@@ -1,0 +1,653 @@
+# rules/india_export.yaml
+# Regulatory rules, deadlines, thresholds, purpose codes, and EDF field definitions
+# Governing Export of Goods & Services under FEMA (effective October 1, 2026)
+# Governed by Rule 6 of AGENTS.md: Never hardcode regulations in application code.
+
+version: "2026.11"
+last_updated: "2026-11-05"
+g2_status: "complete_verified"
+
+governing_regulations:
+  principal_regulation:
+    name: "Foreign Exchange Management (Export and Import of Goods and Services) Regulations, 2026"
+    notification_no: "FEMA 23(R)/2026-RB"
+    rbi_notification_id: "13277"
+    url: "https://m.rbi.org.in/scripts/BS_FemaNotifications.aspx?Id=13277"
+    date_notified: "2026-01-13"
+    date_effective: "2026-10-01"
+    source: "Reserve Bank of India"
+    last_verified: "2026-11-05"
+    verified: true
+
+  annex_pdf:
+    name: "Export Declaration Form (EDF) Annex"
+    url: "https://rbidocs.rbi.org.in/rdocs/content/pdfs/NRAR23R16012026_AN.pdf"
+    gazette_pages: "11-12"
+    retrieval_date: "2026-11-05"
+    checksum_bytes: 202610
+    source: "Reserve Bank of India (Official PDF)"
+    last_verified: "2026-11-05"
+    verified: true
+
+  amendments:
+    - name: "Foreign Exchange Management (Export and Import of Goods and Services) (Amendment) Regulations, 2026"
+      notification_no: "FEMA 23(R)/(1)/2026-RB"
+      date_notified: "2026-09-22"
+      date_effective: "2026-10-01"
+      scope: "Amended realization and repatriation periods under Regulation 5(1) to 9 months (standard) and 12 months (INR)."
+      source: "Reserve Bank of India"
+      last_verified: "2026-11-05"
+      verified: true
+
+    - name: "Foreign Exchange Management (Export and Import of Goods and Services) (Second Amendment) Regulations, 2026"
+      notification_no: "FEMA 23(R)/(2)/2026-RB"
+      date_notified: "2026-11-02"
+      date_effective: "2026-10-01"
+      scope: "Added definition of resident individual under Reg 2(1)(da); added deemed EDF submission provisos (a) and (b) under Reg 3(2); amended Reg 18(1)(d) IDPMS threshold."
+      source: "Reserve Bank of India"
+      last_verified: "2026-11-05"
+      verified: true
+
+  directions:
+    name: "Directions on Export and Import of Goods and Services"
+    circular_no: "A.P. (DIR Series) Circular No. 20 (RBI/2025-26/194)"
+    date_issued: "2026-01-16"
+    date_effective: "2026-10-01"
+    scope: "Formally superseded legacy Master Directions on Export & Import; designated AD banks as operational authorities; mandated PRAVAAH portal for RBI references."
+    source: "Reserve Bank of India"
+    last_verified: "2026-11-05"
+    verified: true
+
+deadlines:
+  service_edf_submission:
+    description: "Deadline to submit Export Declaration Form (EDF) for service exports to Specified Authority"
+    period_type: "calendar_days_from_end_of_invoice_month"
+    days: 30
+    regulation_reference: "Regulation 3(2)"
+    source: "FEMA 23(R)/2026-RB"
+    last_verified: "2026-11-05"
+    verified: true
+
+  realisation_period_standard:
+    description: "Time limit to realise and repatriate full export proceeds in foreign currency (USD, EUR, GBP, etc.)"
+    period_type: "months_from_invoice_date"
+    months: 9
+    regulation_reference: "Regulation 5(1)(b)"
+    source: "FEMA 23(R)/(1)/2026-RB"
+    last_verified: "2026-11-05"
+    verified: true
+
+  realisation_period_inr_settlement:
+    description: "Time limit to realise and repatriate export proceeds invoiced and settled in Indian Rupees (INR)"
+    period_type: "months_from_invoice_date"
+    months: 12
+    regulation_reference: "First Proviso to Regulation 5(1)"
+    source: "FEMA 23(R)/(1)/2026-RB"
+    last_verified: "2026-11-05"
+    verified: true
+
+  idpms_service_import_reporting:
+    description: "AD bank timeframe to enter service import data into IDPMS for non-individual transactions > ₹10 Lakh"
+    period_type: "working_days_from_document_receipt"
+    days: 5
+    regulation_reference: "Regulation 18(1)(d)"
+    source: "FEMA 23(R)/(2)/2026-RB"
+    last_verified: "2026-11-05"
+    verified: true
+
+provisions_10_lakh:
+  # The four distinct ₹10 Lakh statutory provisions across Regulations 3, 4, 6 and 18:
+  deemed_edf_submission_non_individual:
+    statutory_context: "Export Declaration Form (EDF) Deemed Submission"
+    regulation_reference: "Regulation 3(2), Second Proviso (b)"
+    threshold_inr: 1000000
+    beneficiary: "Persons other than resident individuals (Companies, LLPs, Partnership Firms)"
+    rule: "Inward service remittance <= ₹10 Lakh is deemed to have submitted EDF upon furnishing payment-receipt details to AD bank."
+    source: "FEMA 23(R)/(2)/2026-RB"
+    last_verified: "2026-11-05"
+    verified: true
+
+  edpms_entry_closure:
+    statutory_context: "EDPMS Open Entry Knock-Off / Closure upon Realisation"
+    regulation_reference: "Regulation 4(2) & A.P. (DIR Series) Circular No. 20"
+    threshold_inr: 1000000
+    beneficiary: "All Exporters (Goods and Services)"
+    rule: "AD bank may close EDPMS entry for shipping bills or invoices <= ₹10 Lakh based directly on exporter self-declaration of realization (with quarterly bulk submission option)."
+    source: "FEMA 23(R)/2026-RB & Circular No. 20"
+    last_verified: "2026-11-05"
+    verified: true
+
+  reduction_in_export_realisation:
+    statutory_context: "Reduction in Export Value / Under-realisation / Discounts / Deductions"
+    regulation_reference: "Regulation 6"
+    threshold_inr: 1000000
+    beneficiary: "Exporters facing shortfall or deductions in proceeds"
+    rule: "AD bank may approve reduction in export value for bills <= ₹10 Lakh based on exporter self-declaration explaining bona fide commercial reason without extensive audits."
+    source: "FEMA 23(R)/2026-RB"
+    last_verified: "2026-11-05"
+    verified: true
+
+  idpms_service_import_reporting:
+    statutory_context: "IDPMS Service Import Data Entry Mandate for AD Banks"
+    regulation_reference: "Regulation 18(1)(d)"
+    threshold_inr: 1000000
+    beneficiary: "Importers of cross-border services / subscriptions"
+    rule: "AD banks must log service imports into IDPMS within 5 days ONLY if the importer is a non-individual AND invoice value exceeds ₹10 Lakh."
+    source: "FEMA 23(R)/(2)/2026-RB"
+    last_verified: "2026-11-05"
+    verified: true
+
+thresholds:
+  deemed_submission_resident_individual:
+    description: "Monetary ceiling for deemed EDF submission by resident individual service exporters"
+    amount_inr: null
+    has_ceiling: false
+    condition: "Must furnish payment receipt details to AD bank for crediting account"
+    regulation_reference: "Regulation 3(2), First Proviso (a)"
+    source: "FEMA 23(R)/(2)/2026-RB"
+    last_verified: "2026-11-05"
+    verified: true
+
+  deemed_submission_non_individual:
+    description: "Inward remittance ceiling for deemed EDF submission by entities other than resident individuals"
+    amount_inr: 1000000  # ₹10 Lakh
+    has_ceiling: true
+    condition: "Inward remittance per transaction/service <= ₹10 Lakh and receipt info furnished to AD bank"
+    regulation_reference: "Regulation 3(2), Second Proviso (b)"
+    source: "FEMA 23(R)/(2)/2026-RB"
+    last_verified: "2026-11-05"
+    verified: true
+
+specified_authorities:
+  dta_services:
+    authority: "Authorised Dealer (AD Category-I Bank)"
+    jurisdiction: "Domestic Tariff Area (DTA)"
+    regulation_reference: "Regulation 2(1)(f)(ii)"
+    source: "FEMA 23(R)/2026-RB"
+    last_verified: "2026-11-05"
+    verified: true
+
+  dta_software:
+    authority: "Authorised Dealer (AD Bank) OR Software Technology Parks of India (STPI)"
+    jurisdiction: "Domestic Tariff Area (DTA)"
+    regulation_reference: "Regulation 2(1)(f)(iii) & Annex Section 5"
+    source: "FEMA 23(R)/2026-RB"
+    notes: "Regulation 2(1)(f)(iii) and Form EDF Section 5 explicitly retain STPI as a specified authority for software in DTA alongside AD banks. Software exporters in DTA may approach either authority."
+    last_verified: "2026-11-05"
+    verified: true
+
+  sez_services_and_software:
+    authority: "Development Commissioner"
+    jurisdiction: "Special Economic Zones (SEZ)"
+    regulation_reference: "Regulation 2(1)(f)(ii) & (iii) & Annex Section 5"
+    source: "FEMA 23(R)/2026-RB"
+    last_verified: "2026-11-05"
+    verified: true
+
+purpose_codes:
+  # RBI Purpose Codes for Export of Services & Software (commonly used with PayPal / FIRA)
+  P0801:
+    code: "P0801"
+    description: "Hardware consultancy / implementation"
+    category: "Information Technology & Software Services"
+    source: "RBI Purpose Code List"
+    last_verified: "2026-11-05"
+    verified: true
+
+  P0802:
+    code: "P0802"
+    description: "Software consultancy / implementation (including design, development, customization of software)"
+    category: "Information Technology & Software Services"
+    source: "RBI Purpose Code List"
+    last_verified: "2026-11-05"
+    verified: true
+
+  P0803:
+    code: "P0803"
+    description: "Data processing, database services, web hosting, portal services"
+    category: "Information Technology & Software Services"
+    source: "RBI Purpose Code List"
+    last_verified: "2026-11-05"
+    verified: true
+
+  P0807:
+    code: "P0807"
+    description: "Other information services (news agency, content curation, digital publishing)"
+    category: "Information Technology & Software Services"
+    source: "RBI Purpose Code List"
+    last_verified: "2026-11-05"
+    verified: true
+
+  P0902:
+    code: "P0902"
+    description: "Telecommunication services (VoIP, call centre, remote support)"
+    category: "Communication Services"
+    source: "RBI Purpose Code List"
+    last_verified: "2026-11-05"
+    verified: true
+
+  P1004:
+    code: "P1004"
+    description: "Legal services"
+    category: "Professional & Management Consulting"
+    source: "RBI Purpose Code List"
+    last_verified: "2026-11-05"
+    verified: true
+
+  P1005:
+    code: "P1005"
+    description: "Accounting, auditing, book keeping and tax consulting services"
+    category: "Professional & Management Consulting"
+    source: "RBI Purpose Code List"
+    last_verified: "2026-11-05"
+    verified: true
+
+  P1006:
+    code: "P1006"
+    description: "Business and management consultancy and public relations services"
+    category: "Professional & Management Consulting"
+    source: "RBI Purpose Code List"
+    last_verified: "2026-11-05"
+    verified: true
+
+  P1007:
+    code: "P1007"
+    description: "Advertising, trade fair, market research and public opinion polling services"
+    category: "Professional & Commercial Services"
+    source: "RBI Purpose Code List"
+    last_verified: "2026-11-05"
+    verified: true
+
+  P1008:
+    code: "P1008"
+    description: "Research and development services"
+    category: "Technical & Scientific Services"
+    source: "RBI Purpose Code List"
+    last_verified: "2026-11-05"
+    verified: true
+
+  P1009:
+    code: "P1009"
+    description: "Architectural, engineering, scientific and other technical services"
+    category: "Technical & Professional Services"
+    source: "RBI Purpose Code List"
+    last_verified: "2026-11-05"
+    verified: true
+
+  P1099:
+    code: "P1099"
+    description: "Other other business services (freelancing, virtual assistance, content creation not elsewhere classified)"
+    category: "Other Business Services"
+    source: "RBI Purpose Code List"
+    last_verified: "2026-11-05"
+    verified: true
+
+  # Unverified or rarely used purpose codes
+  P1101:
+    code: "P1101"
+    description: "Audio-visual and related services (film/music royalties)"
+    category: "Personal, Cultural & Recreational Services"
+    source: "Secondary trade summary"
+    last_verified: "2026-11-05"
+    verified: false
+
+  P1401:
+    code: "P1401"
+    description: "Refunds / rebates / reductions in export value"
+    category: "Financial Adjustments"
+    source: "Secondary trade summary"
+    last_verified: "2026-11-05"
+    verified: false
+
+edf_annex_fields:
+  # STATUS: VERIFIED DIRECTLY FROM PRIMARY RBI ANNEX PDF
+  # Source URL: https://rbidocs.rbi.org.in/rdocs/content/pdfs/NRAR23R16012026_AN.pdf
+  status: "verified_from_primary_pdf"
+  verified: true
+  source_pdf: "https://rbidocs.rbi.org.in/rdocs/content/pdfs/NRAR23R16012026_AN.pdf"
+  gazette_pages: "11-12"
+  retrieval_date: "2026-11-05"
+
+  section_1_general_information:
+    type_of_export:
+      exact_pdf_label: "Type of export : Goods/Service"
+      status: "mandatory"
+      applies_to: ["goods", "services", "software"]
+      value_for_edflow: "Service"
+    form_no:
+      exact_pdf_label: "Form No:"
+      status: "conditional"
+      applies_to: ["goods", "services", "software"]
+    shipping_bill_no_date:
+      exact_pdf_label: "Shipping Bill No. & Date:"
+      status: "not_applicable"
+      applies_to: ["goods"]
+    mode_of_transport_delivery:
+      exact_pdf_label: "Mode of Transport/Delivery: [ ] Air [ ] Internet [ ] others"
+      status: "mandatory"
+      applies_to: ["goods", "services", "software"]
+      checkbox_selected_for_digital: "Internet"
+    category_of_exporter:
+      exact_pdf_label: "Category of Exporter: [ ] Custom (DTA units) [ ] SEZ [ ] 100% EOU [ ] Warehouse export [ ] others (Specify......."
+      status: "mandatory"
+      applies_to: ["goods", "services", "software"]
+      checkbox_selected_for_dta: "Custom (DTA units)"
+    ad_code:
+      exact_pdf_label: "AD code:"
+      status: "mandatory"
+      applies_to: ["goods", "services", "software"]
+    ie_code:
+      exact_pdf_label: "IE Code:"
+      status: "conditional_context_dependent"
+      applies_to: ["goods", "services", "software"]
+    gstin:
+      exact_pdf_label: "GSTIN:"
+      status: "conditional"
+      applies_to: ["goods", "services", "software"]
+    pan:
+      exact_pdf_label: "PAN:"
+      status: "mandatory"
+      applies_to: ["goods", "services", "software"]
+    ad_name_address:
+      exact_pdf_label: "AD Name & Address:"
+      status: "mandatory"
+      applies_to: ["goods", "services", "software"]
+    exporters_name_address:
+      exact_pdf_label: "Exporters Name & Address:"
+      status: "mandatory"
+      applies_to: ["goods", "services", "software"]
+    mode_of_realisation:
+      exact_pdf_label: "Mode of Realisation [ ] Others (advance payment, etc. including transfer/remittance to bank a/c maintained overseas)"
+      status: "mandatory"
+      applies_to: ["goods", "services", "software"]
+    consignee_name_address:
+      exact_pdf_label: "Consignee Name & Address:"
+      status: "mandatory"
+      applies_to: ["goods", "services", "software"]
+      value_for_multiple_recipients: "As per 2B"
+    third_party_name_address:
+      exact_pdf_label: "Third Party name & Address (In case of third Party Payments for Exports)"
+      status: "conditional"
+      applies_to: ["goods", "services", "software"]
+    relationship_exporter_third_party:
+      exact_pdf_label: "Relationship between Exporter & Third Party:"
+      status: "conditional"
+      applies_to: ["goods", "services", "software"]
+    country_of_final_destination:
+      exact_pdf_label: "Country of Final Destination:"
+      status: "mandatory"
+      applies_to: ["goods", "services", "software"]
+      value_for_multiple_recipients: "As per 2B"
+    port_of_discharge:
+      exact_pdf_label: "Port of Discharge:"
+      status: "not_applicable"
+      applies_to: ["goods"]
+    name_of_the_ad:
+      exact_pdf_label: "Name of the AD"
+      status: "mandatory"
+      applies_to: ["goods", "services", "software"]
+    description_of_goods_services:
+      exact_pdf_label: "Description of Goods/Services:"
+      status: "mandatory"
+      applies_to: ["goods", "services", "software"]
+    total_fob_services_value_in_words:
+      exact_pdf_label: "Total FOB/Services value in words (INR):"
+      status: "mandatory"
+      applies_to: ["goods", "services", "software"]
+
+  section_2a_goods:
+    title: "2A. Details of Export Value^ of Goods (This part shall be repeated for each invoice drawn under a shipping bill)"
+    applies_to: ["goods"]
+
+  section_2b_services:
+    title: "2B. Details of Export Value^ of Services"
+    subtitle: "Details of services provided to multiple recipients"
+    applies_to: ["services", "software"]
+    columns:
+      col_1: { header: "S. No.", status: "mandatory" }
+      col_2: { header: "Service recipient Name & Address", status: "mandatory" }
+      col_3: { header: "Country", status: "mandatory" }
+      col_4:
+        header: "Details of Invoice"
+        sub_columns:
+          sub_1: { header: "No.", status: "mandatory" }
+          sub_2: { header: "Date", status: "mandatory" }
+          sub_3: { header: "Currency", status: "mandatory" }
+          sub_4: { header: "Amount", status: "mandatory" }
+      col_5: { header: "Net Realisable value", status: "mandatory" }
+      col_6: { header: "Contract No., if any, and Date", status: "conditional" }
+      col_7: { header: "Description of services", status: "mandatory" }
+      col_8: { header: "SAC Code", status: "mandatory" }
+      col_9: { header: "Remarks", status: "optional" }
+
+  section_3_fpo_couriers:
+    title: "3. Applicable for Export under FPO/Couriers"
+    applies_to: ["goods_courier"]
+
+  section_4_declaration:
+    title: "4. Declaration by the Exporters (All types of exports)"
+    applies_to: ["goods", "services", "software"]
+    status: "mandatory"
+
+  section_5_specified_authority:
+    title: "5. Space for use of Specified Authority (Custom/SEZ/AD/STPI):"
+    applies_to: ["goods", "services", "software"]
+    authorities_named: ["Custom", "SEZ", "Authorised Dealer", "STPI"]
+
+# B11 matching configuration. Weights and thresholds for the deterministic
+# FIRA->ledger matching engine (app/services/matching.py). Never hardcode these
+# in code (AGENTS.md rule 6). Weights are in basis points and sum to 10000.
+# `reference_rates_inr` is a SIMULATED mid-market table used only to detect FX
+# variance offline (no network in matching); it is not a regulation.
+matching:
+  engine_version: "b11.1"
+  date_window_days: 120
+  amount_tolerance: "0.00"
+  fx_variance_tolerance_percent: "0.50"
+  confidence:
+    high_bp: 7000
+    medium_bp: 4000
+  weights_bp:
+    reference_present: 7000
+    reference_resolved: 1000
+    amount_match: 1200
+    currency_match: 500
+    remitter_match: 200
+    date_within_window: 100
+  reference_rates_inr:
+    source: "simulated"
+    rates:
+      USD: "84.00"
+      GBP: "106.00"
+      EUR: "91.00"
+      SGD: "62.00"
+  remitter_legal_suffixes:
+    - "inc"
+    - "llc"
+    - "ltd"
+    - "limited"
+    - "gmbh"
+    - "pte"
+    - "plc"
+    - "corp"
+    - "co"
+    - "pvt"
+    - "private"
+    - "company"
+
+# B13 exception engine configuration. Which categories raise an exception and at
+# what severity is data, not code (AGENTS.md rule 6). `duplicate` and `fx_variance`
+# are enabled by default; `fx_variance` defaults to LOW severity as approved. The
+# engine never mutates a match record; it only tracks the review lifecycle.
+exceptions:
+  engine_version: "b13.1"
+  default_severity: "medium"
+  auto_close_note: "Condition no longer present"
+  categories:
+    # Line-level categories mirror the B11 match types one-for-one.
+    unmatched:
+      enabled: true
+      severity: "high"
+    ambiguous:
+      enabled: true
+      severity: "medium"
+    duplicate:
+      enabled: true
+      severity: "medium"
+    fx_variance:
+      enabled: true
+      severity: "low"
+    missing_reference:
+      enabled: true
+      severity: "medium"
+    # Ledger-level categories are gaps between the FIRA/match state and the ledger.
+    missing_fira:
+      enabled: true
+      severity: "high"
+    missing_payment:
+      enabled: true
+      severity: "medium"
+    orphan_payment:
+      enabled: true
+      severity: "medium"
+
+# B12 purpose code adviser configuration. The keyword lexicon, the signal weights
+# and the confidence thresholds are data, not code (AGENTS.md rule 6). Scoring is
+# deterministic and integer-only (basis points) -- there is no AI and no network.
+# The adviser only *proposes*: a human accept is the sole way Invoice.purpose_code
+# changes (AGENTS.md rule 2).
+purpose_adviser:
+  engine_version: "b12.1"
+  fallback_code: "P1099"
+  # Historic scoring learns only from committed codes (source user/adviser_accepted);
+  # proposed/rejected/superseded recommendations are never used as evidence.
+  history_token_overlap_percent: "50"
+  stopwords:
+    - "services"
+    - "service"
+    - "and"
+    - "the"
+    - "for"
+    - "of"
+    - "to"
+    - "a"
+    - "in"
+    - "on"
+    - "with"
+  # Keyword phrases per purpose code. Phrases are matched as whole-token sequences
+  # after stopword removal; the earliest (then longest) match is the primary cue.
+  keywords:
+    P0801: ["hardware", "hardware consultancy"]
+    P0802: ["software", "software development", "software consultancy", "implementation", "customization", "programming", "coding"]
+    P0803: ["data processing", "database", "web hosting", "portal"]
+    P0807: ["digital publishing", "content curation", "news agency", "publishing"]
+    P0902: ["telecommunication", "telecom", "voip", "call centre", "remote support"]
+    P1004: ["legal", "litigation", "attorney"]
+    P1005: ["accounting", "book keeping", "tax consulting", "auditing"]
+    P1006: ["business management", "consultancy", "consulting", "public relations", "management"]
+    P1007: ["advertising", "trade fair", "market research", "public opinion polling"]
+    P1008: ["research and development", "scientific research", "research"]
+    P1009: ["architectural", "architecture", "engineering", "technical services"]
+    P1099: ["freelance", "virtual assistance", "content creation"]
+    P1101: ["audio visual", "film", "music royalty"]
+    P1401: ["refund", "rebate"]
+  # Signal weights in basis points; must sum to exactly 10000 (asserted by a test).
+  weights_bp:
+    keyword_primary: 5500
+    fira_echo: 2000
+    keyword_phrase: 1000
+    history_same_client: 700
+    history_similar_service: 500
+    contract_ref_match: 300
+  confidence:
+    high_bp: 7000
+    medium_bp: 4000
+
+# B16 EDF pack generation configuration. Every EDF constant, the included-status
+# policy and the blocking-exception policy are data, not code (AGENTS.md rule 6).
+# Generation is deterministic, offline and Decimal-only: it derives the worksheet
+# from the ledger and never files anything with a bank or the RBI (AGENTS.md).
+edf_pack:
+  engine_version: "b16.1"
+  # Section 1 constants. Mirrors the verified labels in `edf_annex_fields`.
+  trade_type: "Service"
+  mode_of_transport: "Internet"
+  category_of_exporter: "Custom (DTA units)"
+  mode_of_realisation: "Others (advance payment, etc. including transfer/remittance to bank a/c maintained overseas)"
+  consignee_for_multiple: "As per 2B"
+  country_for_multiple: "As per 2B"
+  date_placeholder: "N/A"
+  # Only raised invoices are declared; DRAFT invoices are excluded.
+  included_statuses: ["SENT", "PAID"]
+  # A pack cannot be approved while any of these categories has an open exception.
+  blocking_exception_categories:
+    - "unmatched"
+    - "missing_fira"
+    - "missing_payment"
+  worksheet_note: "DRAFT WORKSHEET - NOT FILED. Submit through your AD bank / CA."
+  # Section 4 declaration. {realisation_date} is the computed realisation deadline.
+  declaration_template: >-
+    We hereby declare that the information given above is true and correct to the
+    best of our knowledge and belief and that the export proceeds will be realised
+    and repatriated within the period prescribed, i.e. on or before
+    {realisation_date}.
+
+# B8 AI layer configuration. The AI proposes, code decides and a human approves
+# (AGENTS.md rule 2): proposals are task-oriented, Pydantic-validated and
+# deterministically re-checked before a human may accept them. Provider/model
+# defaults, limits and the PII detector set are data, not code (rule 6). AI is
+# disabled by default (AI_MODE=off) and `replay` makes zero network calls.
+ai:
+  engine_version: "b8.1"
+  default_provider: "gemini"
+  default_model: "gemini-2.0-flash"
+  limits:
+    max_prompt_bytes: 16000
+    max_output_tokens: 1024
+    max_retries: 2
+    timeout_seconds: 30
+    temperature: 0.0
+  # Only task-oriented adopters exist; there is deliberately no generic chat task.
+  tasks:
+    purpose_explain:
+      enabled: true
+      task_version: "b8.1"
+      provider: "gemini"
+      model: "gemini-2.0-flash"
+      high_bp: 7000
+      medium_bp: 4000
+      verify_weights_bp:
+        code_known: 4000
+        mentions_code: 2500
+        adequate_length: 1500
+        no_pii: 2000
+    exception_remediation:
+      enabled: true
+      task_version: "b8.1"
+      provider: "gemini"
+      model: "gemini-2.0-flash"
+      high_bp: 7000
+      medium_bp: 4000
+      verify_weights_bp:
+        known_category: 4000
+        mentions_category: 2500
+        adequate_length: 1500
+        no_pii: 2000
+  # PII is masked before egress (rule 5). These detectors run over free text; the
+  # AD code, IEC code, SAC code, purpose code and currency codes are deliberately
+  # NOT masked -- they are business identifiers, not personal data (B8 decision 4).
+  pii:
+    placeholder_format: "[[{kind}_{n}]]"
+    detectors:
+      email: '[\w.+-]+@[\w-]+\.[\w.-]+'
+      gstin: '\b\d{2}[A-Z]{5}\d{4}[A-Z][1-9A-Z]Z[0-9A-Z]\b'
+      pan: '\b[A-Z]{5}\d{4}[A-Z]\b'
+      utr: '\b[A-Z]{4}\d{7,}\b'
+      # A bare 10-digit run is ambiguous: an IEC code (a business identifier that
+      # must stay visible, B8 decision 4) looks identical to a 10-digit account.
+      # Account numbers require 11-18 digits and must not directly follow a '+',
+      # so the digit body of an international phone falls through to `phone`.
+      account: '(?<![\d+])\d{11,18}(?!\d)'
+      # Phones must carry a leading '+' or an internal separator; otherwise a
+      # plain 10-digit run (e.g. an IEC code) would be misread as a phone number.
+      phone: '(?<!\d)(?=\+|\d[\d\s-]*[-\s])\+?\d[\d\s-]{7,}\d(?!\d)'

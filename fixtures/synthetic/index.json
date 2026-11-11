@@ -1,0 +1,312 @@
+{
+  "synthetic": true,
+  "dataset": "SYNTHETIC",
+  "watermark": "SYNTHETIC - NOT A REAL DOCUMENT",
+  "generated_by": "scripts/gen_fixtures.py",
+  "reference_date": "2026-11-06",
+  "fx_rates_simulated": {
+    "USD": "84.00",
+    "GBP": "106.00",
+    "EUR": "91.00",
+    "SGD": "62.00"
+  },
+  "fixtures": [
+    {
+      "id": "fira_01_clean",
+      "file": "fira_01_clean.pdf",
+      "ground_truth": "fira_01_clean.ground_truth.json",
+      "scenarios": [
+        "exact_match"
+      ],
+      "line_count": 3
+    },
+    {
+      "id": "fira_02_fx_variance",
+      "file": "fira_02_fx_variance.pdf",
+      "ground_truth": "fira_02_fx_variance.ground_truth.json",
+      "scenarios": [
+        "fx_variance"
+      ],
+      "line_count": 2
+    },
+    {
+      "id": "fira_03_split_duplicate",
+      "file": "fira_03_split_duplicate.pdf",
+      "ground_truth": "fira_03_split_duplicate.ground_truth.json",
+      "scenarios": [
+        "split_payment",
+        "duplicate_line"
+      ],
+      "line_count": 4
+    },
+    {
+      "id": "fira_04_missing_unmatched",
+      "file": "fira_04_missing_unmatched.pdf",
+      "ground_truth": "fira_04_missing_unmatched.ground_truth.json",
+      "scenarios": [
+        "missing_reference",
+        "unmatched_line"
+      ],
+      "line_count": 2
+    },
+    {
+      "id": "fira_05_ambiguous",
+      "file": "fira_05_ambiguous.pdf",
+      "ground_truth": "fira_05_ambiguous.ground_truth.json",
+      "scenarios": [
+        "ambiguous_invoices"
+      ],
+      "line_count": 1
+    }
+  ],
+  "scenarios": {
+    "exact_match": {
+      "fixture": "fira_01_clean",
+      "invoices": [
+        "INV-2026-1001",
+        "INV-2026-1002",
+        "INV-2026-1003"
+      ]
+    },
+    "fx_variance": {
+      "fixture": "fira_02_fx_variance",
+      "invoices": [
+        "INV-2026-1004",
+        "INV-2026-1005"
+      ]
+    },
+    "split_payment": {
+      "fixture": "fira_03_split_duplicate",
+      "invoices": [
+        "INV-2026-1007"
+      ],
+      "parts": 2
+    },
+    "duplicate_line": {
+      "fixture": "fira_03_split_duplicate",
+      "lines": [
+        3,
+        4
+      ]
+    },
+    "missing_reference": {
+      "fixture": "fira_04_missing_unmatched",
+      "lines": [
+        1
+      ]
+    },
+    "unmatched_line": {
+      "fixture": "fira_04_missing_unmatched",
+      "lines": [
+        2
+      ],
+      "missing_invoice_reference": "INV-2026-9999"
+    },
+    "ambiguous_invoices": {
+      "fixture": "fira_05_ambiguous",
+      "candidates": [
+        "INV-2026-1009",
+        "INV-2026-1010"
+      ]
+    },
+    "invoice_without_fira": {
+      "invoices": [
+        "INV-2026-1008"
+      ],
+      "note": "Invoiced and paid but absent from every FIRA statement."
+    }
+  },
+  "expected_exceptions": {
+    "engine_version": "b13.1",
+    "ledger_level": {
+      "missing_fira": [
+        {
+          "invoice_number": "INV-2026-1008",
+          "severity": "high"
+        }
+      ],
+      "missing_payment": [],
+      "orphan_payment": [
+        {
+          "paypal_capture_id": "SYNCAP000010",
+          "severity": "medium"
+        },
+        {
+          "paypal_capture_id": "SYNCAP000011",
+          "severity": "medium"
+        },
+        {
+          "paypal_capture_id": "SYNCAP000012",
+          "severity": "medium"
+        }
+      ]
+    },
+    "note": "Line-level expected exceptions live in each *.ground_truth.json under 'expected_exceptions'."
+  },
+  "expected_purpose": {
+    "engine_version": "b12.1",
+    "by_invoice": {
+      "INV-2026-1001": "P0802",
+      "INV-2026-1002": "P0802",
+      "INV-2026-1003": "P1007",
+      "INV-2026-1004": "P0803",
+      "INV-2026-1005": "P1006",
+      "INV-2026-1006": "P1099",
+      "INV-2026-1007": "P0807",
+      "INV-2026-1008": "P1008",
+      "INV-2026-1009": "P0802",
+      "INV-2026-1010": "P0802"
+    },
+    "note": "B12 oracle: the purpose code the adviser must rank first for each invoice. Also mirrored per invoice in demo_invoices.json."
+  },
+  "expected_edf": {
+    "engine_version": "b16.1",
+    "period": {
+      "year": 2026,
+      "month": 10
+    },
+    "line_count": 10,
+    "lines": [
+      {
+        "sequence": 1,
+        "invoice_number": "INV-2026-1001",
+        "client_name": "Example Software Buyer Inc",
+        "client_country": "US",
+        "currency": "USD",
+        "amount": "2500.00",
+        "net_realisable_value": "2427.50",
+        "nrv_currency": "USD",
+        "nrv_source": "paypal",
+        "sac_code": "998314"
+      },
+      {
+        "sequence": 2,
+        "invoice_number": "INV-2026-1002",
+        "client_name": "Example Software Buyer Inc",
+        "client_country": "US",
+        "currency": "USD",
+        "amount": "1800.00",
+        "net_realisable_value": "1747.80",
+        "nrv_currency": "USD",
+        "nrv_source": "paypal",
+        "sac_code": "998314"
+      },
+      {
+        "sequence": 3,
+        "invoice_number": "INV-2026-1003",
+        "client_name": "Sample Design Studio Ltd",
+        "client_country": "GB",
+        "currency": "GBP",
+        "amount": "1200.00",
+        "net_realisable_value": "1156.80",
+        "nrv_currency": "GBP",
+        "nrv_source": "paypal",
+        "sac_code": "998392"
+      },
+      {
+        "sequence": 4,
+        "invoice_number": "INV-2026-1004",
+        "client_name": "Demo Analytics GmbH",
+        "client_country": "DE",
+        "currency": "EUR",
+        "amount": "3000.00",
+        "net_realisable_value": "2913.00",
+        "nrv_currency": "EUR",
+        "nrv_source": "paypal",
+        "sac_code": "998315"
+      },
+      {
+        "sequence": 5,
+        "invoice_number": "INV-2026-1005",
+        "client_name": "Test Retail Pte Ltd",
+        "client_country": "SG",
+        "currency": "SGD",
+        "amount": "2200.00",
+        "net_realisable_value": "2136.20",
+        "nrv_currency": "SGD",
+        "nrv_source": "paypal",
+        "sac_code": "998311"
+      },
+      {
+        "sequence": 6,
+        "invoice_number": "INV-2026-1006",
+        "client_name": "Example Software Buyer Inc",
+        "client_country": "US",
+        "currency": "USD",
+        "amount": "950.00",
+        "net_realisable_value": "922.45",
+        "nrv_currency": "USD",
+        "nrv_source": "paypal",
+        "sac_code": "998387"
+      },
+      {
+        "sequence": 7,
+        "invoice_number": "INV-2026-1007",
+        "client_name": "Placeholder Media LLC",
+        "client_country": "US",
+        "currency": "USD",
+        "amount": "1500.00",
+        "net_realisable_value": "679.70",
+        "nrv_currency": "USD",
+        "nrv_source": "paypal",
+        "sac_code": "998386"
+      },
+      {
+        "sequence": 8,
+        "invoice_number": "INV-2026-1008",
+        "client_name": "Demo Analytics GmbH",
+        "client_country": "DE",
+        "currency": "EUR",
+        "amount": "4000.00",
+        "net_realisable_value": "3883.70",
+        "nrv_currency": "EUR",
+        "nrv_source": "paypal",
+        "sac_code": "998313"
+      },
+      {
+        "sequence": 9,
+        "invoice_number": "INV-2026-1009",
+        "client_name": "Example Software Buyer Inc",
+        "client_country": "US",
+        "currency": "USD",
+        "amount": "2000.00",
+        "net_realisable_value": "2000.00",
+        "nrv_currency": "USD",
+        "nrv_source": "expected",
+        "sac_code": "998314"
+      },
+      {
+        "sequence": 10,
+        "invoice_number": "INV-2026-1010",
+        "client_name": "Example Software Buyer Inc",
+        "client_country": "US",
+        "currency": "USD",
+        "amount": "2000.00",
+        "net_realisable_value": "2000.00",
+        "nrv_currency": "USD",
+        "nrv_source": "expected",
+        "sac_code": "998314"
+      }
+    ],
+    "totals": {
+      "by_currency": {
+        "EUR": "7000.00",
+        "GBP": "1200.00",
+        "SGD": "2200.00",
+        "USD": "10750.00"
+      },
+      "nrv_by_currency": {
+        "EUR": "6796.70",
+        "GBP": "1156.80",
+        "SGD": "2136.20",
+        "USD": "9777.45"
+      },
+      "total_inr": "1694871.00"
+    },
+    "note": "B16 oracle: the Section 2B lines and INR totals the deterministic EDF engine must produce for period 2026-10. NRV prefers a recorded PayPal payment (net), else the invoiced amount labelled 'expected'."
+  },
+  "demo_files": {
+    "invoices": "demo_invoices.json",
+    "payments": "demo_payments.json"
+  }
+}

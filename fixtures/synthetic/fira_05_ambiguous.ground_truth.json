@@ -1,0 +1,76 @@
+{
+  "synthetic": true,
+  "dataset": "SYNTHETIC",
+  "watermark": "SYNTHETIC - NOT A REAL DOCUMENT",
+  "fixture_id": "fira_05_ambiguous",
+  "source": "simulated",
+  "scenarios": [
+    "ambiguous_invoices"
+  ],
+  "fira": {
+    "fira_reference": "SYN-FIRA-2026-11-0005",
+    "bank": "Synthetic Bank of Exampleland (FICTIONAL)",
+    "ad_code": "00000000000000",
+    "statement_period": "2026-10-31 to 2026-11-06",
+    "generated_on": "2026-11-06"
+  },
+  "fx_rates_simulated": {
+    "USD": "84.00",
+    "GBP": "106.00",
+    "EUR": "91.00",
+    "SGD": "62.00"
+  },
+  "exporter": {
+    "legal_name": "Synthetic Exporter Pvt Ltd (FICTIONAL)",
+    "entity_type": "company",
+    "pan": "AAAAA0000A",
+    "gstin": "00AAAAA0000A1Z0",
+    "lut_number": "SYN-LUT-0001",
+    "ad_bank_name": "Synthetic Bank of Exampleland (FICTIONAL)",
+    "ad_code": "00000000000000"
+  },
+  "lines": [
+    {
+      "line_no": 1,
+      "utr": "SYN-UTR-05-001",
+      "value_date": "2026-11-02",
+      "remitter_name": "Example Software Buyer Inc",
+      "remitter_country": "US",
+      "remitter_email": "buyer.us@example.com",
+      "currency": "USD",
+      "gross_amount": "2000.00",
+      "bank_charges": "58.00",
+      "net_amount_inr": "163128.00",
+      "purpose_code": "P0802",
+      "invoice_reference": null
+    }
+  ],
+  "expected_matching": [
+    {
+      "line_no": 1,
+      "invoice_number": null,
+      "match_type": "ambiguous",
+      "expected_status": "needs_review",
+      "confidence": "low",
+      "candidates": [
+        "INV-2026-1009",
+        "INV-2026-1010"
+      ],
+      "notes": "No reference and two open invoices share the client and amount."
+    }
+  ],
+  "expected_exceptions": [
+    {
+      "line_no": 1,
+      "category": "ambiguous",
+      "severity": "medium"
+    }
+  ],
+  "expectations": {
+    "ambiguous_candidates": [
+      "INV-2026-1009",
+      "INV-2026-1010"
+    ],
+    "ambiguous_criteria": "same client_email and same currency/amount, no reference"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "account_number": "L9R4QY98MSC5S",
+  "start_date": "2026-11-03T07:01:23Z",
+  "end_date": "2026-11-05T01:29:59Z",
+  "last_refreshed_datetime": "2026-11-05T01:29:59Z",
+  "page": 1,
+  "total_items": 0,
+  "total_pages": 0,
+  "links": [
+    {
+      "href": "https://api.sandbox.paypal.com/v1/reporting/transactions?end_date=2026-11-05T07%3A01%3A23Z&fields=all&start_date=2026-11-03T07%3A01%3A23Z&page_size=100&page=1",
+      "rel": "self",
+      "method": "GET",
+      "encType": "application/json"
+    }
+  ]
+}

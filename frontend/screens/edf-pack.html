@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100vw;margin:0;padding:0;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "secondary": "#00687a", "on-surface-variant": "#464555", "secondary-container": "#57dffe", "primary": "#3525cd", "tertiary-fixed-dim": "#4edea3", "on-tertiary-fixed": "#002113", "outline": "#777587", "on-background": "#131b2e", "surface-container-lowest": "#ffffff", "on-secondary": "#ffffff", "surface-container-highest": "#dae2fd", "on-error": "#ffffff", "on-primary-fixed": "#0f0069", "on-tertiary-container": "#67f4b7", "surface-container": "#eaedff", "primary-fixed-dim": "#c3c0ff", "surface-container-high": "#e2e7ff", "tertiary-fixed": "#6ffbbe", "inverse-surface": "#283044", "outline-variant": "#c7c4d8", "on-secondary-fixed": "#001f26", "secondary-fixed": "#acedff", "surface-container-low": "#f2f3ff", "surface-tint": "#4d44e3", "inverse-primary": "#c3c0ff", "tertiary": "#005338", "on-primary": "#ffffff", "tertiary-container": "#006e4b", "surface": "#faf8ff", "error": "#ba1a1a", "error-container": "#ffdad6", "on-primary-container": "#dad7ff", "inverse-on-surface": "#eef0ff", "background": "#faf8ff", "primary-container": "#4f46e5", "on-tertiary-fixed-variant": "#005236", "secondary-fixed-dim": "#4cd7f6", "primary-fixed": "#e2dfff", "on-primary-fixed-variant": "#3323cc", "surface-bright": "#faf8ff", "on-secondary-container": "#006172", "on-error-container": "#93000a", "on-tertiary": "#ffffff", "surface-dim": "#d2d9f4", "surface-variant": "#dae2fd", "on-secondary-fixed-variant": "#004e5c", "on-surface": "#131b2e" }, "borderRadius": { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" }, "spacing": { "space-2xs": "0.125rem", "margin-md": "2rem", "space-lg": "1.5rem", "space-base": "1rem", "margin-lg": "3rem", "space-sm": "0.5rem", "space-xl": "2rem", "gutter-lg": "2rem", "margin": "1rem", "space-md": "0.75rem", "gutter-md": "1.5rem", "space-2xl": "3rem", "space-xs": "0.25rem", "gutter": "1rem" }, "fontFamily": { "code-sm": ["Inter"], "headline-sm": ["Plus Jakarta Sans"], "headline-lg": ["Plus Jakarta Sans"], "body-sm": ["Inter"], "headline-xl": ["Plus Jakarta Sans"], "headline-lg-mobile": ["Plus Jakarta Sans"], "body-md": ["Inter"], "label-sm": ["Inter"], "headline-md": ["Plus Jakarta Sans"], "body-lg": ["Inter"], "headline-xl-mobile": ["Plus Jakarta Sans"], "label-md": ["Inter"] }, "fontSize": { "code-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0em", "fontWeight": "500"}], "headline-sm": ["18px", {"lineHeight": "24px", "letterSpacing": "-0.01em", "fontWeight": "600"}], "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "600"}], "body-sm": ["13px", {"lineHeight": "18px", "letterSpacing": "0em", "fontWeight": "400"}], "headline-xl": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.025em", "fontWeight": "700"}], "headline-lg-mobile": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.015em", "fontWeight": "600"}], "body-md": ["14px", {"lineHeight": "20px", "letterSpacing": "-0.005em", "fontWeight": "400"}], "label-sm": ["11px", {"lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "600"}], "headline-md": ["22px", {"lineHeight": "28px", "letterSpacing": "-0.015em", "fontWeight": "600"}], "body-lg": ["16px", {"lineHeight": "24px", "letterSpacing": "-0.01em", "fontWeight": "400"}], "headline-xl-mobile": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700"}], "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "500"}] } } } };</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface text-on-surface antialiased"><header class="fixed top-0 w-full z-50 pt-safe bg-surface/80 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-16 px-space-base flex items-center justify-between gap-space-sm"><div class="flex items-center gap-space-sm"><button aria-label="Open Workspace Menu" class="w-11 h-11 flex items-center justify-center rounded-xl text-on-surface hover:bg-surface-container-high transition-colors" onclick="document.getElementById('nav-drawer').classList.toggle('-translate-x-full')" type="button"><span class="material-symbols-outlined text-[24px]">menu</span></button><div class="flex items-center gap-space-xs"><div class="w-7 h-7 rounded-xl bg-primary-container flex items-center justify-center text-on-primary font-headline-sm text-headline-sm font-bold">E</div><span class="font-headline-sm text-headline-sm text-on-surface tracking-tight font-bold">EDFlow</span></div></div><div class="flex items-center gap-space-xs"><div class="hidden sm:flex items-center gap-1.5 px-space-sm py-space-xs rounded-full bg-[#ECFDF5] text-[#065F46] font-label-sm text-label-sm"><span class="w-1.5 h-1.5 rounded-full bg-[#10B981]"></span><span>COMPLIANT</span></div><button aria-label="Notifications" class="w-11 h-11 flex items-center justify-center rounded-xl text-on-surface-variant hover:bg-surface-container-high transition-colors" type="button"><span class="material-symbols-outlined text-[22px]">notifications</span></button><button aria-label="Toggle Theme" class="w-11 h-11 flex items-center justify-center rounded-xl text-on-surface-variant hover:bg-surface-container-high transition-colors" onclick="document.documentElement.classList.toggle('dark')" type="button"><span class="material-symbols-outlined text-[20px]">contrast</span></button><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center ml-space-xs"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><div class="fixed inset-y-0 left-0 z-50 w-72 max-w-[80vw] bg-surface-container-lowest shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1)] -translate-x-full transition-transform duration-200 ease-in-out flex flex-col pt-safe pb-safe" id="nav-drawer"><div class="h-16 px-space-base flex items-center justify-between"><div class="flex items-center gap-space-xs"><div class="w-6 h-6 rounded-xl bg-primary-container flex items-center justify-center text-on-primary font-headline-sm text-headline-sm font-bold">E</div><span class="font-headline-sm text-headline-sm text-on-surface font-bold">Workspace</span></div><button aria-label="Close Drawer" class="w-11 h-11 flex items-center justify-center rounded-xl text-on-surface-variant hover:bg-surface-container-high" onclick="document.getElementById('nav-drawer').classList.add('-translate-x-full')" type="button"><span class="material-symbols-outlined text-[22px]">close</span></button></div><div class="flex-1 overflow-y-auto px-space-sm py-space-xs flex flex-col gap-space-2xs"><a class="flex items-center gap-space-md px-space-base h-11 rounded-xl text-on-surface-variant hover:bg-surface-container font-body-md text-body-md" data-path="dashboard" href="#"><span class="material-symbols-outlined text-[20px]">dashboard</span><span>Dashboard</span></a><a class="flex items-center gap-space-md px-space-base h-11 rounded-xl text-on-surface-variant hover:bg-surface-container font-body-md text-body-md" data-path="invoices" href="#"><span class="material-symbols-outlined text-[20px]">receipt_long</span><span>Invoices</span></a><a class="flex items-center gap-space-md px-space-base h-11 rounded-xl text-on-surface-variant hover:bg-surface-container font-body-md text-body-md" data-path="fira-documents" href="#"><span class="material-symbols-outlined text-[20px]">description</span><span>FIRA Documents</span></a><a class="flex items-center gap-space-md px-space-base h-11 rounded-xl text-on-surface-variant hover:bg-surface-container font-body-md text-body-md" data-path="matching-center" href="#"><span class="material-symbols-outlined text-[20px]">compare_arrows</span><span>Matching Center</span></a><a class="flex items-center gap-space-md px-space-base h-11 rounded-xl text-on-surface-variant hover:bg-surface-container font-body-md text-body-md" data-path="exceptions-hub" href="#"><span class="material-symbols-outlined text-[20px]">warning</span><span>Exceptions Hub</span></a><a class="flex items-center gap-space-md px-space-base h-11 rounded-xl text-on-surface-variant hover:bg-surface-container font-body-md text-body-md" data-path="purpose-adviser" href="#"><span class="material-symbols-outlined text-[20px]">psychology_alt</span><span>Purpose Adviser</span></a><a class="flex items-center gap-space-md px-space-base h-11 rounded-xl text-on-surface-variant hover:bg-surface-container font-body-md text-body-md" data-path="ai-insights" href="#"><span class="material-symbols-outlined text-[20px]">insights</span><span>AI Insights</span></a><a class="flex items-center gap-space-md px-space-base h-11 rounded-xl text-on-surface-variant hover:bg-surface-container font-body-md text-body-md" data-path="edf-packs" href="#"><span class="material-symbols-outlined text-[20px]">inventory_2</span><span>EDF Packs</span></a><a class="flex items-center gap-space-md px-space-base h-11 rounded-xl text-on-surface-variant hover:bg-surface-container font-body-md text-body-md" data-path="audit-log" href="#"><span class="material-symbols-outlined text-[20px]">history</span><span>Audit Log</span></a><a class="flex items-center gap-space-md px-space-base h-11 rounded-xl text-on-surface-variant hover:bg-surface-container font-body-md text-body-md" data-path="settings" href="#"><span class="material-symbols-outlined text-[20px]">settings</span><span>Settings</span></a><a class="flex items-center gap-space-md px-space-base h-11 rounded-xl text-on-surface-variant hover:bg-surface-container font-body-md text-body-md" data-path="user-guide" href="#"><span class="material-symbols-outlined text-[20px]">menu_book</span><span>User Guide</span></a></div></div><main class="flex flex-col relative w-full pt-16 pb-24 bg-surface"><div class="flex flex-col w-full">
+<!-- Interactive Visual Feedback Toast Container -->
+<div class="fixed top-20 right-4 left-4 z-50 transform -translate-y-28 opacity-0 pointer-events-none transition-all duration-300 flex items-center justify-between p-space-sm rounded-xl bg-inverse-surface text-inverse-on-surface shadow-xl" id="toast-notification">
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-[#10B981] text-[20px]">verified</span>
+<span class="font-body-md text-body-md font-medium" id="toast-text">EDPMS Gateway payload generated successfully</span>
+</div>
+<button class="p-space-xs text-inverse-on-surface/70 hover:text-inverse-on-surface" onclick="dismissToast()" type="button">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+</div>
+<!-- Main Container -->
+<div class="flex flex-col gap-space-lg px-space-base py-space-md">
+<!-- 1. HEADER / CONTEXT BAR -->
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<div class="inline-flex items-center gap-1.5 px-space-sm py-0.5 rounded-full bg-[#ECFDF5] text-[#065F46] font-label-sm text-label-sm">
+<span class="relative flex h-2 w-2">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#10B981] opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-[#10B981]"></span>
+</span>
+<span>REGULATORY COMPLIANCE DOSSIER • DGFT &amp; EDPMS READY</span>
+</div>
+</div>
+<div class="flex flex-col gap-0.5 mt-space-xs">
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface font-bold tracking-tight">
+          EDF Pack Management
+        </h1>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+          Generate, validate, seal, and export audit-ready Export Declaration dossiers to AD-Cat 1 banking portals.
+        </p>
+</div>
+<!-- Live Filing Cycle Meter -->
+<div class="mt-space-xs flex items-center justify-between p-space-sm rounded-xl bg-surface-container-high text-on-surface">
+<div class="flex items-center gap-space-xs min-w-0">
+<span class="material-symbols-outlined text-primary-container text-[18px]">schedule</span>
+<span class="font-label-md text-label-md font-semibold truncate">Filing Window: 7 Days Remaining</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant hidden sm:inline">(Q3 FY24-25)</span>
+</div>
+<span class="px-space-xs py-0.5 rounded-md bg-surface-container-lowest font-code-sm text-code-sm text-primary font-semibold">
+          CYCLE #84
+        </span>
+</div>
+</div>
+<!-- 2. TOP METRICS / STATUS COUNTERS (Bento Grid) -->
+<div class="grid grid-cols-2 gap-space-sm">
+<!-- Metric 1: Ready to Export -->
+<div class="flex flex-col p-space-sm rounded-xl bg-surface-container-lowest shadow-sm">
+<div class="flex items-center justify-between mb-space-xs">
+<span class="font-label-sm text-label-sm text-on-surface-variant font-medium">Ready to Export</span>
+<span class="h-2 w-2 rounded-full bg-[#10B981] shadow-[0_0_8px_#10B981]"></span>
+</div>
+<div class="flex items-baseline gap-space-xs">
+<span class="font-headline-md text-headline-md text-on-surface font-bold">2</span>
+<span class="font-label-sm text-label-sm text-[#065F46] font-semibold bg-[#ECFDF5] px-1 rounded">Packs</span>
+</div>
+<div class="font-code-sm text-code-sm text-on-surface-variant mt-0.5 font-medium truncate">
+          ₹1.18 Cr eq. ($142.5k)
+        </div>
+</div>
+<!-- Metric 2: Drafting -->
+<div class="flex flex-col p-space-sm rounded-xl bg-surface-container-lowest shadow-sm">
+<div class="flex items-center justify-between mb-space-xs">
+<span class="font-label-sm text-label-sm text-on-surface-variant font-medium">Drafting</span>
+<span class="material-symbols-outlined text-[16px] text-primary-container">pending</span>
+</div>
+<div class="flex items-baseline gap-space-xs">
+<span class="font-headline-md text-headline-md text-on-surface font-bold">1</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-medium">Pack</span>
+</div>
+<div class="font-code-sm text-code-sm text-primary-container mt-0.5 font-medium">
+          78% Assembled
+        </div>
+</div>
+<!-- Metric 3: Blocked -->
+<div class="flex flex-col p-space-sm rounded-xl bg-surface-container-lowest shadow-sm">
+<div class="flex items-center justify-between mb-space-xs">
+<span class="font-label-sm text-label-sm text-error font-medium">Blocked</span>
+<span class="material-symbols-outlined text-[16px] text-error">warning</span>
+</div>
+<div class="flex items-baseline gap-space-xs">
+<span class="font-headline-md text-headline-md text-error font-bold">1</span>
+<span class="font-label-sm text-label-sm text-[#991B1B] font-semibold bg-[#FEF2F2] px-1 rounded">Alert</span>
+</div>
+<div class="font-code-sm text-code-sm text-error mt-0.5 font-medium">
+          2 Open Exceptions
+        </div>
+</div>
+<!-- Metric 4: Exported & Filed -->
+<div class="flex flex-col p-space-sm rounded-xl bg-surface-container-lowest shadow-sm">
+<div class="flex items-center justify-between mb-space-xs">
+<span class="font-label-sm text-label-sm text-on-surface-variant font-medium">Filed &amp; Sealed</span>
+<span class="material-symbols-outlined text-[16px] text-secondary">verified_user</span>
+</div>
+<div class="flex items-baseline gap-space-xs">
+<span class="font-headline-md text-headline-md text-on-surface font-bold">12</span>
+<span class="font-label-sm text-label-sm text-secondary font-semibold bg-surface-container px-1 rounded">Merkle ✓</span>
+</div>
+<div class="font-code-sm text-code-sm text-on-surface-variant mt-0.5 font-medium">
+          100% Reconciled
+        </div>
+</div>
+</div>
+<!-- 3. LIVE DOSSIER GENERATION PROGRESS (Active Compilation Card) -->
+<div class="relative overflow-hidden rounded-xl bg-gradient-to-br from-primary-container to-primary text-on-primary p-space-base shadow-md">
+<div class="relative z-10 flex flex-col gap-space-md">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex flex-col">
+<div class="flex items-center gap-space-xs">
+<span class="inline-block w-2 h-2 rounded-full bg-secondary-fixed animate-ping"></span>
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-secondary-fixed font-semibold">Active Compilation</span>
+</div>
+<h2 class="font-headline-sm text-headline-sm font-bold text-on-primary mt-1">
+              Assembling Pack #EDF-2024-089
+            </h2>
+<p class="font-body-sm text-body-sm text-on-primary/80 mt-0.5">
+              Acme Europe B.V. • Automated Cross-Referencing
+            </p>
+</div>
+<div class="h-10 w-10 flex items-center justify-center rounded-xl bg-surface-container-lowest/15 backdrop-blur-md">
+<span class="material-symbols-outlined text-on-primary text-[22px] animate-spin">sync</span>
+</div>
+</div>
+<!-- Progress Metrics Bar -->
+<div class="flex flex-col gap-1.5">
+<div class="flex items-center justify-between font-label-sm text-label-sm text-on-primary">
+<span>Overall Verification Stage</span>
+<span class="font-code-sm text-code-sm font-bold">88%</span>
+</div>
+<div class="h-2 w-full rounded-full bg-surface-container-lowest/20 overflow-hidden">
+<div class="h-full bg-secondary-fixed rounded-full transition-all duration-500 ease-out" style="width: 88%;"></div>
+</div>
+</div>
+<!-- Assembly Checklist -->
+<div class="grid grid-cols-2 gap-space-xs py-space-xs">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-secondary-fixed text-[16px]">check_circle</span>
+<span class="font-label-sm text-label-sm text-on-primary truncate">Invoices (4/4)</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-secondary-fixed text-[16px]">check_circle</span>
+<span class="font-label-sm text-label-sm text-on-primary truncate">FIRA Remits (4/4)</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-secondary-fixed text-[16px]">check_circle</span>
+<span class="font-label-sm text-label-sm text-on-primary truncate">RBI Codes (100%)</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-secondary-fixed-dim text-[16px]">hourglass_top</span>
+<span class="font-label-sm text-label-sm text-on-primary/90 truncate">Dual CA Signature</span>
+</div>
+</div>
+<button class="w-full h-11 flex items-center justify-center gap-space-xs rounded-xl bg-surface-container-lowest text-primary font-headline-sm text-headline-sm font-semibold active:scale-[0.99] transition-transform shadow-sm" onclick="triggerAssemble('EDF-2024-089')" type="button">
+<span class="material-symbols-outlined text-[18px]">verified</span>
+<span>Finalize &amp; Seal Dossier</span>
+</button>
+</div>
+<!-- Decorative subtle vector backdrop -->
+<div class="absolute -right-6 -bottom-6 w-32 h-32 rounded-full bg-surface-container-lowest/5 pointer-events-none"></div>
+</div>
+<!-- 4. TAB / STATUS FILTER PILLS (Horizontally Scrollable) -->
+<div class="flex items-center gap-space-xs overflow-x-auto no-scrollbar py-1">
+<button class="filter-pill active px-space-md py-1.5 rounded-full font-label-md text-label-md font-semibold whitespace-nowrap bg-primary-container text-on-primary transition-colors" onclick="filterPacks('all', this)" type="button">
+        All Packs (16)
+      </button>
+<button class="filter-pill px-space-md py-1.5 rounded-full font-label-md text-label-md font-medium whitespace-nowrap bg-surface-container text-on-surface-variant hover:bg-surface-container-high transition-colors" onclick="filterPacks('ready', this)" type="button">
+        Ready (2)
+      </button>
+<button class="filter-pill px-space-md py-1.5 rounded-full font-label-md text-label-md font-medium whitespace-nowrap bg-surface-container text-on-surface-variant hover:bg-surface-container-high transition-colors" onclick="filterPacks('draft', this)" type="button">
+        Draft (1)
+      </button>
+<button class="filter-pill px-space-md py-1.5 rounded-full font-label-md text-label-md font-medium whitespace-nowrap bg-surface-container text-on-surface-variant hover:bg-surface-container-high transition-colors" onclick="filterPacks('blocked', this)" type="button">
+        Blocked (1)
+      </button>
+<button class="filter-pill px-space-md py-1.5 rounded-full font-label-md text-label-md font-medium whitespace-nowrap bg-surface-container text-on-surface-variant hover:bg-surface-container-high transition-colors" onclick="filterPacks('exported', this)" type="button">
+        Exported (12)
+      </button>
+</div>
+<!-- 5. COMPREHENSIVE PACK CARDS -->
+<div class="flex flex-col gap-space-base" id="packs-container">
+<!-- CARD 1: READY PACK (Primary Lodgement Target) -->
+<div class="pack-card ready flex flex-col rounded-xl bg-surface-container-lowest p-space-base shadow-sm gap-space-md">
+<!-- Header -->
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-space-xs flex-wrap">
+<span class="font-code-sm text-code-sm text-primary font-bold">#EDF-2024-088</span>
+<span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+<span class="font-body-md text-body-md font-semibold text-on-surface truncate">Acme North America Q3-B</span>
+</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
+              3 Commercial Invoices (INV-912, INV-901, INV-899)
+            </div>
+</div>
+<span class="inline-flex items-center gap-1 px-space-sm py-space-xs rounded-full bg-[#ECFDF5] text-[#065F46] font-label-sm text-label-sm shrink-0">
+<span class="w-1.5 h-1.5 rounded-full bg-[#10B981]"></span>
+<span>READY FOR LODGEMENT</span>
+</span>
+</div>
+<!-- Telemetry & Purpose Codes Panel -->
+<div class="flex flex-col gap-space-xs p-space-sm rounded-xl bg-surface-container-low">
+<div class="flex items-baseline justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Declared Value</span>
+<div class="flex items-baseline gap-space-xs">
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold">$84,200.00 USD</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">(₹69.8L)</span>
+</div>
+</div>
+<!-- Progress -->
+<div class="flex flex-col gap-1 mt-1">
+<div class="flex items-center justify-between font-label-sm text-label-sm">
+<span class="text-on-surface-variant">Reconciliation &amp; Compliance Integrity</span>
+<span class="text-[#065F46] font-bold">100% Verified</span>
+</div>
+<div class="h-1.5 w-full rounded-full bg-surface-container-high overflow-hidden">
+<div class="h-full bg-[#10B981] rounded-full" style="width: 100%;"></div>
+</div>
+</div>
+<!-- Purpose code confidence tags -->
+<div class="flex items-center gap-space-xs flex-wrap mt-space-xs pt-space-xs">
+<span class="px-space-xs py-0.5 rounded bg-surface-container-highest font-code-sm text-code-sm text-on-surface font-medium">
+              P0802: Software Dev
+            </span>
+<span class="px-space-xs py-0.5 rounded bg-surface-container-highest font-code-sm text-code-sm text-on-surface font-medium">
+              P1007: Digital Services
+            </span>
+<span class="font-label-sm text-label-sm text-[#065F46] ml-auto font-medium flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[14px]">auto_awesome</span>
+              AI Confidence 99.1%
+            </span>
+</div>
+</div>
+<!-- Validation Results Accordion-like summary -->
+<div class="flex flex-col gap-1.5 py-0.5">
+<div class="flex items-center gap-2 font-body-sm text-body-sm text-on-surface">
+<span class="material-symbols-outlined text-[#10B981] text-[18px]">check_circle</span>
+<span>Zero open exceptions or tariff divergences</span>
+</div>
+<div class="flex items-center gap-2 font-body-sm text-body-sm text-on-surface">
+<span class="material-symbols-outlined text-[#10B981] text-[18px]">check_circle</span>
+<span>Bank Nostro &amp; FIRA matched (JPMorgan Chase / Citi)</span>
+</div>
+<div class="flex items-center gap-2 font-body-sm text-body-sm text-on-surface">
+<span class="material-symbols-outlined text-[#10B981] text-[18px]">check_circle</span>
+<span>DGFT IEC / ICEGATE Shipping Bill validation passed</span>
+</div>
+</div>
+<!-- Sign-off Audit Rail -->
+<div class="flex items-center justify-between p-space-xs rounded-lg bg-surface-container-low font-label-sm text-label-sm text-on-surface-variant">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-[#10B981]">draw</span>
+<span>CFO Signed</span>
+</div>
+<span class="text-outline-variant">•</span>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-[#10B981]">security</span>
+<span>CA Verified</span>
+</div>
+<span class="text-outline-variant">•</span>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-[#10B981]">gavel</span>
+<span>Legal Seal Active</span>
+</div>
+</div>
+<!-- Export Actions Bar -->
+<div class="flex flex-col gap-space-sm pt-space-xs">
+<div class="grid grid-cols-3 gap-space-xs">
+<button class="h-9 px-space-xs flex items-center justify-center gap-1 rounded-lg bg-surface-container font-label-md text-label-md text-on-surface hover:bg-surface-container-high transition-colors" onclick="downloadFormat('JSON (DGFT Schema)')" type="button">
+<span class="material-symbols-outlined text-[16px]">data_object</span>
+<span>DGFT JSON</span>
+</button>
+<button class="h-9 px-space-xs flex items-center justify-center gap-1 rounded-lg bg-surface-container font-label-md text-label-md text-on-surface hover:bg-surface-container-high transition-colors" onclick="downloadFormat('CSV Ledger')" type="button">
+<span class="material-symbols-outlined text-[16px]">table_view</span>
+<span>CSV Ledger</span>
+</button>
+<button class="h-9 px-space-xs flex items-center justify-center gap-1 rounded-lg bg-surface-container font-label-md text-label-md text-on-surface hover:bg-surface-container-high transition-colors" onclick="downloadFormat('Certified PDF')" type="button">
+<span class="material-symbols-outlined text-[16px]">picture_as_pdf</span>
+<span>RBI PDF</span>
+</button>
+</div>
+<button class="w-full h-12 flex items-center justify-center gap-space-sm rounded-xl bg-primary-container text-on-primary font-headline-sm text-headline-sm font-semibold active:scale-[0.985] shadow-sm transition-all" onclick="submitToEdpms('EDF-2024-088')" type="button">
+<span class="material-symbols-outlined text-[20px]">rocket_launch</span>
+<span>Submit Direct to EDPMS Gateway</span>
+</button>
+</div>
+</div>
+<!-- CARD 2: BLOCKED PACK (Needs Intervention) -->
+<div class="pack-card blocked flex flex-col rounded-xl bg-surface-container-lowest p-space-base shadow-sm gap-space-md">
+<!-- Header -->
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-space-xs flex-wrap">
+<span class="font-code-sm text-code-sm text-error font-bold">#EDF-2024-087</span>
+<span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+<span class="font-body-md text-body-md font-semibold text-on-surface truncate">APAC Services Batch 4</span>
+</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
+              2 Commercial Invoices (INV-904, INV-885)
+            </div>
+</div>
+<span class="inline-flex items-center gap-1 px-space-sm py-space-xs rounded-full bg-[#FEF2F2] text-[#991B1B] font-label-sm text-label-sm shrink-0">
+<span class="w-1.5 h-1.5 rounded-full bg-[#EF4444]"></span>
+<span>BLOCKED</span>
+</span>
+</div>
+<!-- Telemetry Panel -->
+<div class="flex flex-col gap-space-xs p-space-sm rounded-xl bg-surface-container-low">
+<div class="flex items-baseline justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Declared Value</span>
+<div class="flex items-baseline gap-space-xs">
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold">¥4,800,000 JPY</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">(~$31.2k)</span>
+</div>
+</div>
+<!-- Progress -->
+<div class="flex flex-col gap-1 mt-1">
+<div class="flex items-center justify-between font-label-sm text-label-sm">
+<span class="text-on-surface-variant">Validation Integrity</span>
+<span class="text-error font-bold">62% (Exceptions Found)</span>
+</div>
+<div class="h-1.5 w-full rounded-full bg-surface-container-high overflow-hidden">
+<div class="h-full bg-error rounded-full" style="width: 62%;"></div>
+</div>
+</div>
+</div>
+<!-- Block Alert Callout Box -->
+<div class="flex flex-col gap-space-xs p-space-sm rounded-xl bg-[#FEF2F2] text-[#991B1B]">
+<div class="flex items-center gap-space-xs font-label-sm text-label-sm font-bold">
+<span class="material-symbols-outlined text-[18px]">error</span>
+<span>2 Unresolved Regulatory Exceptions</span>
+</div>
+<ul class="flex flex-col gap-1 text-on-surface font-body-sm text-body-sm pl-6 list-disc">
+<li>
+<span class="font-medium text-error">Purpose Code Conflict:</span> Bank Nostro P0803 diverges from master agreement MSA.
+            </li>
+<li>
+<span class="font-medium text-error">ICEGATE Endorsement:</span> Missing Customs Shipping Bill electronic stamp.
+            </li>
+</ul>
+</div>
+<!-- Intervention Actions -->
+<div class="flex flex-col sm:flex-row gap-space-xs pt-space-xs">
+<button class="flex-1 h-11 flex items-center justify-center gap-space-xs rounded-xl bg-surface-container-highest text-on-surface font-label-md text-label-md font-semibold hover:bg-surface-container-high transition-colors" onclick="navigateToExceptions()" type="button">
+<span class="material-symbols-outlined text-[18px] text-error">warning</span>
+<span>Clear in Exceptions Hub (2)</span>
+</button>
+<button class="h-11 px-space-md flex items-center justify-center gap-space-xs rounded-xl bg-surface-container text-on-surface-variant font-label-md text-label-md font-semibold hover:bg-surface-container-high transition-colors" onclick="revalidatePack('EDF-2024-087')" type="button">
+<span class="material-symbols-outlined text-[18px]">replay</span>
+<span>Re-validate</span>
+</button>
+</div>
+</div>
+<!-- CARD 3: DRAFT PACK (In Assembly) -->
+<div class="pack-card draft flex flex-col rounded-xl bg-surface-container-lowest p-space-base shadow-sm gap-space-md">
+<!-- Header -->
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-space-xs flex-wrap">
+<span class="font-code-sm text-code-sm text-primary-container font-bold">#EDF-2024-089</span>
+<span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+<span class="font-body-md text-body-md font-semibold text-on-surface truncate">European Cloud Enterprise</span>
+</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
+              1 Large Batch Invoice (INV-918)
+            </div>
+</div>
+<span class="inline-flex items-center gap-1 px-space-sm py-space-xs rounded-full bg-[#FFFBEB] text-[#92400E] font-label-sm text-label-sm shrink-0">
+<span class="w-1.5 h-1.5 rounded-full bg-[#F59E0B]"></span>
+<span>DRAFTING</span>
+</span>
+</div>
+<!-- Telemetry Panel -->
+<div class="flex flex-col gap-space-xs p-space-sm rounded-xl bg-surface-container-low">
+<div class="flex items-baseline justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Declared Value</span>
+<div class="flex items-baseline gap-space-xs">
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold">€38,400.00 EUR</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">(₹34.6L)</span>
+</div>
+</div>
+<!-- Progress -->
+<div class="flex flex-col gap-1 mt-1">
+<div class="flex items-center justify-between font-label-sm text-label-sm">
+<span class="text-on-surface-variant">Assembly Completion</span>
+<span class="text-primary-container font-bold">78%</span>
+</div>
+<div class="h-1.5 w-full rounded-full bg-surface-container-high overflow-hidden">
+<div class="h-full bg-primary-container rounded-full" style="width: 78%;"></div>
+</div>
+</div>
+</div>
+<!-- Status message -->
+<div class="flex items-center gap-space-sm p-space-sm rounded-xl bg-surface-container-low font-body-sm text-body-sm text-on-surface">
+<span class="material-symbols-outlined text-primary-container text-[20px] shrink-0">psychology</span>
+<span>AI Forensic Scan complete. Awaiting MT103 confirmation from Deutsche Bank Nostro.</span>
+</div>
+<!-- Action CTAs -->
+<div class="flex items-center gap-space-sm pt-space-xs">
+<button class="flex-1 h-11 flex items-center justify-center gap-space-xs rounded-xl bg-primary text-on-primary font-label-md text-label-md font-semibold active:scale-[0.985] shadow-sm transition-all" onclick="continueAssembly('EDF-2024-089')" type="button">
+<span class="material-symbols-outlined text-[18px]">build</span>
+<span>Continue Assembly</span>
+</button>
+<button class="h-11 px-space-md flex items-center justify-center gap-space-xs rounded-xl bg-surface-container font-label-md text-label-md text-on-surface font-medium hover:bg-surface-container-high transition-colors" onclick="previewDraft('EDF-2024-089')" type="button">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+<span>Preview</span>
+</button>
+</div>
+</div>
+<!-- CARD 4: EXPORTED & ARCHIVED PACK -->
+<div class="pack-card exported flex flex-col rounded-xl bg-surface-container-lowest p-space-base shadow-sm gap-space-md opacity-95">
+<!-- Header -->
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-space-xs flex-wrap">
+<span class="font-code-sm text-code-sm text-secondary font-bold">#EDF-2024-086</span>
+<span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+<span class="font-body-md text-body-md font-semibold text-on-surface truncate">UK Tech Exports Ltd</span>
+</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
+              Lodged on 18 Oct 2024 via HDFC Bank AD-Cat 1
+            </div>
+</div>
+<span class="inline-flex items-center gap-1 px-space-sm py-space-xs rounded-full bg-surface-container text-on-surface font-label-sm text-label-sm shrink-0">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+<span>FILED &amp; SEALED</span>
+</span>
+</div>
+<!-- Lodgement Receipt Telemetry -->
+<div class="flex flex-col gap-space-xs p-space-sm rounded-xl bg-surface-container-low font-code-sm text-code-sm">
+<div class="flex items-center justify-between text-on-surface">
+<span class="text-on-surface-variant">Value Lodged</span>
+<span class="font-bold text-on-surface font-headline-sm text-headline-sm">£50,000.00 GBP</span>
+</div>
+<div class="flex items-center justify-between pt-1">
+<span class="text-on-surface-variant">EDPMS Ack No.</span>
+<span class="font-semibold text-primary">#EDPMS-MUM-2024-99410</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-on-surface-variant">Merkle SHA-256</span>
+<span class="text-on-surface-variant truncate max-w-[160px]">0x82f9d2...b3a04e</span>
+</div>
+</div>
+<!-- Download Actions -->
+<div class="flex items-center justify-between gap-space-xs">
+<button class="flex-1 h-10 flex items-center justify-center gap-space-xs rounded-lg bg-surface-container font-label-md text-label-md text-on-surface hover:bg-surface-container-high transition-colors" onclick="downloadFormat('Official PDF Receipt')" type="button">
+<span class="material-symbols-outlined text-[16px]">file_download</span>
+<span>PDF Certificate</span>
+</button>
+<button class="flex-1 h-10 flex items-center justify-center gap-space-xs rounded-lg bg-surface-container font-label-md text-label-md text-on-surface hover:bg-surface-container-high transition-colors" onclick="showAuditChain()" type="button">
+<span class="material-symbols-outlined text-[16px]">timeline</span>
+<span>Audit Chain</span>
+</button>
+</div>
+</div>
+</div>
+<!-- 6. MULTI-FORMAT EXPORT SPECIFICATIONS & BATCH BUNDLE -->
+<div class="flex flex-col p-space-base rounded-xl bg-surface-container-low gap-space-sm">
+<div class="flex items-center gap-space-xs text-on-surface">
+<span class="material-symbols-outlined text-primary-container text-[20px]">verified_user</span>
+<h3 class="font-headline-sm text-headline-sm font-bold">Standard Regulatory Schemas</h3>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+        All generated bundles conform to DGFT Electronic Filing v2.4, ICEGATE Automated Customs linking, and RBI FEDAI Master Directions.
+      </p>
+<div class="pt-space-xs">
+<button class="w-full h-11 flex items-center justify-center gap-space-xs rounded-xl bg-surface-container-lowest text-on-surface font-headline-sm text-headline-sm font-semibold shadow-sm hover:bg-surface-container-high transition-colors" onclick="downloadBatchArchive()" type="button">
+<span class="material-symbols-outlined text-primary text-[18px]">archive</span>
+<span>Download Master Compliant Batch (.ZIP)</span>
+</button>
+</div>
+<div class="flex items-center justify-center gap-space-sm text-center font-label-sm text-label-sm text-on-surface-variant">
+<span>Includes Signed XML</span>
+<span>•</span>
+<span>Validated JSON</span>
+<span>•</span>
+<span>Watermarked Audit PDF</span>
+</div>
+</div>
+</div>
+<!-- Client-side Interactive Behaviors -->
+<script>
+    function showToast(message) {
+      const toast = document.getElementById('toast-notification');
+      const text = document.getElementById('toast-text');
+      if (toast && text) {
+        text.innerText = message;
+        toast.classList.remove('-translate-y-28', 'opacity-0', 'pointer-events-none');
+        toast.classList.add('translate-y-0', 'opacity-100');
+        setTimeout(() => {
+          dismissToast();
+        }, 4000);
+      }
+    }
+
+    function dismissToast() {
+      const toast = document.getElementById('toast-notification');
+      if (toast) {
+        toast.classList.remove('translate-y-0', 'opacity-100');
+        toast.classList.add('-translate-y-28', 'opacity-0', 'pointer-events-none');
+      }
+    }
+
+    function triggerAssemble(packId) {
+      showToast('Compiling ' + packId + ' with dual CA signature & Merkle seal...');
+    }
+
+    function submitToEdpms(packId) {
+      showToast('Transmitting ' + packId + ' to RBI EDPMS Gateway...');
+      setTimeout(() => {
+        showToast('Success! Gateway Ack #EDPMS-MUM-2024-99882 received.');
+      }, 1800);
+    }
+
+    function downloadFormat(format) {
+      showToast('Exporting Dossier in ' + format + ' format...');
+    }
+
+    function downloadBatchArchive() {
+      showToast('Generating encrypted .ZIP bundle for DGFT upload...');
+    }
+
+    function revalidatePack(packId) {
+      showToast('Re-running forensic AI verification on ' + packId + '...');
+    }
+
+    function continueAssembly(packId) {
+      showToast('Opening Dossier Assembly Studio for ' + packId);
+    }
+
+    function previewDraft(packId) {
+      showToast('Rendering draft preview for ' + packId);
+    }
+
+    function showAuditChain() {
+      showToast('Verified SHA-256 Merkle tree chain loaded.');
+    }
+
+    function navigateToExceptions() {
+      showToast('Redirecting to Exceptions Hub...');
+    }
+
+    function filterPacks(type, button) {
+      const pills = document.querySelectorAll('.filter-pill');
+      pills.forEach(p => {
+        p.classList.remove('bg-primary-container', 'text-on-primary', 'font-semibold');
+        p.classList.add('bg-surface-container', 'text-on-surface-variant', 'font-medium');
+      });
+      button.classList.remove('bg-surface-container', 'text-on-surface-variant', 'font-medium');
+      button.classList.add('bg-primary-container', 'text-on-primary', 'font-semibold');
+
+      const cards = document.querySelectorAll('.pack-card');
+      cards.forEach(card => {
+        if (type === 'all') {
+          card.classList.remove('hidden');
+        } else if (card.classList.contains(type)) {
+          card.classList.remove('hidden');
+        } else {
+          card.classList.add('hidden');
+        }
+      });
+    }
+  </script>
+</div></main><nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface/80 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]" data-active-classes="text-primary font-bold"><div class="flex justify-around items-center h-16 px-space-xs"><a class="flex flex-col items-center justify-center min-w-[56px] h-12 text-on-surface-variant hover:text-on-surface transition-colors" data-path="dashboard" href="#"><span class="material-symbols-outlined text-[22px]">dashboard</span><span class="font-label-sm text-label-sm">Dashboard</span></a><a class="flex flex-col items-center justify-center min-w-[56px] h-12 text-on-surface-variant hover:text-on-surface transition-colors" data-path="invoices" href="#"><span class="material-symbols-outlined text-[22px]">receipt_long</span><span class="font-label-sm text-label-sm">Invoices</span></a><a class="flex flex-col items-center justify-center min-w-[56px] h-12 text-on-surface-variant hover:text-on-surface transition-colors" data-path="matching-center" href="#"><span class="material-symbols-outlined text-[22px]">compare_arrows</span><span class="font-label-sm text-label-sm">Matching</span></a><a class="flex flex-col items-center justify-center min-w-[56px] h-12 text-on-surface-variant hover:text-on-surface transition-colors" data-path="exceptions-hub" href="#"><span class="material-symbols-outlined text-[22px]">warning</span><span class="font-label-sm text-label-sm">Exceptions</span></a><a class="flex flex-col items-center justify-center min-w-[56px] h-12 text-on-surface-variant hover:text-on-surface transition-colors" data-path="edf-packs" href="#"><span class="material-symbols-outlined text-[22px]">inventory_2</span><span class="font-label-sm text-label-sm">Packs</span></a></div></nav></body></html>

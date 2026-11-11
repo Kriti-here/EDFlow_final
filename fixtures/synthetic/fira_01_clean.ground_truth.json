@@ -1,0 +1,120 @@
+{
+  "synthetic": true,
+  "dataset": "SYNTHETIC",
+  "watermark": "SYNTHETIC - NOT A REAL DOCUMENT",
+  "fixture_id": "fira_01_clean",
+  "source": "simulated",
+  "scenarios": [
+    "exact_match"
+  ],
+  "fira": {
+    "fira_reference": "SYN-FIRA-2026-11-0001",
+    "bank": "Synthetic Bank of Exampleland (FICTIONAL)",
+    "ad_code": "00000000000000",
+    "statement_period": "2026-10-31 to 2026-11-06",
+    "generated_on": "2026-11-06"
+  },
+  "fx_rates_simulated": {
+    "USD": "84.00",
+    "GBP": "106.00",
+    "EUR": "91.00",
+    "SGD": "62.00"
+  },
+  "exporter": {
+    "legal_name": "Synthetic Exporter Pvt Ltd (FICTIONAL)",
+    "entity_type": "company",
+    "pan": "AAAAA0000A",
+    "gstin": "00AAAAA0000A1Z0",
+    "lut_number": "SYN-LUT-0001",
+    "ad_bank_name": "Synthetic Bank of Exampleland (FICTIONAL)",
+    "ad_code": "00000000000000"
+  },
+  "lines": [
+    {
+      "line_no": 1,
+      "utr": "SYN-UTR-01-001",
+      "value_date": "2026-11-02",
+      "remitter_name": "Example Software Buyer Inc",
+      "remitter_country": "US",
+      "remitter_email": "buyer.us@example.com",
+      "currency": "USD",
+      "gross_amount": "2500.00",
+      "bank_charges": "72.50",
+      "net_amount_inr": "203910.00",
+      "purpose_code": "P0802",
+      "invoice_reference": "INV-2026-1001"
+    },
+    {
+      "line_no": 2,
+      "utr": "SYN-UTR-01-002",
+      "value_date": "2026-11-03",
+      "remitter_name": "Example Software Buyer Inc",
+      "remitter_country": "US",
+      "remitter_email": "buyer.us@example.com",
+      "currency": "USD",
+      "gross_amount": "1800.00",
+      "bank_charges": "52.20",
+      "net_amount_inr": "146815.20",
+      "purpose_code": "P0802",
+      "invoice_reference": "INV-2026-1002"
+    },
+    {
+      "line_no": 3,
+      "utr": "SYN-UTR-01-003",
+      "value_date": "2026-11-04",
+      "remitter_name": "Sample Design Studio Ltd",
+      "remitter_country": "GB",
+      "remitter_email": "design.gb@example.com",
+      "currency": "GBP",
+      "gross_amount": "1200.00",
+      "bank_charges": "43.20",
+      "net_amount_inr": "122620.80",
+      "purpose_code": "P1007",
+      "invoice_reference": "INV-2026-1003"
+    }
+  ],
+  "expected_matching": [
+    {
+      "line_no": 1,
+      "invoice_number": "INV-2026-1001",
+      "match_type": "exact",
+      "expected_status": "matched",
+      "confidence": "high",
+      "candidates": [
+        "INV-2026-1001"
+      ],
+      "notes": "Reference and gross amount agree."
+    },
+    {
+      "line_no": 2,
+      "invoice_number": "INV-2026-1002",
+      "match_type": "exact",
+      "expected_status": "matched",
+      "confidence": "high",
+      "candidates": [
+        "INV-2026-1002"
+      ],
+      "notes": "Reference and gross amount agree."
+    },
+    {
+      "line_no": 3,
+      "invoice_number": "INV-2026-1003",
+      "match_type": "exact",
+      "expected_status": "matched",
+      "confidence": "high",
+      "candidates": [
+        "INV-2026-1003"
+      ],
+      "notes": "Reference and gross amount agree."
+    }
+  ],
+  "expected_exceptions": [],
+  "expectations": {
+    "matched_invoices": [
+      "INV-2026-1001",
+      "INV-2026-1002",
+      "INV-2026-1003"
+    ],
+    "all_lines_referenced": true
+  }
+}

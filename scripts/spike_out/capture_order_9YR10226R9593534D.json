@@ -1,0 +1,120 @@
+{
+  "id": "9YR10226R9593534D",
+  "intent": "CAPTURE",
+  "status": "COMPLETED",
+  "payment_source": {
+    "paypal": {
+      "email_address": "sb-csc5j53714682@personal.example.com",
+      "account_id": "FRZNPGTQP56PL",
+      "account_status": "VERIFIED",
+      "name": {
+        "given_name": "John",
+        "surname": "Doe"
+      },
+      "address": {
+        "country_code": "US"
+      }
+    }
+  },
+  "purchase_units": [
+    {
+      "reference_id": "INV-TEST",
+      "amount": {
+        "currency_code": "USD",
+        "value": "50.00",
+        "breakdown": {}
+      },
+      "payee": {
+        "email_address": "sb-tajuj53677394@business.example.com",
+        "merchant_id": "L9R4QY98MSC5S"
+      },
+      "custom_id": "INV-TEST",
+      "shipping": {
+        "name": {
+          "full_name": "John Doe"
+        },
+        "address": {
+          "address_line_1": "2211 N First St",
+          "admin_area_2": "San Jose",
+          "admin_area_1": "CA",
+          "postal_code": "95131",
+          "country_code": "US"
+        }
+      },
+      "payments": {
+        "captures": [
+          {
+            "id": "7DX64188JR9412354",
+            "status": "COMPLETED",
+            "amount": {
+              "currency_code": "USD",
+              "value": "50.00"
+            },
+            "final_capture": true,
+            "seller_protection": {
+              "status": "ELIGIBLE",
+              "dispute_categories": [
+                "ITEM_NOT_RECEIVED",
+                "UNAUTHORIZED_TRANSACTION"
+              ]
+            },
+            "seller_receivable_breakdown": {
+              "gross_amount": {
+                "currency_code": "USD",
+                "value": "50.00"
+              },
+              "paypal_fee": {
+                "currency_code": "USD",
+                "value": "2.66"
+              },
+              "net_amount": {
+                "currency_code": "USD",
+                "value": "47.34"
+              }
+            },
+            "custom_id": "INV-TEST",
+            "links": [
+              {
+                "href": "https://api.sandbox.paypal.com/v2/payments/captures/7DX64188JR9412354",
+                "rel": "self",
+                "method": "GET"
+              },
+              {
+                "href": "https://api.sandbox.paypal.com/v2/payments/captures/7DX64188JR9412354/refund",
+                "rel": "refund",
+                "method": "POST"
+              },
+              {
+                "href": "https://api.sandbox.paypal.com/v2/checkout/orders/9YR10226R9593534D",
+                "rel": "up",
+                "method": "GET"
+              }
+            ],
+            "create_time": "2026-11-05T07:34:20Z",
+            "update_time": "2026-11-05T07:34:20Z"
+          }
+        ]
+      }
+    }
+  ],
+  "payer": {
+    "name": {
+      "given_name": "John",
+      "surname": "Doe"
+    },
+    "email_address": "sb-csc5j53714682@personal.example.com",
+    "payer_id": "FRZNPGTQP56PL",
+    "address": {
+      "country_code": "US"
+    }
+  },
+  "create_time": "2026-11-05T07:34:20Z",
+  "update_time": "2026-11-05T07:34:20Z",
+  "links": [
+    {
+      "href": "https://api.sandbox.paypal.com/v2/checkout/orders/9YR10226R9593534D",
+      "rel": "self",
+      "method": "GET"
+    }
+  ]
+}

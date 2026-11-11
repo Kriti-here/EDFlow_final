@@ -1,0 +1,59 @@
+{
+  "id": "7DX64188JR9412354",
+  "amount": {
+    "currency_code": "USD",
+    "value": "50.00"
+  },
+  "final_capture": true,
+  "seller_protection": {
+    "status": "ELIGIBLE",
+    "dispute_categories": [
+      "ITEM_NOT_RECEIVED",
+      "UNAUTHORIZED_TRANSACTION"
+    ]
+  },
+  "seller_receivable_breakdown": {
+    "gross_amount": {
+      "currency_code": "USD",
+      "value": "50.00"
+    },
+    "paypal_fee": {
+      "currency_code": "USD",
+      "value": "2.66"
+    },
+    "net_amount": {
+      "currency_code": "USD",
+      "value": "47.34"
+    }
+  },
+  "custom_id": "INV-TEST",
+  "status": "COMPLETED",
+  "supplementary_data": {
+    "related_ids": {
+      "order_id": "9YR10226R9593534D"
+    }
+  },
+  "payee": {
+    "email_address": "sb-tajuj53677394@business.example.com",
+    "merchant_id": "L9R4QY98MSC5S"
+  },
+  "create_time": "2026-11-05T07:34:20Z",
+  "update_time": "2026-11-05T07:34:20Z",
+  "links": [
+    {
+      "href": "https://api.sandbox.paypal.com/v2/payments/captures/7DX64188JR9412354",
+      "rel": "self",
+      "method": "GET"
+    },
+    {
+      "href": "https://api.sandbox.paypal.com/v2/payments/captures/7DX64188JR9412354/refund",
+      "rel": "refund",
+      "method": "POST"
+    },
+    {
+      "href": "https://api.sandbox.paypal.com/v2/checkout/orders/9YR10226R9593534D",
+      "rel": "up",
+      "method": "GET"
+    }
+  ]
+}

@@ -1,0 +1,546 @@
+@import "tailwindcss";
+
+/* ------------------------------------------------------------------ */
+/* EDFlow design tokens (ported from the landing-page mockup config)   */
+/* ------------------------------------------------------------------ */
+@theme {
+  /* Colors */
+  --color-inverse-on-surface: #eef0ff;
+  --color-error: #ba1a1a;
+  --color-on-primary-fixed-variant: #3323cc;
+  --color-background: #faf8ff;
+  --color-primary-fixed: #e2dfff;
+  --color-on-secondary-fixed: #001f26;
+  --color-tertiary: #005338;
+  --color-secondary-fixed: #acedff;
+  --color-surface-container-lowest: #ffffff;
+  --color-error-container: #ffdad6;
+  --color-on-tertiary: #ffffff;
+  --color-on-background: #131b2e;
+  --color-surface-tint: #4d44e3;
+  --color-on-secondary-fixed-variant: #004e5c;
+  --color-surface-container-highest: #dae2fd;
+  --color-surface-dim: #d2d9f4;
+  --color-on-primary: #ffffff;
+  --color-on-secondary: #ffffff;
+  --color-on-tertiary-container: #67f4b7;
+  --color-inverse-surface: #283044;
+  --color-primary-container: #4f46e5;
+  --color-on-error-container: #93000a;
+  --color-tertiary-container: #006e4b;
+  --color-tertiary-fixed-dim: #4edea3;
+  --color-on-tertiary-fixed: #002113;
+  --color-secondary: #00687a;
+  --color-surface-container-high: #e2e7ff;
+  --color-secondary-container: #57dffe;
+  --color-surface-container: #eaedff;
+  --color-on-secondary-container: #006172;
+  --color-secondary-fixed-dim: #4cd7f6;
+  --color-primary-fixed-dim: #c3c0ff;
+  --color-on-tertiary-fixed-variant: #005236;
+  --color-inverse-primary: #c3c0ff;
+  --color-surface-variant: #dae2fd;
+  --color-on-primary-container: #dad7ff;
+  --color-surface: #faf8ff;
+  --color-outline-variant: #c7c4d8;
+  --color-on-surface-variant: #464555;
+  --color-outline: #777587;
+  --color-primary: #3525cd;
+  --color-surface-container-low: #f2f3ff;
+  --color-tertiary-fixed: #6ffbbe;
+  --color-on-error: #ffffff;
+  --color-on-primary-fixed: #0f0069;
+  --color-on-surface: #131b2e;
+  --color-surface-bright: #faf8ff;
+
+  /* Named spacing scale */
+  --spacing-space-base: 1rem;
+  --spacing-space-lg: 1.5rem;
+  --spacing-gutter-md: 1.5rem;
+  --spacing-margin: 1rem;
+  --spacing-space-2xl: 3rem;
+  --spacing-space-md: 0.75rem;
+  --spacing-gutter-lg: 2rem;
+  --spacing-margin-lg: 3rem;
+  --spacing-margin-md: 2rem;
+  --spacing-space-xs: 0.25rem;
+  --spacing-space-sm: 0.5rem;
+  --spacing-space-xl: 2rem;
+  --spacing-gutter: 1rem;
+  --spacing-space-2xs: 0.125rem;
+
+  /* Radius scale */
+  --radius-lg: 0.25rem;
+  --radius-xl: 0.5rem;
+  --radius-2xl: 1rem;
+  --radius-full: 0.75rem;
+
+  /* Font families */
+  --font-headline-xl: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-headline-lg: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-headline-md: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-headline-sm: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-headline-xl-mobile: "Plus Jakarta Sans", ui-sans-serif, system-ui,
+    sans-serif;
+  --font-headline-lg-mobile: "Plus Jakarta Sans", ui-sans-serif, system-ui,
+    sans-serif;
+  --font-body-lg: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-body-md: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-body-sm: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-label-md: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-label-sm: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-code-sm: "Inter", ui-sans-serif, system-ui, sans-serif;
+
+  /* Type scale */
+  --text-headline-xl: 40px;
+  --text-headline-xl--line-height: 48px;
+  --text-headline-xl--letter-spacing: -0.025em;
+  --text-headline-xl--font-weight: 700;
+
+  --text-headline-xl-mobile: 30px;
+  --text-headline-xl-mobile--line-height: 38px;
+  --text-headline-xl-mobile--letter-spacing: -0.02em;
+  --text-headline-xl-mobile--font-weight: 700;
+
+  --text-headline-lg: 32px;
+  --text-headline-lg--line-height: 40px;
+  --text-headline-lg--letter-spacing: -0.02em;
+  --text-headline-lg--font-weight: 600;
+
+  --text-headline-lg-mobile: 24px;
+  --text-headline-lg-mobile--line-height: 32px;
+  --text-headline-lg-mobile--letter-spacing: -0.015em;
+  --text-headline-lg-mobile--font-weight: 600;
+
+  --text-headline-md: 22px;
+  --text-headline-md--line-height: 28px;
+  --text-headline-md--letter-spacing: -0.015em;
+  --text-headline-md--font-weight: 600;
+
+  --text-headline-sm: 18px;
+  --text-headline-sm--line-height: 24px;
+  --text-headline-sm--letter-spacing: -0.01em;
+  --text-headline-sm--font-weight: 600;
+
+  --text-body-lg: 16px;
+  --text-body-lg--line-height: 24px;
+  --text-body-lg--letter-spacing: -0.01em;
+  --text-body-lg--font-weight: 400;
+
+  --text-body-md: 14px;
+  --text-body-md--line-height: 20px;
+  --text-body-md--letter-spacing: -0.005em;
+  --text-body-md--font-weight: 400;
+
+  --text-body-sm: 13px;
+  --text-body-sm--line-height: 18px;
+  --text-body-sm--font-weight: 400;
+
+  --text-label-md: 12px;
+  --text-label-md--line-height: 16px;
+  --text-label-md--letter-spacing: 0.01em;
+  --text-label-md--font-weight: 500;
+
+  --text-label-sm: 11px;
+  --text-label-sm--line-height: 14px;
+  --text-label-sm--letter-spacing: 0.04em;
+  --text-label-sm--font-weight: 600;
+
+  --text-code-sm: 12px;
+  --text-code-sm--line-height: 16px;
+  --text-code-sm--font-weight: 500;
+}
+
+/* ------------------------------------------------------------------ */
+/* Base + landing animations                                           */
+/* ------------------------------------------------------------------ */
+@layer base {
+  html,
+  body {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    overscroll-behavior-y: none;
+    -webkit-tap-highlight-color: transparent;
+    min-height: max(884px, 100dvh);
+  }
+
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  .pt-safe {
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+}
+
+::-webkit-scrollbar {
+  display: none;
+}
+
+@keyframes flowPulse {
+  0%,
+  100% {
+    opacity: 0.35;
+    stroke-dashoffset: 0;
+  }
+  50% {
+    opacity: 0.9;
+    stroke-dashoffset: -12;
+  }
+}
+
+@keyframes ambientPulse {
+  0%,
+  100% {
+    transform: scale(1) translate(-50%, 0);
+    opacity: 0.55;
+  }
+  50% {
+    transform: scale(1.08) translate(-50%, -6px);
+    opacity: 0.85;
+  }
+}
+
+@keyframes driftSlowA {
+  0%,
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-6px) rotate(1deg);
+  }
+}
+
+@keyframes driftSlowB {
+  0%,
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(5px) rotate(-1deg);
+  }
+}
+
+@keyframes spineFlow {
+  0% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  40% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(300%);
+    opacity: 0;
+  }
+}
+
+.animate-spine-flow {
+  animation: spineFlow 2.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.animate-ambient-pulse {
+  animation: ambientPulse 6s ease-in-out infinite;
+}
+
+.animate-drift-a {
+  animation: driftSlowA 5s ease-in-out infinite;
+}
+
+.animate-drift-b {
+  animation: driftSlowB 6s ease-in-out infinite;
+}
+
+/* ------------------------------------------------------------------ */
+/* Motion system (subtle, professional — CSS only)                     */
+/* ------------------------------------------------------------------ */
+@keyframes enterFade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes enterUp {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes connectorFlow {
+  0% {
+    transform: translateY(-120%);
+    opacity: 0;
+  }
+  35% {
+    opacity: 1;
+  }
+  70% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(120%);
+    opacity: 0;
+  }
+}
+
+/* Staggered hero entrance */
+.animate-enter-fade {
+  animation: enterFade 0.7s ease-out both;
+}
+
+.animate-enter-up {
+  animation: enterUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Route transition: fade + slight rise, kept under 300ms. */
+@keyframes pageEnter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.animate-page-enter {
+  animation: pageEnter 0.26s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Flowing highlight inside workflow connectors */
+.animate-connector-flow {
+  animation: connectorFlow 2.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+/* Horizontal variant of the connector pulse (desktop steppers) */
+@keyframes connectorFlowX {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  30% {
+    opacity: 1;
+  }
+  70% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(260%);
+    opacity: 0;
+  }
+}
+
+.animate-connector-flow-x {
+  animation: connectorFlowX 2.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+/* Gentle idle float for hero panels */
+@keyframes floatY {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+.animate-float-slow {
+  animation: floatY 7s ease-in-out infinite;
+}
+
+/* Soft pulse ring for the active pipeline node (desktop stepper) */
+@keyframes nodePulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(79, 70, 229, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 0 7px rgba(79, 70, 229, 0);
+  }
+}
+
+.animate-node-pulse {
+  animation: nodePulse 2.6s ease-in-out infinite;
+}
+
+/* Scroll reveal — toggled by the Reveal component */
+.reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition:
+    opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.reveal-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* Subtle lift for interactive cards */
+.card-hover {
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    border-color 0.25s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+}
+
+/* Progress fills: horizontal bars and the concentric compliance rings. */
+@keyframes barFill {
+  from {
+    width: 0;
+  }
+}
+
+.bar-fill {
+  animation: barFill 1.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes ringFill {
+  from {
+    stroke-dashoffset: var(--ring-start);
+  }
+}
+
+.ring-fill {
+  animation: ringFill 1.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Dashboard-level fade-in, layered under the per-card stagger. */
+@keyframes dashboardIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.animate-dashboard-in {
+  animation: dashboardIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Shared dashboard card surface: elevated shadow with a subtle hover lift. */
+.dash-card {
+  box-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.04),
+    0 8px 24px rgba(15, 23, 42, 0.06);
+  transition:
+    transform 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.dash-card:hover {
+  transform: translateY(-3px);
+  box-shadow:
+    0 2px 6px rgba(15, 23, 42, 0.06),
+    0 18px 44px rgba(15, 23, 42, 0.13);
+}
+
+/* Urgent exception rows: subtle pulse; hover lifts with an error-tinted glow. */
+@keyframes urgentPulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(186, 26, 26, 0.16);
+  }
+  50% {
+    box-shadow: 0 0 0 5px rgba(186, 26, 26, 0);
+  }
+}
+
+.exception-urgent {
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+  animation: urgentPulse 2.8s ease-in-out infinite;
+}
+
+.exception-urgent:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px rgba(186, 26, 26, 0.16);
+  animation: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+
+  .card-hover:hover {
+    transform: none;
+  }
+}
+
+.card-hover {
+  transition: all 0.3s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+}
+
+@keyframes invoiceModalBackdropIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes invoiceModalPanelIn {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.invoice-modal-backdrop {
+  animation: invoiceModalBackdropIn 0.2s ease-out both;
+}
+
+.invoice-modal-panel {
+  animation: invoiceModalPanelIn 0.2s ease-out both;
+}
+
+.invoice-toast {
+  animation: invoiceModalBackdropIn 0.2s ease-out both;
+}

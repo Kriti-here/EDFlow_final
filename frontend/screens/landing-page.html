@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><title>EDFlow Compliance Platform</title><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Plus+Jakarta+Sans:wght@500;600;700;800&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { colors: { "inverse-on-surface": "#eef0ff", "error": "#ba1a1a", "on-primary-fixed-variant": "#3323cc", "background": "#faf8ff", "primary-fixed": "#e2dfff", "on-secondary-fixed": "#001f26", "tertiary": "#005338", "secondary-fixed": "#acedff", "surface-container-lowest": "#ffffff", "error-container": "#ffdad6", "on-tertiary": "#ffffff", "on-background": "#131b2e", "surface-tint": "#4d44e3", "on-secondary-fixed-variant": "#004e5c", "surface-container-highest": "#dae2fd", "surface-dim": "#d2d9f4", "on-primary": "#ffffff", "on-secondary": "#ffffff", "on-tertiary-container": "#67f4b7", "inverse-surface": "#283044", "primary-container": "#4f46e5", "on-error-container": "#93000a", "tertiary-container": "#006e4b", "tertiary-fixed-dim": "#4edea3", "on-tertiary-fixed": "#002113", "secondary": "#00687a", "surface-container-high": "#e2e7ff", "secondary-container": "#57dffe", "surface-container": "#eaedff", "on-secondary-container": "#006172", "secondary-fixed-dim": "#4cd7f6", "primary-fixed-dim": "#c3c0ff", "on-tertiary-fixed-variant": "#005236", "inverse-primary": "#c3c0ff", "surface-variant": "#dae2fd", "on-primary-container": "#dad7ff", "surface": "#faf8ff", "outline-variant": "#c7c4d8", "on-surface-variant": "#464555", "outline": "#777587", "primary": "#3525cd", "surface-container-low": "#f2f3ff", "tertiary-fixed": "#6ffbbe", "on-error": "#ffffff", "on-primary-fixed": "#0f0069", "on-surface": "#131b2e", "surface-bright": "#faf8ff" }, borderRadius: { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" }, spacing: { "space-base": "1rem", "space-lg": "1.5rem", "gutter-md": "1.5rem", "margin": "1rem", "space-2xl": "3rem", "space-md": "0.75rem", "gutter-lg": "2rem", "margin-lg": "3rem", "margin-md": "2rem", "space-xs": "0.25rem", "space-sm": "0.5rem", "space-xl": "2rem", "gutter": "1rem", "space-2xs": "0.125rem" }, fontFamily: { "headline-lg-mobile": ["Plus Jakarta Sans"], "headline-xl-mobile": ["Plus Jakarta Sans"], "body-md": ["Inter"], "label-sm": ["Inter"], "body-lg": ["Inter"], "headline-md": ["Plus Jakarta Sans"], "headline-sm": ["Plus Jakarta Sans"], "label-md": ["Inter"], "headline-xl": ["Plus Jakarta Sans"], "headline-lg": ["Plus Jakarta Sans"], "body-sm": ["Inter"], "code-sm": ["Inter"] }, fontSize: { "headline-lg-mobile": ["24px", { lineHeight: "32px", letterSpacing: "-0.015em", fontWeight: "600" }], "headline-xl-mobile": ["30px", { lineHeight: "38px", letterSpacing: "-0.02em", fontWeight: "700" }], "body-md": ["14px", { lineHeight: "20px", letterSpacing: "-0.005em", fontWeight: "400" }], "label-sm": ["11px", { lineHeight: "14px", letterSpacing: "0.04em", fontWeight: "600" }], "body-lg": ["16px", { lineHeight: "24px", letterSpacing: "-0.01em", fontWeight: "400" }], "headline-md": ["22px", { lineHeight: "28px", letterSpacing: "-0.015em", fontWeight: "600" }], "headline-sm": ["18px", { lineHeight: "24px", letterSpacing: "-0.01em", fontWeight: "600" }], "label-md": ["12px", { lineHeight: "16px", letterSpacing: "0.01em", fontWeight: "500" }], "headline-xl": ["40px", { lineHeight: "48px", letterSpacing: "-0.025em", fontWeight: "700" }], "headline-lg": ["32px", { lineHeight: "40px", letterSpacing: "-0.02em", fontWeight: "600" }], "body-sm": ["13px", { lineHeight: "18px", letterSpacing: "0em", fontWeight: "400" }], "code-sm": ["12px", { lineHeight: "16px", letterSpacing: "0em", fontWeight: "500" }] } } } };</script><style>@layer base { html, body { width: 100%; margin: 0; padding: 0; } body { overscroll-behavior-y: none; -webkit-tap-highlight-color: transparent; } .pb-safe { padding-bottom: env(safe-area-inset-bottom, 0px); } .pt-safe { padding-top: env(safe-area-inset-top, 0px); } } ::-webkit-scrollbar { display: none; }
+  @keyframes flowPulse {
+    0%, 100% { opacity: 0.35; stroke-dashoffset: 0; }
+    50% { opacity: 0.9; stroke-dashoffset: -12; }
+  }
+  @keyframes ambientPulse {
+    0%, 100% { transform: scale(1) translate(-50%, 0); opacity: 0.55; }
+    50% { transform: scale(1.08) translate(-50%, -6px); opacity: 0.85; }
+  }
+  @keyframes driftSlowA {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-6px) rotate(1deg); }
+  }
+  @keyframes driftSlowB {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(5px) rotate(-1deg); }
+  }
+  @keyframes spineFlow {
+    0% { transform: translateY(-100%); opacity: 0; }
+    40% { opacity: 1; }
+    80% { opacity: 1; }
+    100% { transform: translateY(300%); opacity: 0; }
+  }
+  .animate-spine-flow {
+    animation: spineFlow 2.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  }
+  .animate-ambient-pulse {
+    animation: ambientPulse 6s ease-in-out infinite;
+  }
+  .animate-drift-a {
+    animation: driftSlowA 5s ease-in-out infinite;
+  }
+  .animate-drift-b {
+    animation: driftSlowB 6s ease-in-out infinite;
+  }
+  </style><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head><body class="bg-surface font-body-md text-on-surface antialiased flex flex-col min-h-screen relative"><header class="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-xl border-b border-surface-container-high/70 shadow-[0_1px_10px_rgba(15,23,42,0.03)] pt-safe"><div class="h-16 px-margin flex items-center justify-between gap-space-sm"><div class="flex items-center gap-space-sm min-w-0"><button aria-expanded="false" aria-label="Toggle Navigation Menu" class="w-10 h-10 -ml-1.5 rounded-lg flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-container active:scale-95 transition-all" id="menuToggle"><span class="material-symbols-outlined text-[22px]">menu</span></button><div class="flex items-center gap-2.5 min-w-0"><img alt="EDFlow Brandmark" class="h-8 w-8 rounded-lg shadow-sm shrink-0 object-contain ring-1 ring-primary/10" src="https://lh3.googleusercontent.com/aida/ALJJyrDB9uJEaP73RhyUkcbZBUt_OT5IzdojMPtmF_Q8Xwilr9QGyA5GjNSFdyRjVpatBSN_dC9hhaYl41spxV8YpRaTsxC0X8C6VAAE7oMvCDLPhj-vB1gOBekLco_XJlwR1SHoAeAM7-NABn--WZkW4t47StpWZcWCAuQut6GPTgCACGzaVU60zWwG72-RlHVuTLv2xtR-ewIKcyu-RAFtweLZr1kBYzlE13EMc63bnTYx6g"/><div class="flex flex-col min-w-0"><span class="font-headline-sm text-headline-sm text-on-surface tracking-tight leading-none font-bold">EDFlow</span><span class="font-label-sm text-[10px] text-on-surface-variant/90 tracking-wider truncate uppercase pt-0.5 font-medium">Export Compliance Intelligence</span></div></div></div><div class="flex items-center gap-1.5 shrink-0"><button aria-label="Toggle Dark or Light Theme" class="w-9 h-9 rounded-lg flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-container active:scale-95 transition-all"><span class="material-symbols-outlined text-[19px]">dark_mode</span></button><a class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary-container/10 border border-primary-container/20 text-primary-container font-label-md text-label-md font-semibold active:scale-95 transition-all" data-path="compliance-workspace" href="#"><span class="text-[13px]">🚀</span><span>Dashboard</span></a><button aria-label="Sign In or User Profile" class="w-8 h-8 rounded-full bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 flex items-center justify-center active:scale-95 transition-all shadow-[0_1px_2px_rgba(0,0,0,0.04)]"><span class="material-symbols-outlined text-[18px]">person</span></button></div></div><!-- Hamburger Drawer / Dropdown Menu --><div class="hidden absolute top-16 left-0 w-full bg-surface-container-lowest/98 backdrop-blur-2xl border-b border-surface-container-high shadow-xl p-space-md flex-col gap-1 transition-all duration-200 z-50" id="mobileMenuNav"><a class="flex items-center justify-between px-space-md py-2.5 rounded-lg text-on-surface hover:bg-surface-container font-label-md" href="#hero"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[20px] text-primary">layers</span><span class="font-semibold">Features</span></div><span class="text-[11px] text-on-surface-variant font-mono">Overview</span></a><a class="flex items-center justify-between px-space-md py-2.5 rounded-lg text-on-surface hover:bg-surface-container font-label-md" href="#workflow"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[20px] text-primary">account_tree</span><span class="font-semibold">Workflow</span></div><span class="text-[10px] px-2 py-0.5 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-bold uppercase">Pipeline</span></a><a class="flex items-center justify-between px-space-md py-2.5 rounded-lg text-on-surface hover:bg-surface-container font-label-md" href="#quick-start"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[20px] text-primary">speed</span><span class="font-semibold">Quick Start</span></div><span class="text-[11px] text-on-surface-variant font-mono">&lt; 10s</span></a><a class="flex items-center justify-between px-space-md py-2.5 rounded-lg text-on-surface hover:bg-surface-container font-label-md" data-path="compliance-workspace" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[20px] text-primary">description</span><span class="font-semibold">Docs</span></div><span class="material-symbols-outlined text-[16px] text-on-surface-variant">arrow_outward</span></a><div class="pt-2 mt-1 border-t border-surface-container-high/60"><a class="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-primary text-on-primary font-label-md font-semibold shadow-sm active:scale-95 transition-all" data-path="compliance-workspace" href="#"><span>🚀 Enter Workspace</span></a></div></div></header><main class="flex-1 flex flex-col relative w-full pt-16 pb-20 bg-surface"><div class="flex flex-col w-full">
+<!-- SECTION 1: HERO SECTION -->
+<section class="relative w-full px-margin pt-space-xl pb-space-lg flex flex-col items-center text-center overflow-hidden" id="hero">
+<!-- Soft Pulsing Linear & Radial Ambient Glow -->
+<div class="absolute -top-10 left-1/2 -translate-x-1/2 w-80 h-72 bg-gradient-to-b from-primary/20 via-primary-container/15 to-transparent rounded-full blur-3xl pointer-events-none -z-10 animate-ambient-pulse"></div>
+<div class="absolute top-28 left-1/2 -translate-x-1/2 w-[340px] h-48 bg-secondary-container/20 rounded-full blur-3xl pointer-events-none -z-10"></div>
+<!-- Flowing SVG Connection Lines -->
+<div class="absolute inset-0 pointer-events-none -z-10 flex items-center justify-center opacity-75">
+<svg class="w-full h-full max-w-md" fill="none" viewbox="0 0 380 430" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<lineargradient id="fintechFlow1" x1="0%" x2="100%" y1="0%" y2="100%">
+<stop offset="0%" stop-color="#4f46e5" stop-opacity="0.4"></stop>
+<stop offset="50%" stop-color="#57dffe" stop-opacity="0.45"></stop>
+<stop offset="100%" stop-color="#006e4b" stop-opacity="0.35"></stop>
+</lineargradient>
+</defs>
+<path d="M40 70 C 130 110, 70 210, 190 230 S 290 320, 340 370" stroke="url(#fintechFlow1)" stroke-dasharray="5 5" stroke-width="1.75" style="animation: flowPulse 4s linear infinite;"></path>
+<path d="M340 80 C 260 130, 290 220, 190 240 S 110 320, 40 380" opacity="0.3" stroke="#4f46e5" stroke-dasharray="4 4" stroke-width="1.25"></path>
+<circle cx="190" cy="235" fill="#4f46e5" opacity="0.08" r="85"></circle>
+</svg>
+</div>
+<!-- Floating Micro-Workflow Nodes (Strict Fintech Polish) -->
+<div class="hidden sm:flex absolute left-4 top-24 z-0 pointer-events-none items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container-lowest/90 border border-primary/20 shadow-sm backdrop-blur-md animate-drift-a">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span>
+<span class="text-[11px] font-mono text-on-surface-variant font-medium">SWIFT MT103 Nostro Sync</span>
+</div>
+<div class="hidden sm:flex absolute right-4 top-36 z-0 pointer-events-none items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container-lowest/90 border border-primary/20 shadow-sm backdrop-blur-md animate-drift-b">
+<span class="material-symbols-outlined text-[13px] text-primary">verified</span>
+<span class="text-[11px] font-mono text-on-surface-variant font-medium">EDF Dossier Ready</span>
+</div>
+<!-- Category Pill Badge -->
+<div class="inline-flex items-center gap-space-xs px-3 py-1 rounded-full bg-surface-container-high/90 border border-primary-container/20 text-primary font-label-sm text-[11px] shadow-sm mb-space-base">
+<span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+<span class="font-semibold tracking-wider">FINTECH &amp; EXPORT COMPLIANCE</span>
+</div>
+<!-- Centered Headline -->
+<h1 class="font-headline-xl-mobile text-headline-xl-mobile text-on-surface max-w-md tracking-tight font-extrabold leading-[1.18]">
+    Automate Export Compliance. <span class="bg-gradient-to-r from-primary via-primary-container to-indigo-600 bg-clip-text text-transparent">From Invoice to EDF Pack.</span>
+</h1>
+<!-- Exact Subheading Preserved -->
+<p class="font-body-md text-body-md text-on-surface-variant max-w-sm mt-space-sm mb-space-lg leading-relaxed">
+    Connect invoices, payments, FIRA certificates, reconciliation workflows, exception management and EDF preparation in one platform.
+</p>
+<!-- Buttons (Enter Workspace Dominant) -->
+<div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 w-full max-w-xs mb-space-lg">
+<a class="relative group overflow-hidden flex items-center justify-center gap-space-xs px-space-lg py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-on-primary font-headline-sm text-headline-sm font-semibold shadow-[0_4px_16px_rgba(79,70,229,0.32)] hover:shadow-[0_6px_20px_rgba(79,70,229,0.4)] active:scale-[0.98] transition-all text-center" data-path="compliance-workspace" href="#">
+<span class="absolute inset-0 w-full h-full bg-gradient-to-r from-white/0 via-white/20 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out"></span>
+<span class="relative flex items-center gap-1.5"><span>🚀 Enter Workspace</span></span>
+</a>
+<a class="flex items-center justify-center gap-space-xs px-space-lg py-3 rounded-xl bg-surface-container-lowest hover:bg-surface-container border border-surface-container-highest text-on-surface font-label-md text-label-md font-semibold shadow-sm active:scale-[0.98] transition-all text-center" href="#quick-start">
+<span>📖 Quick Start Guide</span>
+</a>
+</div>
+<!-- Scroll Indicator -->
+<a class="inline-flex items-center gap-1 text-on-surface-variant hover:text-primary font-label-md transition-colors pt-space-xs group" href="#workflow">
+<span class="group-hover:translate-y-0.5 transition-transform">↓ See How It Works</span>
+</a>
+</section>
+<!-- SECTION 2: WHAT WE DISCOVERED -->
+<section class="w-full px-margin py-space-xl flex flex-col bg-surface-container-low/70 border-y border-surface-container-high/60" id="discovered">
+<div class="text-left mb-space-md">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-error font-bold flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-error"></span> The Friction
+</span>
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface font-bold tracking-tight">What We Discovered</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-space-2xs font-medium">
+      Exporters manually connect these disconnected systems every month.
+</p>
+</div>
+<!-- 3 Visual Disconnection Cards with Fragmentation Styling -->
+<div class="flex flex-col gap-2.5 relative">
+<!-- Card 1 -->
+<div class="p-3.5 rounded-xl bg-surface-container-lowest shadow-sm flex items-center justify-between border border-dashed border-red-200 hover:border-red-300 transition-colors">
+<div class="flex items-center gap-3 min-w-0">
+<div class="w-9 h-9 rounded-lg bg-red-50 text-error flex items-center justify-center shrink-0 border border-red-100">
+<span class="material-symbols-outlined text-[19px]">description</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-md text-[13px] text-on-surface font-semibold truncate">Invoice Data Lives Separately</span>
+<span class="font-body-sm text-[12px] text-on-surface-variant truncate">Siloed ERP bills &amp; commercial declarations</span>
+</div>
+</div>
+<div class="flex items-center gap-1.5 shrink-0 pl-2">
+<span class="w-1.5 h-1.5 rounded-full bg-error"></span>
+<span class="text-[10px] font-mono uppercase text-error font-semibold hidden xs:inline">Disconnected</span>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="p-3.5 rounded-xl bg-surface-container-lowest shadow-sm flex items-center justify-between border border-dashed border-amber-200 hover:border-amber-300 transition-colors">
+<div class="flex items-center gap-3 min-w-0">
+<div class="w-9 h-9 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center shrink-0 border border-amber-100">
+<span class="material-symbols-outlined text-[19px]">account_balance</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-md text-[13px] text-on-surface font-semibold truncate">Payment Data Lives Separately</span>
+<span class="font-body-sm text-[12px] text-on-surface-variant truncate">SWIFT MT103 Nostro credits in bank portals</span>
+</div>
+</div>
+<div class="flex items-center gap-1.5 shrink-0 pl-2">
+<span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+<span class="text-[10px] font-mono uppercase text-amber-700 font-semibold hidden xs:inline">Isolated</span>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="p-3.5 rounded-xl bg-surface-container-lowest shadow-sm flex items-center justify-between border border-dashed border-red-200 hover:border-red-300 transition-colors">
+<div class="flex items-center gap-3 min-w-0">
+<div class="w-9 h-9 rounded-lg bg-red-50 text-error flex items-center justify-center shrink-0 border border-red-100">
+<span class="material-symbols-outlined text-[19px]">history_edu</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-md text-[13px] text-on-surface font-semibold truncate">FIRA Records Live Separately</span>
+<span class="font-body-sm text-[12px] text-on-surface-variant truncate">Isolated regulatory bank remittance advices</span>
+</div>
+</div>
+<div class="flex items-center gap-1.5 shrink-0 pl-2">
+<span class="w-1.5 h-1.5 rounded-full bg-error"></span>
+<span class="text-[10px] font-mono uppercase text-error font-semibold hidden xs:inline">Unlinked</span>
+</div>
+</div>
+<!-- Unification Connector Bracket -->
+<div class="mt-1 flex items-center justify-center gap-2 pt-2 px-3 py-2 rounded-lg bg-primary-fixed/20 border border-primary/15 text-center">
+<span class="material-symbols-outlined text-primary text-[16px]">sync_alt</span>
+<span class="font-label-sm text-[11px] text-primary font-semibold">EDFlow unifies all three into one real-time pipeline</span>
+</div>
+</div>
+</section>
+<!-- SECTION 3: QUICK START (<10s cognitive load) -->
+<section class="w-full px-margin py-space-xl flex flex-col" id="quick-start">
+<div class="p-space-lg rounded-2xl bg-surface-container-lowest shadow-sm border border-surface-container-high/80 flex flex-col gap-space-sm relative overflow-hidden">
+<div class="flex items-center justify-between pb-space-xs border-b border-surface-container-high/70">
+<div>
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-primary font-bold">Speed Run (&lt;10s)</span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-bold">Learn EDFlow in Under 2 Minutes</h2>
+</div>
+<div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[20px]">bolt</span>
+</div>
+</div>
+<!-- 5-Step Visual Flow with Spine Connector -->
+<div class="relative flex flex-col gap-3.5 mt-2 pl-2">
+<!-- Vertical Connecting Line behind nodes -->
+<div class="absolute left-[19px] top-3 bottom-3 w-0.5 bg-gradient-to-b from-primary via-primary-container to-emerald-500 -z-0"></div>
+<!-- Step 1 -->
+<div class="relative z-10 flex items-center gap-3">
+<span class="w-6 h-6 rounded-full bg-primary text-on-primary font-mono text-[11px] flex items-center justify-center font-bold ring-4 ring-surface-container-lowest shrink-0 shadow-sm">1</span>
+<span class="font-label-md text-label-md text-on-surface font-semibold">Create Invoice</span>
+</div>
+<!-- Step 2 -->
+<div class="relative z-10 flex items-center gap-3">
+<span class="w-6 h-6 rounded-full bg-primary text-on-primary font-mono text-[11px] flex items-center justify-center font-bold ring-4 ring-surface-container-lowest shrink-0 shadow-sm">2</span>
+<span class="font-label-md text-label-md text-on-surface font-semibold">Upload FIRA</span>
+</div>
+<!-- Step 3 -->
+<div class="relative z-10 flex items-center gap-3">
+<span class="w-6 h-6 rounded-full bg-primary text-on-primary font-mono text-[11px] flex items-center justify-center font-bold ring-4 ring-surface-container-lowest shrink-0 shadow-sm">3</span>
+<span class="font-label-md text-label-md text-on-surface font-semibold">Run Matching</span>
+</div>
+<!-- Step 4 -->
+<div class="relative z-10 flex items-center gap-3">
+<span class="w-6 h-6 rounded-full bg-primary text-on-primary font-mono text-[11px] flex items-center justify-center font-bold ring-4 ring-surface-container-lowest shrink-0 shadow-sm">4</span>
+<span class="font-label-md text-label-md text-on-surface font-semibold">Resolve Exceptions</span>
+</div>
+<!-- Step 5 -->
+<div class="relative z-10 flex items-center gap-3">
+<span class="w-6 h-6 rounded-full bg-emerald-600 text-white font-mono text-[11px] flex items-center justify-center font-bold ring-4 ring-surface-container-lowest shrink-0 shadow-sm">5</span>
+<span class="font-label-md text-label-md text-on-surface font-bold text-emerald-800">Generate EDF Pack</span>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 4: WORKFLOW PIPELINE (THE STAR SECTION) -->
+<section class="w-full px-margin pb-space-2xl pt-space-xs flex flex-col" id="workflow">
+<div class="flex items-center justify-between mb-space-md">
+<div>
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-primary font-bold">Interactive Architecture</span>
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface font-bold tracking-tight">Workflow Pipeline</h2>
+</div>
+<span class="px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 font-label-sm text-[11px] font-semibold flex items-center gap-1.5 shadow-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-ping"></span> Live Engine
+</span>
+</div>
+<!-- Animated Interactive Flow Diagram with glowing spine & cards -->
+<div class="flex flex-col gap-2 relative">
+<!-- Flow Step 1: Invoice -->
+<div class="p-3.5 rounded-xl bg-surface-container-lowest shadow-sm flex items-center justify-between border border-surface-container-high/80 hover:border-primary/40 transition-all">
+<div class="flex items-center gap-3 min-w-0">
+<div class="w-9 h-9 rounded-lg bg-primary-fixed/80 flex items-center justify-center shrink-0 text-primary">
+<span class="material-symbols-outlined text-[19px]">receipt</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5">
+<span class="font-label-md text-label-md text-on-surface font-semibold">Invoice</span>
+<span class="font-mono text-[11px] px-1.5 py-0.5 rounded bg-surface-container text-on-surface-variant font-medium">#INV-8821</span>
+</div>
+<span class="font-body-sm text-[12px] text-on-surface-variant truncate">Commercial bill data extracted</span>
+</div>
+</div>
+<span class="px-2 py-0.5 rounded-md bg-surface-container-high text-primary font-mono text-[11px] font-bold shrink-0">USD</span>
+</div>
+<!-- Glowing Connector Line -->
+<div class="flex justify-center -my-1 z-10">
+<div class="w-4 h-4 rounded-full bg-primary/10 text-primary flex items-center justify-center ring-2 ring-primary/20">
+<span class="material-symbols-outlined text-[11px]">arrow_downward</span>
+</div>
+</div>
+<!-- Flow Step 2: Payment -->
+<div class="p-3.5 rounded-xl bg-surface-container-lowest shadow-sm flex items-center justify-between border border-surface-container-high/80 hover:border-secondary/40 transition-all">
+<div class="flex items-center gap-3 min-w-0">
+<div class="w-9 h-9 rounded-lg bg-secondary-fixed/80 flex items-center justify-center shrink-0 text-secondary">
+<span class="material-symbols-outlined text-[19px]">account_balance</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5">
+<span class="font-label-md text-label-md text-on-surface font-semibold">Payment</span>
+<span class="font-mono text-[11px] px-1.5 py-0.5 rounded bg-surface-container text-on-surface-variant font-medium">MT103 Nostro</span>
+</div>
+<span class="font-body-sm text-[12px] text-on-surface-variant truncate">Inward swift wire credited</span>
+</div>
+</div>
+<span class="font-label-sm text-[11px] text-secondary font-bold shrink-0 px-2 py-0.5 rounded bg-secondary-fixed/30">Cleared</span>
+</div>
+<!-- Glowing Connector Line -->
+<div class="flex justify-center -my-1 z-10">
+<div class="w-4 h-4 rounded-full bg-primary/10 text-primary flex items-center justify-center ring-2 ring-primary/20">
+<span class="material-symbols-outlined text-[11px]">arrow_downward</span>
+</div>
+</div>
+<!-- Flow Step 3: FIRA -->
+<div class="p-3.5 rounded-xl bg-surface-container-lowest shadow-sm flex items-center justify-between border border-surface-container-high/80 hover:border-primary/40 transition-all">
+<div class="flex items-center gap-3 min-w-0">
+<div class="w-9 h-9 rounded-lg bg-surface-container-highest flex items-center justify-center shrink-0 text-primary">
+<span class="material-symbols-outlined text-[19px]">verified_user</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5">
+<span class="font-label-md text-label-md text-on-surface font-semibold">FIRA</span>
+<span class="font-mono text-[11px] px-1.5 py-0.5 rounded bg-surface-container text-on-surface-variant font-medium">e-Signed</span>
+</div>
+<span class="font-body-sm text-[12px] text-on-surface-variant truncate">Bank remittance certificate parsed</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-emerald-600 text-[18px] shrink-0">task_alt</span>
+</div>
+<!-- Glowing Connector Line -->
+<div class="flex justify-center -my-1 z-10">
+<div class="w-4 h-4 rounded-full bg-primary/10 text-primary flex items-center justify-center ring-2 ring-primary/20">
+<span class="material-symbols-outlined text-[11px]">arrow_downward</span>
+</div>
+</div>
+<!-- Flow Step 4: Matching (Heroic Stage) -->
+<div class="p-3.5 rounded-xl bg-gradient-to-r from-primary to-primary-container text-on-primary shadow-md flex items-center justify-between ring-1 ring-primary/30">
+<div class="flex items-center gap-3 min-w-0">
+<div class="w-9 h-9 rounded-lg bg-white/15 backdrop-blur-sm flex items-center justify-center shrink-0 text-white">
+<span class="material-symbols-outlined text-[19px]">hub</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5">
+<span class="font-label-md text-label-md font-bold">Matching</span>
+<span class="font-mono text-[11px] px-1.5 py-0.5 rounded bg-white/20 text-white font-bold">99.4% Acc.</span>
+</div>
+<span class="font-body-sm text-[12px] text-on-primary-container truncate">Tolerance &amp; invoice reconciliation</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-white text-[18px]">bolt</span>
+</div>
+<!-- Glowing Connector Line -->
+<div class="flex justify-center -my-1 z-10">
+<div class="w-4 h-4 rounded-full bg-primary/10 text-primary flex items-center justify-center ring-2 ring-primary/20">
+<span class="material-symbols-outlined text-[11px]">arrow_downward</span>
+</div>
+</div>
+<!-- Flow Step 5: Purpose Code Review -->
+<div class="p-3.5 rounded-xl bg-surface-container-lowest shadow-sm flex items-center justify-between border border-surface-container-high/80 hover:border-primary/40 transition-all">
+<div class="flex items-center gap-3 min-w-0">
+<div class="w-9 h-9 rounded-lg bg-surface-container-high flex items-center justify-center shrink-0 text-primary">
+<span class="material-symbols-outlined text-[19px]">fact_check</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5">
+<span class="font-label-md text-label-md text-on-surface font-semibold">Purpose Code Review</span>
+<span class="font-mono text-[11px] px-1.5 py-0.5 rounded bg-surface-container text-on-surface font-bold">P0802</span>
+</div>
+<span class="font-body-sm text-[12px] text-on-surface-variant truncate">DGFT &amp; RBI trade classification verified</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-secondary text-[18px]">checklist</span>
+</div>
+<!-- Glowing Connector Line -->
+<div class="flex justify-center -my-1 z-10">
+<div class="w-4 h-4 rounded-full bg-primary/10 text-primary flex items-center justify-center ring-2 ring-primary/20">
+<span class="material-symbols-outlined text-[11px]">arrow_downward</span>
+</div>
+</div>
+<!-- Flow Step 6: Exception Resolution -->
+<div class="p-3.5 rounded-xl bg-surface-container-lowest shadow-sm flex items-center justify-between border border-surface-container-high/80 hover:border-secondary/40 transition-all">
+<div class="flex items-center gap-3 min-w-0">
+<div class="w-9 h-9 rounded-lg bg-secondary-fixed/50 flex items-center justify-center shrink-0 text-secondary">
+<span class="material-symbols-outlined text-[19px]">rule</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5">
+<span class="font-label-md text-label-md text-on-surface font-semibold">Exception Resolution</span>
+</div>
+<span class="font-body-sm text-[12px] text-on-surface-variant truncate">Auto-resolved bank fee gap</span>
+</div>
+</div>
+<span class="px-2 py-0.5 rounded-md bg-surface-container-high text-on-surface font-mono text-[10px] font-semibold shrink-0">Auto-Resolved</span>
+</div>
+<!-- Glowing Connector Line -->
+<div class="flex justify-center -my-1 z-10">
+<div class="w-4 h-4 rounded-full bg-primary/10 text-primary flex items-center justify-center ring-2 ring-primary/20">
+<span class="material-symbols-outlined text-[11px]">arrow_downward</span>
+</div>
+</div>
+<!-- Flow Step 7: EDF Pack -->
+<div class="p-3.5 rounded-xl bg-surface-container-lowest shadow-sm flex items-center justify-between border-l-4 border-indigo-600 border-t border-r border-b border-surface-container-high/80">
+<div class="flex items-center gap-3 min-w-0">
+<div class="w-9 h-9 rounded-lg bg-emerald-100 flex items-center justify-center shrink-0 text-emerald-800">
+<span class="material-symbols-outlined text-[19px]">inventory_2</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5">
+<span class="font-label-md text-label-md text-on-surface font-bold">EDF Pack</span>
+<span class="font-mono text-[11px] px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 font-bold border border-emerald-200">Verified</span>
+</div>
+<span class="font-body-sm text-[12px] text-on-surface-variant truncate">Cryptographic DGFT dossier</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-primary text-[20px]">download</span>
+</div>
+</div>
+</section>
+<!-- SECTION 5: FINAL CTA & WORKSPACE PREVIEW -->
+<section class="w-full px-margin pb-space-xl flex flex-col" id="final-cta">
+<!-- Streamlined Compliance Gauge (Optimized weight so Workflow shines) -->
+<div class="p-3.5 rounded-xl bg-slate-900 text-slate-100 shadow-md flex flex-col gap-2.5 relative overflow-hidden mb-space-md border border-slate-800">
+<div class="flex items-center justify-between z-10">
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+<span class="font-mono text-[11px] text-emerald-400 uppercase font-semibold">Compliance Gauge</span>
+</div>
+<span class="font-mono text-[10px] text-slate-400">Node: prod-live</span>
+</div>
+<div class="flex items-end justify-between z-10">
+<div>
+<span class="font-label-sm text-[11px] text-slate-400">Reconciliation Health</span>
+<div class="font-headline-lg-mobile text-[22px] text-white font-bold leading-tight">98.4%</div>
+</div>
+<div class="flex flex-col items-end text-right">
+<span class="font-mono text-[11px] text-emerald-400 font-medium">142 Invoices Cleared</span>
+<span class="font-label-sm text-[11px] text-slate-400">0 Audit Delays</span>
+</div>
+</div>
+<div class="w-full h-1.5 rounded-full bg-slate-800 overflow-hidden z-10">
+<div class="h-full bg-gradient-to-r from-emerald-500 to-teal-400 rounded-full" style="width: 98.4%;"></div>
+</div>
+</div>
+<!-- Final CTA Card with Soft Ambient Glow -->
+<div class="relative flex flex-col items-center text-center gap-space-sm p-space-lg rounded-2xl bg-surface-container-lowest border border-surface-container-high/80 shadow-sm overflow-hidden">
+<div class="absolute -top-12 -right-12 w-44 h-44 bg-primary/10 rounded-full blur-2xl pointer-events-none"></div>
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface font-extrabold tracking-tight">
+    Ready to see EDFlow in action?
+</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant max-w-xs leading-relaxed">
+    Experience automated export matching, bank FIRA synchronization, and instantaneous EDF dossier filings.
+</p>
+<div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 w-full max-w-xs mt-1">
+<a class="flex items-center justify-center gap-space-xs px-space-lg py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-on-primary font-headline-sm text-headline-sm font-semibold shadow-[0_4px_14px_rgba(79,70,229,0.3)] active:scale-[0.98] transition-all text-center" data-path="compliance-workspace" href="#">
+<span>🚀 Enter Workspace</span>
+</a>
+<a class="flex items-center justify-center gap-space-xs px-space-lg py-3 rounded-xl bg-surface-container-low hover:bg-surface-container border border-surface-container-highest text-on-surface font-label-md text-label-md font-semibold active:scale-[0.98] transition-all text-center" href="#quick-start">
+<span>📖 View User Guide</span>
+</a>
+</div>
+</div>
+</section>
+<!-- Interactive Client-side Script -->
+<script>
+    document.querySelectorAll('[data-path]').forEach(link => {
+      link.addEventListener('click', () => {
+        link.style.transform = 'scale(0.97)';
+        setTimeout(() => {
+          link.style.transform = '';
+        }, 120);
+      });
+    });
+
+    const menuToggle = document.getElementById('menuToggle');
+    const mobileMenuNav = document.getElementById('mobileMenuNav');
+    if (menuToggle && mobileMenuNav) {
+      menuToggle.addEventListener('click', () => {
+        const isHidden = mobileMenuNav.classList.contains('hidden');
+        if (isHidden) {
+          mobileMenuNav.classList.remove('hidden');
+          mobileMenuNav.classList.add('flex');
+          menuToggle.setAttribute('aria-expanded', 'true');
+        } else {
+          mobileMenuNav.classList.add('hidden');
+          mobileMenuNav.classList.remove('flex');
+          menuToggle.setAttribute('aria-expanded', 'false');
+        }
+      });
+
+      mobileMenuNav.querySelectorAll('a').forEach(a => {
+        a.addEventListener('click', () => {
+          mobileMenuNav.classList.add('hidden');
+          mobileMenuNav.classList.remove('flex');
+          menuToggle.setAttribute('aria-expanded', 'false');
+        });
+      });
+    }
+</script>
+</div></main><nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface/90 backdrop-blur-xl border-t border-surface-container-high/70 shadow-[0_-1px_10px_rgba(15,23,42,0.03)]" data-active-classes="text-primary font-semibold"><div class="flex justify-around items-center h-16 px-space-xs"><a aria-current="page" class="flex flex-col items-center justify-center gap-space-2xs min-w-[56px] h-11 transition-colors text-primary font-semibold" data-path="product-story" href="#"><span class="material-symbols-outlined text-[22px]">token</span><span class="font-label-sm text-label-sm leading-none font-bold">Story</span></a><a class="flex flex-col items-center justify-center gap-space-2xs min-w-[56px] h-11 text-on-surface-variant hover:text-on-surface transition-colors" data-path="compliance-workspace" href="#"><span class="material-symbols-outlined text-[22px]">dashboard</span><span class="font-label-sm text-label-sm leading-none">Workspace</span></a><a class="flex flex-col items-center justify-center gap-space-2xs min-w-[56px] h-11 text-on-surface-variant hover:text-on-surface transition-colors" data-path="sanctions-screening" href="#"><span class="material-symbols-outlined text-[22px]">policy</span><span class="font-label-sm text-label-sm leading-none">Screening</span></a><a class="flex flex-col items-center justify-center gap-space-2xs min-w-[56px] h-11 text-on-surface-variant hover:text-on-surface transition-colors" data-path="tariff-ledger" href="#"><span class="material-symbols-outlined text-[22px]">receipt_long</span><span class="font-label-sm text-label-sm leading-none">Tariffs</span></a><a class="flex flex-col items-center justify-center gap-space-2xs min-w-[56px] h-11 text-on-surface-variant hover:text-on-surface transition-colors" data-path="audit-activity" href="#"><span class="material-symbols-outlined text-[22px]">verified</span><span class="font-label-sm text-label-sm leading-none">Audit</span></a></div></nav></body></html>

@@ -1,0 +1,26 @@
+{
+  "id": "7FY387206L5857054",
+  "status": "CREATED",
+  "links": [
+    {
+      "href": "https://api.sandbox.paypal.com/v2/checkout/orders/7FY387206L5857054",
+      "rel": "self",
+      "method": "GET"
+    },
+    {
+      "href": "https://www.sandbox.paypal.com/checkoutnow?token=7FY387206L5857054",
+      "rel": "approve",
+      "method": "GET"
+    },
+    {
+      "href": "https://api.sandbox.paypal.com/v2/checkout/orders/7FY387206L5857054",
+      "rel": "update",
+      "method": "PATCH"
+    },
+    {
+      "href": "https://api.sandbox.paypal.com/v2/checkout/orders/7FY387206L5857054/capture",
+      "rel": "capture",
+      "method": "POST"
+    }
+  ]
+}

@@ -1,0 +1,161 @@
+{
+  "synthetic": true,
+  "dataset": "SYNTHETIC",
+  "watermark": "SYNTHETIC - NOT A REAL DOCUMENT",
+  "fixture_id": "fira_03_split_duplicate",
+  "source": "simulated",
+  "scenarios": [
+    "split_payment",
+    "duplicate_line"
+  ],
+  "fira": {
+    "fira_reference": "SYN-FIRA-2026-11-0003",
+    "bank": "Synthetic Bank of Exampleland (FICTIONAL)",
+    "ad_code": "00000000000000",
+    "statement_period": "2026-10-31 to 2026-11-06",
+    "generated_on": "2026-11-06"
+  },
+  "fx_rates_simulated": {
+    "USD": "84.00",
+    "GBP": "106.00",
+    "EUR": "91.00",
+    "SGD": "62.00"
+  },
+  "exporter": {
+    "legal_name": "Synthetic Exporter Pvt Ltd (FICTIONAL)",
+    "entity_type": "company",
+    "pan": "AAAAA0000A",
+    "gstin": "00AAAAA0000A1Z0",
+    "lut_number": "SYN-LUT-0001",
+    "ad_bank_name": "Synthetic Bank of Exampleland (FICTIONAL)",
+    "ad_code": "00000000000000"
+  },
+  "lines": [
+    {
+      "line_no": 1,
+      "utr": "SYN-UTR-03-001",
+      "value_date": "2026-11-02",
+      "remitter_name": "Placeholder Media LLC",
+      "remitter_country": "US",
+      "remitter_email": "media.us@example.com",
+      "currency": "USD",
+      "gross_amount": "700.00",
+      "bank_charges": "20.30",
+      "net_amount_inr": "57094.80",
+      "purpose_code": "P0807",
+      "invoice_reference": "INV-2026-1007"
+    },
+    {
+      "line_no": 2,
+      "utr": "SYN-UTR-03-002",
+      "value_date": "2026-11-03",
+      "remitter_name": "Placeholder Media LLC",
+      "remitter_country": "US",
+      "remitter_email": "media.us@example.com",
+      "currency": "USD",
+      "gross_amount": "800.00",
+      "bank_charges": "23.20",
+      "net_amount_inr": "65251.20",
+      "purpose_code": "P0807",
+      "invoice_reference": "INV-2026-1007"
+    },
+    {
+      "line_no": 3,
+      "utr": "SYN-UTR-03-003",
+      "value_date": "2026-11-04",
+      "remitter_name": "Example Software Buyer Inc",
+      "remitter_country": "US",
+      "remitter_email": "buyer.us@example.com",
+      "currency": "USD",
+      "gross_amount": "950.00",
+      "bank_charges": "27.55",
+      "net_amount_inr": "77485.80",
+      "purpose_code": "P1099",
+      "invoice_reference": "INV-2026-1006"
+    },
+    {
+      "line_no": 4,
+      "utr": "SYN-UTR-03-003",
+      "value_date": "2026-11-04",
+      "remitter_name": "Example Software Buyer Inc",
+      "remitter_country": "US",
+      "remitter_email": "buyer.us@example.com",
+      "currency": "USD",
+      "gross_amount": "950.00",
+      "bank_charges": "27.55",
+      "net_amount_inr": "77485.80",
+      "purpose_code": "P1099",
+      "invoice_reference": "INV-2026-1006"
+    }
+  ],
+  "expected_matching": [
+    {
+      "line_no": 1,
+      "invoice_number": "INV-2026-1007",
+      "match_type": "split",
+      "expected_status": "matched",
+      "confidence": "high",
+      "candidates": [
+        "INV-2026-1007"
+      ],
+      "split_group": "INV-2026-1007",
+      "part": 1,
+      "parts_total": 2,
+      "notes": "Part payment 1 of 2 for a single invoice."
+    },
+    {
+      "line_no": 2,
+      "invoice_number": "INV-2026-1007",
+      "match_type": "split",
+      "expected_status": "matched",
+      "confidence": "high",
+      "candidates": [
+        "INV-2026-1007"
+      ],
+      "split_group": "INV-2026-1007",
+      "part": 2,
+      "parts_total": 2,
+      "notes": "Part payment 2 of 2; parts sum to the invoice gross."
+    },
+    {
+      "line_no": 3,
+      "invoice_number": "INV-2026-1006",
+      "match_type": "exact",
+      "expected_status": "matched",
+      "confidence": "high",
+      "candidates": [
+        "INV-2026-1006"
+      ],
+      "notes": "Original line; duplicated by line 4."
+    },
+    {
+      "line_no": 4,
+      "invoice_number": "INV-2026-1006",
+      "match_type": "duplicate",
+      "expected_status": "duplicate",
+      "confidence": "high",
+      "candidates": [
+        "INV-2026-1006"
+      ],
+      "duplicate_of": 3,
+      "notes": "Byte-identical UTR, amount and reference to line 3; must be de-duplicated."
+    }
+  ],
+  "expected_exceptions": [
+    {
+      "line_no": 4,
+      "category": "duplicate",
+      "severity": "medium"
+    }
+  ],
+  "expectations": {
+    "split_group": "INV-2026-1007",
+    "split_parts": 2,
+    "split_total": "1500.00",
+    "duplicate_lines": [
+      3,
+      4
+    ],
+    "duplicate_utr": "SYN-UTR-03-003"
+  }
+}

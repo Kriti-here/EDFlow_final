@@ -1,0 +1,1285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EDFlow - Matching Center</title>
+  <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Material Symbols Outlined -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#094cb2',
+            'primary-dark': '#063a8a',
+            'primary-light': '#e8f0fe',
+            secondary: '#5a5f63',
+            tertiary: '#6d5e00',
+            error: '#ba1a1a',
+            'error-container': '#ffdad6',
+            surface: '#faf9fa',
+            'on-surface': '#1b1c1d',
+            'on-surface-variant': '#44474e',
+            'surface-container-lowest': '#ffffff',
+            'surface-container-low': '#f3f3f5',
+            'surface-container': '#efedee',
+            'surface-container-high': '#e9e7e9',
+            'outline-variant': '#c4c6d0',
+            outline: '#74777f',
+            success: '#107c41',
+            'success-container': '#d1f4dc',
+            warning: '#b45309',
+            'warning-container': '#fef3c7',
+          },
+          fontFamily: {
+            sans: ['Plus Jakarta Sans', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          spacing: {
+            'space-sm': '0.5rem',
+            'space-md': '0.75rem',
+            'space-base': '1rem',
+            'space-lg': '1.5rem',
+            'space-xl': '2rem',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    .material-symbols-outlined.fill {
+      font-variation-settings: 'FILL' 1;
+    }
+    @keyframes pulse-subtle {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.6; transform: scale(1.08); }
+    }
+    .animate-pulse-dot {
+      animation: pulse-subtle 2s infinite ease-in-out;
+    }
+    /* Hide scrollbar for tab navigation */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    /* Modal transitions */
+    .modal-backdrop {
+      background-color: rgba(27, 28, 29, 0.45);
+      backdrop-filter: blur(4px);
+    }
+  </style>
+</head>
+<body class="bg-surface text-on-surface font-sans antialiased min-h-screen pb-24 sm:pb-28">
+
+  <!-- Toast Notification Container -->
+  <div id="toastContainer" class="fixed top-4 right-4 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none px-4 sm:px-0"></div>
+
+  <!-- Detail Modal -->
+  <div id="detailModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-backdrop hidden transition-opacity duration-200">
+    <div class="bg-surface-container-lowest border border-outline-variant/60 rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+      <div class="px-5 py-4 border-b border-outline-variant/30 flex items-center justify-between bg-surface-container-low">
+        <div class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-primary">fact_check</span>
+          <h3 class="font-bold text-base sm:text-lg text-on-surface">Reconciliation Inspection</h3>
+        </div>
+        <button onclick="closeModal()" class="w-8 h-8 rounded-full flex items-center justify-center hover:bg-surface-container-high transition-colors text-on-surface-variant">
+          <span class="material-symbols-outlined text-xl">close</span>
+        </button>
+      </div>
+      <div id="modalBody" class="p-5 overflow-y-auto space-y-4 text-sm">
+        <!-- Injected via JavaScript -->
+      </div>
+      <div class="px-5 py-3 border-t border-outline-variant/30 bg-surface-container-low flex justify-end gap-2">
+        <button onclick="closeModal()" class="px-4 py-2 rounded-xl text-sm font-semibold border border-outline-variant/60 text-on-surface hover:bg-surface-container-high transition-colors">Dismiss</button>
+        <button id="modalActionBtn" class="px-4 py-2 rounded-xl text-sm font-semibold bg-primary text-white hover:bg-primary-dark transition-colors shadow-sm flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-base">check_circle</span>
+          Confirm Match
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Top App Bar (Header) -->
+  <header class="sticky top-0 z-40 bg-surface-container-lowest/90 backdrop-blur-md border-b border-outline-variant/30 px-4 py-3 sm:px-6">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <button class="p-1.5 -ml-1.5 rounded-lg text-on-surface hover:bg-surface-container transition-colors" title="Menu">
+          <span class="material-symbols-outlined">menu</span>
+        </button>
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-white font-black text-lg tracking-tighter shadow-sm">
+            E
+          </div>
+          <span class="text-xl font-extrabold tracking-tight text-on-surface">EDFlow</span>
+          <span class="hidden sm:inline-block ml-2 px-2 py-0.5 text-[11px] font-semibold bg-primary-light text-primary rounded-full">Fintech v4.2</span>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 sm:gap-3">
+        <div class="hidden sm:flex items-center gap-1.5 text-xs font-medium text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse-dot"></span>
+          <span>Gateway Connected</span>
+        </div>
+        <button class="relative p-2 rounded-full text-on-surface-variant hover:bg-surface-container transition-colors" title="Notifications">
+          <span class="material-symbols-outlined text-xl">notifications</span>
+          <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-error rounded-full"></span>
+        </button>
+        <button class="p-2 rounded-full text-on-surface-variant hover:bg-surface-container transition-colors" title="Theme Toggle">
+          <span class="material-symbols-outlined text-xl">contrast</span>
+        </button>
+        <div class="w-8 h-8 rounded-full bg-primary/10 text-primary font-bold flex items-center justify-center text-xs border border-primary/20">
+          PA
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 pt-4 space-y-6">
+
+    <!-- Header Status & Title Section -->
+    <div class="space-y-2">
+      <!-- Regulatory / Real-Time Pulse Pill -->
+      <div class="flex items-center justify-between flex-wrap gap-2">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200/80 text-emerald-800 text-xs font-semibold">
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse-dot shadow-sm"></span>
+          <span>Real-Time Reconciliation Active</span>
+          <span class="text-emerald-400">•</span>
+          <span class="text-emerald-700 font-mono text-[11px]">FEDAI & EDPMS AUTO-SYNC</span>
+        </div>
+        <div class="flex items-center gap-2 text-xs text-secondary">
+          <span class="material-symbols-outlined text-sm">schedule</span>
+          <span>Last polled: <strong class="text-on-surface">32s ago</strong> via Citi / HDFC APIs</span>
+        </div>
+      </div>
+
+      <!-- Title & Description -->
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 pt-1">
+        <div>
+          <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-on-surface">Matching Center</h1>
+          <p class="text-sm text-secondary mt-0.5">Automatically match FIRA documents with Nostro remittances using AI-powered reconciliation</p>
+        </div>
+        <div class="flex items-center gap-2 flex-wrap">
+          <button onclick="runAutoMatch()" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary text-white text-sm font-semibold hover:bg-primary-dark transition-all shadow-sm active:scale-95">
+            <span class="material-symbols-outlined text-base" id="syncIcon">sync</span>
+            <span>Run Auto-Match</span>
+          </button>
+          <button onclick="exportReport()" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-surface-container-lowest border border-outline-variant/60 text-on-surface text-sm font-semibold hover:bg-surface-container transition-colors shadow-sm">
+            <span class="material-symbols-outlined text-base">download</span>
+            <span class="hidden sm:inline">Export Report</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Top Metrics Section (Bento Grid: 2 cols on mobile, 3 cols sm, 6 cols lg) -->
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
+      <!-- Total Matches -->
+      <div class="bg-surface-container-lowest border border-outline-variant/40 rounded-2xl p-4 shadow-sm hover:border-primary/40 transition-all flex flex-col justify-between">
+        <div class="flex items-center justify-between text-secondary">
+          <span class="text-[12px] font-semibold uppercase tracking-wider">Total Matches</span>
+          <span class="material-symbols-outlined text-primary text-lg">dataset</span>
+        </div>
+        <div class="mt-2">
+          <div class="text-2xl sm:text-3xl font-extrabold tracking-tight text-on-surface">47</div>
+          <div class="flex items-center gap-1 text-[11px] font-medium text-emerald-700 mt-1">
+            <span class="material-symbols-outlined text-sm">arrow_upward</span>
+            <span>+8 today</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Unmatched -->
+      <div class="bg-surface-container-lowest border border-outline-variant/40 rounded-2xl p-4 shadow-sm hover:border-error/40 transition-all flex flex-col justify-between">
+        <div class="flex items-center justify-between text-secondary">
+          <span class="text-[12px] font-semibold uppercase tracking-wider">Unmatched</span>
+          <span class="material-symbols-outlined text-error text-lg">warning</span>
+        </div>
+        <div class="mt-2">
+          <div class="text-2xl sm:text-3xl font-extrabold tracking-tight text-error">3</div>
+          <div class="flex items-center gap-1 text-[11px] font-medium text-error mt-1">
+            <span class="material-symbols-outlined text-sm">priority_high</span>
+            <span>Needs attention</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Match Accuracy -->
+      <div class="bg-surface-container-lowest border border-outline-variant/40 rounded-2xl p-4 shadow-sm hover:border-emerald-500/40 transition-all flex flex-col justify-between">
+        <div class="flex items-center justify-between text-secondary">
+          <span class="text-[12px] font-semibold uppercase tracking-wider">Accuracy</span>
+          <span class="material-symbols-outlined text-emerald-600 text-lg">verified</span>
+        </div>
+        <div class="mt-2">
+          <div class="text-2xl sm:text-3xl font-extrabold tracking-tight text-on-surface">98.4%</div>
+          <div class="flex items-center gap-1 text-[11px] font-medium text-emerald-700 mt-1">
+            <span class="material-symbols-outlined text-sm">check</span>
+            <span>Statutory SLA met</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Auto-Matched -->
+      <div class="bg-surface-container-lowest border border-outline-variant/40 rounded-2xl p-4 shadow-sm hover:border-primary/40 transition-all flex flex-col justify-between">
+        <div class="flex items-center justify-between text-secondary">
+          <span class="text-[12px] font-semibold uppercase tracking-wider">Auto-Matched</span>
+          <span class="material-symbols-outlined text-primary text-lg">smart_toy</span>
+        </div>
+        <div class="mt-2">
+          <div class="text-2xl sm:text-3xl font-extrabold tracking-tight text-primary">44</div>
+          <div class="flex items-center gap-1 text-[11px] font-medium text-secondary mt-1">
+            <span>93.6% of pipeline</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Manual Review -->
+      <div class="bg-surface-container-lowest border border-outline-variant/40 rounded-2xl p-4 shadow-sm hover:border-warning/40 transition-all flex flex-col justify-between">
+        <div class="flex items-center justify-between text-secondary">
+          <span class="text-[12px] font-semibold uppercase tracking-wider">Manual Review</span>
+          <span class="material-symbols-outlined text-amber-600 text-lg">assignment_ind</span>
+        </div>
+        <div class="mt-2">
+          <div class="text-2xl sm:text-3xl font-extrabold tracking-tight text-amber-700">3</div>
+          <div class="flex items-center gap-1 text-[11px] font-medium text-amber-700 mt-1">
+            <span>2 CA signed-off</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Reconciliation Rate -->
+      <div class="bg-surface-container-lowest border border-outline-variant/40 rounded-2xl p-4 shadow-sm hover:border-primary/40 transition-all flex flex-col justify-between">
+        <div class="flex items-center justify-between text-secondary">
+          <span class="text-[12px] font-semibold uppercase tracking-wider">Reconciled</span>
+          <span class="material-symbols-outlined text-emerald-600 text-lg">donut_large</span>
+        </div>
+        <div class="mt-2">
+          <div class="text-2xl sm:text-3xl font-extrabold tracking-tight text-on-surface">95.2%</div>
+          <div class="flex items-center gap-1 text-[11px] font-medium text-emerald-700 mt-1">
+            <span class="material-symbols-outlined text-sm">trending_up</span>
+            <span>+2.1% this week</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Active Matching Progress & Performance Summary Section -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+      <!-- Active Progress Card (7 cols lg) -->
+      <div class="lg:col-span-7 bg-surface-container-lowest border border-outline-variant/40 rounded-2xl p-5 sm:p-6 shadow-sm flex flex-col justify-between relative overflow-hidden">
+        <div class="absolute -right-8 -top-8 w-36 h-36 bg-primary/5 rounded-full pointer-events-none blur-2xl"></div>
+        <div>
+          <div class="flex items-center justify-between flex-wrap gap-2">
+            <div class="flex items-center gap-2.5">
+              <div class="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+                <span class="material-symbols-outlined text-2xl">neurology</span>
+              </div>
+              <div>
+                <h3 class="font-bold text-base sm:text-lg text-on-surface">Live Reconciliation Engine</h3>
+                <p class="text-xs text-secondary">Processing 3 pending remittances across AD-Cat 1 portals</p>
+              </div>
+            </div>
+            <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-primary-light text-primary font-mono">
+              STAGE 4 / 4
+            </span>
+          </div>
+
+          <!-- Progress Bar -->
+          <div class="mt-5 space-y-1.5">
+            <div class="flex items-center justify-between text-xs">
+              <span class="font-semibold text-on-surface">Overall Pipeline Progress</span>
+              <span class="font-mono font-bold text-primary">88% Assembled</span>
+            </div>
+            <div class="w-full h-3 bg-surface-container rounded-full overflow-hidden p-0.5 border border-outline-variant/20">
+              <div id="reconcileProgressBar" class="h-full bg-gradient-to-r from-primary to-indigo-600 rounded-full transition-all duration-700 ease-out" style="width: 88%"></div>
+            </div>
+          </div>
+
+          <!-- Checklist Items (2x2 grid) -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mt-5">
+            <div class="flex items-center justify-between p-2.5 rounded-xl bg-surface-container-low border border-outline-variant/30 text-xs">
+              <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-emerald-600 text-base">check_circle</span>
+                <span class="font-medium text-on-surface">FIRA Ingestion</span>
+              </div>
+              <span class="font-mono font-bold text-on-surface">100% <span class="text-secondary font-normal">(47/47)</span></span>
+            </div>
+
+            <div class="flex items-center justify-between p-2.5 rounded-xl bg-surface-container-low border border-outline-variant/30 text-xs">
+              <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-emerald-600 text-base">check_circle</span>
+                <span class="font-medium text-on-surface">Nostro Sync</span>
+              </div>
+              <span class="font-mono font-bold text-on-surface">100% <span class="text-secondary font-normal">(47/47)</span></span>
+            </div>
+
+            <div class="flex items-center justify-between p-2.5 rounded-xl bg-surface-container-low border border-outline-variant/30 text-xs">
+              <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary text-base">psychology</span>
+                <span class="font-medium text-on-surface">AI Matching</span>
+              </div>
+              <span class="font-mono font-bold text-primary">98% <span class="text-secondary font-normal">(46/47)</span></span>
+            </div>
+
+            <div class="flex items-center justify-between p-2.5 rounded-xl bg-surface-container-low border border-outline-variant/30 text-xs">
+              <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-amber-600 text-base">pending</span>
+                <span class="font-medium text-on-surface">CA Validation</span>
+              </div>
+              <span class="font-mono font-bold text-amber-700">85% <span class="text-secondary font-normal">(40/47)</span></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Progress Action -->
+        <div class="mt-5 pt-4 border-t border-outline-variant/20 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div class="text-[12px] text-secondary text-center sm:text-left">
+            <span>Target completion: <strong>Today 17:00 IST</strong> to clear RBI 21-day lodging window.</span>
+          </div>
+          <button onclick="runAutoMatch()" class="w-full sm:w-auto px-4 py-2 rounded-xl bg-primary text-white text-xs font-bold tracking-wide uppercase hover:bg-primary-dark transition-all flex items-center justify-center gap-1.5 shadow-sm">
+            <span class="material-symbols-outlined text-sm">play_arrow</span>
+            Run Auto-Match Now
+          </button>
+        </div>
+      </div>
+
+      <!-- Reconciliation Performance Summary Card (5 cols lg) -->
+      <div class="lg:col-span-5 bg-surface-container-lowest border border-outline-variant/40 rounded-2xl p-5 sm:p-6 shadow-sm flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-emerald-600">analytics</span>
+              <h3 class="font-bold text-base sm:text-lg text-on-surface">Matching Performance</h3>
+            </div>
+            <span class="text-[11px] text-secondary font-mono">30-DAY STATS</span>
+          </div>
+
+          <!-- KPI Mini Grid -->
+          <div class="grid grid-cols-2 gap-3 mt-4">
+            <div class="bg-surface-container-low rounded-xl p-3">
+              <span class="text-[11px] text-secondary uppercase font-semibold">Auto-Match Rate</span>
+              <div class="text-xl font-extrabold text-on-surface mt-0.5">98.4%</div>
+              <span class="text-[10px] text-emerald-700 font-medium">Industry bench: 74%</span>
+            </div>
+            <div class="bg-surface-container-low rounded-xl p-3">
+              <span class="text-[11px] text-secondary uppercase font-semibold">Manual Override</span>
+              <div class="text-xl font-extrabold text-amber-700 mt-0.5">1.6%</div>
+              <span class="text-[10px] text-secondary">Reduced from 18%</span>
+            </div>
+            <div class="bg-surface-container-low rounded-xl p-3">
+              <span class="text-[11px] text-secondary uppercase font-semibold">False Positives</span>
+              <div class="text-xl font-extrabold text-emerald-700 mt-0.5">0.0%</div>
+              <span class="text-[10px] text-emerald-700 font-medium">Deterministic audit lock</span>
+            </div>
+            <div class="bg-surface-container-low rounded-xl p-3">
+              <span class="text-[11px] text-secondary uppercase font-semibold">Processing Time</span>
+              <div class="text-xl font-extrabold text-primary mt-0.5">1.2s <span class="text-xs font-normal text-secondary">avg</span></div>
+              <span class="text-[10px] text-secondary">vs 45m legacy manual</span>
+            </div>
+          </div>
+
+          <!-- Mini Bar Chart: Daily Match Rates -->
+          <div class="mt-4 pt-3 border-t border-outline-variant/20">
+            <div class="flex items-center justify-between text-xs mb-2">
+              <span class="text-secondary font-medium">Daily Match Rates (Past 7 Days)</span>
+              <span class="text-on-surface font-mono font-bold text-[11px]">Avg: 97.8%</span>
+            </div>
+            <div class="flex items-end justify-between h-14 gap-1.5 px-1">
+              <div class="flex-1 flex flex-col items-center gap-1 group">
+                <div class="w-full bg-primary/20 group-hover:bg-primary rounded-t transition-all" style="height: 85%" title="Mon: 94.2%"></div>
+                <span class="text-[9px] text-secondary font-mono">M</span>
+              </div>
+              <div class="flex-1 flex flex-col items-center gap-1 group">
+                <div class="w-full bg-primary/30 group-hover:bg-primary rounded-t transition-all" style="height: 92%" title="Tue: 96.0%"></div>
+                <span class="text-[9px] text-secondary font-mono">T</span>
+              </div>
+              <div class="flex-1 flex flex-col items-center gap-1 group">
+                <div class="w-full bg-primary/40 group-hover:bg-primary rounded-t transition-all" style="height: 96%" title="Wed: 97.4%"></div>
+                <span class="text-[9px] text-secondary font-mono">W</span>
+              </div>
+              <div class="flex-1 flex flex-col items-center gap-1 group">
+                <div class="w-full bg-primary/50 group-hover:bg-primary rounded-t transition-all" style="height: 94%" title="Thu: 96.8%"></div>
+                <span class="text-[9px] text-secondary font-mono">T</span>
+              </div>
+              <div class="flex-1 flex flex-col items-center gap-1 group">
+                <div class="w-full bg-primary/60 group-hover:bg-primary rounded-t transition-all" style="height: 98%" title="Fri: 98.1%"></div>
+                <span class="text-[9px] text-secondary font-mono">F</span>
+              </div>
+              <div class="flex-1 flex flex-col items-center gap-1 group">
+                <div class="w-full bg-primary/40 group-hover:bg-primary rounded-t transition-all" style="height: 95%" title="Sat: 97.0%"></div>
+                <span class="text-[9px] text-secondary font-mono">S</span>
+              </div>
+              <div class="flex-1 flex flex-col items-center gap-1 group">
+                <div class="w-full bg-primary rounded-t shadow-sm" style="height: 100%" title="Today: 98.4%"></div>
+                <span class="text-[9px] font-bold text-primary font-mono">Today</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Actions Panel -->
+    <div class="bg-surface-container-low border border-outline-variant/40 rounded-2xl p-3.5 sm:p-4 shadow-sm flex items-center justify-between flex-wrap gap-3">
+      <div class="flex items-center gap-2">
+        <span class="material-symbols-outlined text-primary text-xl">bolt</span>
+        <span class="text-sm font-bold text-on-surface">Queue Operations:</span>
+      </div>
+      <div class="flex items-center gap-2 flex-wrap">
+        <button onclick="rerunUnmatched()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-surface-container-lowest border border-outline-variant/60 text-xs font-semibold text-on-surface hover:bg-surface-container transition-colors shadow-sm">
+          <span class="material-symbols-outlined text-base text-primary">sync</span>
+          Re-run All Unmatched (3)
+        </button>
+        <button onclick="exportReport()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-surface-container-lowest border border-outline-variant/60 text-xs font-semibold text-on-surface hover:bg-surface-container transition-colors shadow-sm">
+          <span class="material-symbols-outlined text-base text-emerald-600">download</span>
+          Export Reconciliation Report
+        </button>
+        <button onclick="viewAuditLog()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-surface-container-lowest border border-outline-variant/60 text-xs font-semibold text-on-surface hover:bg-surface-container transition-colors shadow-sm">
+          <span class="material-symbols-outlined text-base text-secondary">history</span>
+          View Audit Log
+        </button>
+      </div>
+    </div>
+
+    <!-- Filter Bar Section -->
+    <div class="bg-surface-container-lowest border border-outline-variant/40 rounded-2xl p-4 sm:p-5 shadow-sm space-y-3.5">
+      <!-- Filter Pills -->
+      <div class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
+        <button onclick="filterMatching('all', this)" class="filter-pill active px-3.5 py-1.5 rounded-full text-xs font-bold transition-all bg-primary text-white shadow-sm flex-shrink-0">
+          All (50)
+        </button>
+        <button onclick="filterMatching('matched', this)" class="filter-pill px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all bg-surface-container text-on-surface hover:bg-surface-container-high flex-shrink-0">
+          Matched (47)
+        </button>
+        <button onclick="filterMatching('unmatched', this)" class="filter-pill px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all bg-surface-container text-on-surface hover:bg-surface-container-high flex-shrink-0">
+          Unmatched (3)
+        </button>
+        <button onclick="filterMatching('high_conf', this)" class="filter-pill px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all bg-surface-container text-on-surface hover:bg-surface-container-high flex-shrink-0">
+          High Confidence (>95%)
+        </button>
+        <button onclick="filterMatching('pending', this)" class="filter-pill px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all bg-surface-container text-on-surface hover:bg-surface-container-high flex-shrink-0">
+          Needs Review (3)
+        </button>
+      </div>
+
+      <!-- Search & Dropdown Filters Bar -->
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-3 pt-1">
+        <!-- Search Input (6 cols md) -->
+        <div class="md:col-span-6 relative">
+          <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-secondary text-lg">search</span>
+          <input 
+            type="text" 
+            id="searchInput"
+            oninput="handleSearch(this.value)"
+            placeholder="Search by FIRA Ref, UTR, Remitter, or Invoice..." 
+            class="w-full pl-9 pr-4 py-2 bg-surface-container-low border border-outline-variant/50 rounded-xl text-xs sm:text-sm text-on-surface placeholder:text-secondary focus:outline-none focus:border-primary focus:bg-surface-container-lowest transition-all"
+          >
+          <button onclick="clearSearch()" id="clearSearchBtn" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-secondary hover:text-on-surface">
+            <span class="material-symbols-outlined text-sm">close</span>
+          </button>
+        </div>
+
+        <!-- Dropdowns (6 cols md) -->
+        <div class="md:col-span-6 grid grid-cols-3 gap-2">
+          <!-- Bank Filter -->
+          <div class="relative">
+            <select id="bankFilter" onchange="applyFilters()" class="w-full appearance-none pl-2.5 pr-7 py-2 bg-surface-container-low border border-outline-variant/50 rounded-xl text-xs font-medium text-on-surface focus:outline-none focus:border-primary cursor-pointer truncate">
+              <option value="">All Banks</option>
+              <option value="JPMorgan Chase">JPMorgan Chase</option>
+              <option value="MUFG">MUFG Bank</option>
+              <option value="HSBC">HSBC Inward</option>
+              <option value="Citibank">Citibank NA</option>
+            </select>
+            <span class="material-symbols-outlined pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-secondary text-base">expand_more</span>
+          </div>
+
+          <!-- Date Range -->
+          <div class="relative">
+            <select id="dateFilter" onchange="applyFilters()" class="w-full appearance-none pl-2.5 pr-7 py-2 bg-surface-container-low border border-outline-variant/50 rounded-xl text-xs font-medium text-on-surface focus:outline-none focus:border-primary cursor-pointer truncate">
+              <option value="30d">Last 30 Days</option>
+              <option value="7d">Last 7 Days</option>
+              <option value="today">Today</option>
+              <option value="cycle84">Cycle #84</option>
+            </select>
+            <span class="material-symbols-outlined pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-secondary text-base">calendar_today</span>
+          </div>
+
+          <!-- Amount Range -->
+          <div class="relative">
+            <select id="amountFilter" onchange="applyFilters()" class="w-full appearance-none pl-2.5 pr-7 py-2 bg-surface-container-low border border-outline-variant/50 rounded-xl text-xs font-medium text-on-surface focus:outline-none focus:border-primary cursor-pointer truncate">
+              <option value="">All Amounts</option>
+              <option value="under10k">&lt; $10,000</option>
+              <option value="10k-50k">$10k - $50k</option>
+              <option value="over50k">&gt; $50,000</option>
+            </select>
+            <span class="material-symbols-outlined pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-secondary text-base">tune</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Matching Table Section -->
+    <div class="bg-surface-container-lowest border border-outline-variant/40 rounded-2xl shadow-sm overflow-hidden">
+      <!-- Section Header -->
+      <div class="px-5 py-4 border-b border-outline-variant/30 flex flex-col sm:flex-row sm:items-center justify-between gap-2 bg-surface-container-low/40">
+        <div>
+          <div class="flex items-center gap-2">
+            <h2 class="text-base sm:text-lg font-bold text-on-surface">Reconciliation Queue</h2>
+            <span id="queueBadge" class="px-2 py-0.5 rounded-full text-xs font-mono font-bold bg-primary-light text-primary">3 items</span>
+          </div>
+          <p class="text-xs text-secondary mt-0.5">3 remittances awaiting match confirmation or regulatory review</p>
+        </div>
+        <div class="flex items-center gap-2 text-xs text-secondary">
+          <span class="material-symbols-outlined text-sm">lock</span>
+          <span>SHA-256 Proof Anchored</span>
+        </div>
+      </div>
+
+      <!-- Desktop Table (md and up) -->
+      <div class="hidden md:block overflow-x-auto">
+        <table class="w-full text-left border-collapse text-xs sm:text-sm">
+          <thead>
+            <tr class="bg-surface-container-low text-secondary uppercase font-semibold text-[11px] tracking-wider border-b border-outline-variant/30">
+              <th class="py-3.5 px-4">Status</th>
+              <th class="py-3.5 px-4">FIRA & Remittance UTR</th>
+              <th class="py-3.5 px-4">Invoice & Client</th>
+              <th class="py-3.5 px-4">Amount & Bank</th>
+              <th class="py-3.5 px-4">AI Recommendation & Score</th>
+              <th class="py-3.5 px-4 text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="matchingTableBody" class="divide-y divide-outline-variant/20">
+            <!-- Row 1: MATCHED -->
+            <tr id="row-1" class="table-row-item hover:bg-surface-container-low/50 transition-colors" data-status="matched" data-conf="99.2" data-bank="JPMorgan Chase" data-amount="49965">
+              <td class="py-4 px-4 align-top">
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">
+                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+                  MATCHED
+                </span>
+              </td>
+              <td class="py-4 px-4 align-top">
+                <div class="font-mono font-bold text-primary">FIRA-2024-0047</div>
+                <div class="font-mono text-xs text-secondary mt-0.5">UTR-994118</div>
+                <span class="inline-block mt-1 text-[10px] text-secondary bg-surface-container px-1.5 py-0.5 rounded">SWIFT MT103</span>
+              </td>
+              <td class="py-4 px-4 align-top">
+                <div class="font-semibold text-on-surface">Apex Robotics Inc.</div>
+                <div class="font-mono text-xs text-primary font-medium mt-0.5">INV-2024-918</div>
+                <div class="text-[11px] text-secondary">San Jose, USA • Software Dev</div>
+              </td>
+              <td class="py-4 px-4 align-top">
+                <div class="font-bold text-on-surface font-mono">$49,965.00 <span class="text-xs text-secondary font-normal">USD</span></div>
+                <div class="text-xs text-secondary flex items-center gap-1 mt-0.5">
+                  <span class="material-symbols-outlined text-sm">account_balance</span>
+                  JPMorgan Chase
+                </div>
+              </td>
+              <td class="py-4 px-4 align-top max-w-xs">
+                <div class="flex items-center gap-2 mb-1">
+                  <div class="w-16 h-1.5 bg-surface-container rounded-full overflow-hidden">
+                    <div class="h-full bg-emerald-500 rounded-full" style="width: 99.2%"></div>
+                  </div>
+                  <span class="font-mono font-bold text-xs text-emerald-700">99.2%</span>
+                </div>
+                <p class="text-xs text-on-surface font-medium">Auto-matched via Swift MT103</p>
+                <p class="text-[11px] text-secondary mt-0.5">Client Tax ID & Inward Ref match commercial contract §3.</p>
+              </td>
+              <td class="py-4 px-4 align-top text-right">
+                <div class="flex items-center justify-end gap-1.5">
+                  <button onclick="showDetails(1)" class="px-2.5 py-1.5 rounded-lg border border-outline-variant/60 text-xs font-semibold text-on-surface hover:bg-surface-container transition-colors" title="View details">
+                    Details
+                  </button>
+                  <button onclick="forceMatch(1)" class="px-2.5 py-1.5 rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 text-xs font-bold transition-colors" title="Re-affirm Match">
+                    Affirm
+                  </button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 2: UNMATCHED -->
+            <tr id="row-2" class="table-row-item hover:bg-surface-container-low/50 transition-colors bg-red-50/20" data-status="unmatched" data-conf="64.2" data-bank="MUFG" data-amount="32400">
+              <td class="py-4 px-4 align-top">
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-error-container text-error">
+                  <span class="w-1.5 h-1.5 rounded-full bg-error"></span>
+                  UNMATCHED
+                </span>
+              </td>
+              <td class="py-4 px-4 align-top">
+                <div class="font-mono font-bold text-on-surface">FIRA-2024-0044</div>
+                <div class="font-mono text-xs text-secondary mt-0.5">UTR-99120</div>
+                <span class="inline-block mt-1 text-[10px] text-error bg-red-100 px-1.5 py-0.5 rounded font-medium">Dual Wire Claim</span>
+              </td>
+              <td class="py-4 px-4 align-top">
+                <div class="font-semibold text-on-surface">Kyoto Digital KK</div>
+                <div class="font-mono text-xs text-primary font-medium mt-0.5">INV-2024-885</div>
+                <div class="text-[11px] text-secondary">Tokyo, JP • Creative Media</div>
+              </td>
+              <td class="py-4 px-4 align-top">
+                <div class="font-bold text-on-surface font-mono">¥4,800,000 <span class="text-xs text-secondary font-normal">JPY</span></div>
+                <div class="text-[11px] text-secondary font-mono">≈ $32,400.00 USD</div>
+                <div class="text-xs text-secondary flex items-center gap-1 mt-0.5">
+                  <span class="material-symbols-outlined text-sm">account_balance</span>
+                  MUFG Bank
+                </div>
+              </td>
+              <td class="py-4 px-4 align-top max-w-xs">
+                <div class="flex items-center gap-2 mb-1">
+                  <div class="w-16 h-1.5 bg-surface-container rounded-full overflow-hidden">
+                    <div class="h-full bg-amber-500 rounded-full" style="width: 64.2%"></div>
+                  </div>
+                  <span class="font-mono font-bold text-xs text-amber-700">64.2%</span>
+                </div>
+                <p class="text-xs text-error font-medium">Bank code P0803 vs contract P0802 mismatch</p>
+                <p class="text-[11px] text-secondary mt-0.5">Reclassification required under DGFT Para 2.05 to avoid audit penalty.</p>
+              </td>
+              <td class="py-4 px-4 align-top text-right">
+                <div class="flex items-center justify-end gap-1.5">
+                  <button onclick="showDetails(2)" class="px-2.5 py-1.5 rounded-lg border border-outline-variant/60 text-xs font-semibold text-on-surface hover:bg-surface-container transition-colors">
+                    Details
+                  </button>
+                  <button onclick="forceMatch(2)" class="px-2.5 py-1.5 rounded-lg bg-primary text-white hover:bg-primary-dark text-xs font-bold transition-colors shadow-sm">
+                    Force Match
+                  </button>
+                  <button onclick="rejectMatch(2)" class="p-1.5 rounded-lg text-secondary hover:text-error hover:bg-red-50 transition-colors" title="Reject / Flag">
+                    <span class="material-symbols-outlined text-base">close</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 3: PENDING -->
+            <tr id="row-3" class="table-row-item hover:bg-surface-container-low/50 transition-colors bg-amber-50/20" data-status="pending" data-conf="88.7" data-bank="HSBC" data-amount="14200">
+              <td class="py-4 px-4 align-top">
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800">
+                  <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                  PENDING
+                </span>
+              </td>
+              <td class="py-4 px-4 align-top">
+                <div class="font-mono font-bold text-on-surface">FIRA-2024-0042</div>
+                <div class="font-mono text-xs text-secondary mt-0.5">UTR-99085</div>
+                <span class="inline-block mt-1 text-[10px] text-amber-800 bg-amber-100 px-1.5 py-0.5 rounded font-medium">Port Clearance</span>
+              </td>
+              <td class="py-4 px-4 align-top">
+                <div class="font-semibold text-on-surface">Seoul BioTech Corp</div>
+                <div class="font-mono text-xs text-primary font-medium mt-0.5">INV-2024-870</div>
+                <div class="text-[11px] text-secondary">Seoul, KR • Biotech R&D</div>
+              </td>
+              <td class="py-4 px-4 align-top">
+                <div class="font-bold text-on-surface font-mono">$14,200.00 <span class="text-xs text-secondary font-normal">USD</span></div>
+                <div class="text-xs text-secondary flex items-center gap-1 mt-0.5">
+                  <span class="material-symbols-outlined text-sm">account_balance</span>
+                  HSBC Inward
+                </div>
+              </td>
+              <td class="py-4 px-4 align-top max-w-xs">
+                <div class="flex items-center gap-2 mb-1">
+                  <div class="w-16 h-1.5 bg-surface-container rounded-full overflow-hidden">
+                    <div class="h-full bg-primary rounded-full" style="width: 88.7%"></div>
+                  </div>
+                  <span class="font-mono font-bold text-xs text-primary">88.7%</span>
+                </div>
+                <p class="text-xs text-amber-800 font-medium">Awaiting ICEGATE endorsement</p>
+                <p class="text-[11px] text-secondary mt-0.5">Goods cleared Nhava Sheva (INNSA1). Awaiting electronic customs confirmation payload.</p>
+              </td>
+              <td class="py-4 px-4 align-top text-right">
+                <div class="flex items-center justify-end gap-1.5">
+                  <button onclick="showDetails(3)" class="px-2.5 py-1.5 rounded-lg border border-outline-variant/60 text-xs font-semibold text-on-surface hover:bg-surface-container transition-colors">
+                    Details
+                  </button>
+                  <button onclick="forceMatch(3)" class="px-2.5 py-1.5 rounded-lg bg-primary text-white hover:bg-primary-dark text-xs font-bold transition-colors shadow-sm">
+                    Force Match
+                  </button>
+                  <button onclick="rejectMatch(3)" class="p-1.5 rounded-lg text-secondary hover:text-error hover:bg-red-50 transition-colors" title="Reject">
+                    <span class="material-symbols-outlined text-base">close</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Mobile Card List View (Phones & small screens) -->
+      <div id="matchingCardsMobile" class="md:hidden divide-y divide-outline-variant/20">
+        <!-- Mobile Card 1: MATCHED -->
+        <div id="mcard-1" class="mobile-card-item p-4 space-y-3" data-status="matched" data-conf="99.2" data-bank="JPMorgan Chase" data-amount="49965">
+          <div class="flex items-center justify-between">
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+              MATCHED
+            </span>
+            <div class="flex items-center gap-1.5 font-mono text-xs font-bold text-emerald-700">
+              <span class="material-symbols-outlined text-sm">verified</span>
+              99.2% Score
+            </div>
+          </div>
+          <div>
+            <div class="flex items-baseline justify-between">
+              <h4 class="font-bold text-on-surface text-base">Apex Robotics Inc.</h4>
+              <span class="font-mono font-bold text-on-surface">$49,965.00 USD</span>
+            </div>
+            <div class="flex items-center gap-2 text-xs text-secondary mt-1">
+              <span class="font-mono text-primary font-semibold">INV-2024-918</span>
+              <span>•</span>
+              <span>JPMorgan Chase</span>
+            </div>
+          </div>
+          <div class="bg-surface-container-low rounded-xl p-2.5 text-xs">
+            <div class="font-mono text-[11px] text-secondary">FIRA-2024-0047 • UTR-994118</div>
+            <p class="font-semibold text-on-surface mt-1">Auto-matched via Swift MT103</p>
+          </div>
+          <div class="flex items-center justify-end gap-2 pt-1">
+            <button onclick="showDetails(1)" class="flex-1 py-2 rounded-xl border border-outline-variant/60 text-xs font-bold text-on-surface hover:bg-surface-container transition-colors text-center">
+              View Details
+            </button>
+            <button onclick="forceMatch(1)" class="flex-1 py-2 rounded-xl bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-bold hover:bg-emerald-100 transition-colors text-center">
+              Affirmed ✓
+            </button>
+          </div>
+        </div>
+
+        <!-- Mobile Card 2: UNMATCHED -->
+        <div id="mcard-2" class="mobile-card-item p-4 space-y-3 bg-red-50/20" data-status="unmatched" data-conf="64.2" data-bank="MUFG" data-amount="32400">
+          <div class="flex items-center justify-between">
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-error-container text-error">
+              <span class="w-1.5 h-1.5 rounded-full bg-error"></span>
+              UNMATCHED
+            </span>
+            <div class="flex items-center gap-1.5 font-mono text-xs font-bold text-amber-700">
+              <span class="material-symbols-outlined text-sm">warning</span>
+              64.2% Score
+            </div>
+          </div>
+          <div>
+            <div class="flex items-baseline justify-between">
+              <h4 class="font-bold text-on-surface text-base">Kyoto Digital KK</h4>
+              <span class="font-mono font-bold text-on-surface">¥4.8M JPY</span>
+            </div>
+            <div class="flex items-center gap-2 text-xs text-secondary mt-1">
+              <span class="font-mono text-primary font-semibold">INV-2024-885</span>
+              <span>•</span>
+              <span>MUFG Bank</span>
+            </div>
+          </div>
+          <div class="bg-red-50/80 border border-red-200/60 rounded-xl p-2.5 text-xs">
+            <div class="font-mono text-[11px] text-secondary">FIRA-2024-0044 • UTR-99120</div>
+            <p class="font-bold text-error mt-1">Bank code P0803 vs contract P0802 mismatch</p>
+          </div>
+          <div class="flex items-center justify-end gap-2 pt-1">
+            <button onclick="showDetails(2)" class="px-3 py-2 rounded-xl border border-outline-variant/60 text-xs font-bold text-on-surface hover:bg-surface-container transition-colors">
+              Details
+            </button>
+            <button onclick="forceMatch(2)" class="flex-1 py-2 rounded-xl bg-primary text-white text-xs font-bold hover:bg-primary-dark transition-colors shadow-sm text-center">
+              Force Match
+            </button>
+            <button onclick="rejectMatch(2)" class="px-3 py-2 rounded-xl border border-red-200 text-error hover:bg-red-50 text-xs font-bold transition-colors">
+              Reject
+            </button>
+          </div>
+        </div>
+
+        <!-- Mobile Card 3: PENDING -->
+        <div id="mcard-3" class="mobile-card-item p-4 space-y-3 bg-amber-50/20" data-status="pending" data-conf="88.7" data-bank="HSBC" data-amount="14200">
+          <div class="flex items-center justify-between">
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-800">
+              <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+              PENDING
+            </span>
+            <div class="flex items-center gap-1.5 font-mono text-xs font-bold text-primary">
+              <span class="material-symbols-outlined text-sm">hourglass_top</span>
+              88.7% Score
+            </div>
+          </div>
+          <div>
+            <div class="flex items-baseline justify-between">
+              <h4 class="font-bold text-on-surface text-base">Seoul BioTech Corp</h4>
+              <span class="font-mono font-bold text-on-surface">$14,200.00 USD</span>
+            </div>
+            <div class="flex items-center gap-2 text-xs text-secondary mt-1">
+              <span class="font-mono text-primary font-semibold">INV-2024-870</span>
+              <span>•</span>
+              <span>HSBC Inward</span>
+            </div>
+          </div>
+          <div class="bg-amber-50/80 border border-amber-200/60 rounded-xl p-2.5 text-xs">
+            <div class="font-mono text-[11px] text-secondary">FIRA-2024-0042 • UTR-99085</div>
+            <p class="font-semibold text-amber-900 mt-1">Awaiting ICEGATE customs endorsement</p>
+          </div>
+          <div class="flex items-center justify-end gap-2 pt-1">
+            <button onclick="showDetails(3)" class="px-3 py-2 rounded-xl border border-outline-variant/60 text-xs font-bold text-on-surface hover:bg-surface-container transition-colors">
+              Details
+            </button>
+            <button onclick="forceMatch(3)" class="flex-1 py-2 rounded-xl bg-primary text-white text-xs font-bold hover:bg-primary-dark transition-colors shadow-sm text-center">
+              Force Match
+            </button>
+            <button onclick="rejectMatch(3)" class="px-3 py-2 rounded-xl border border-outline-variant/60 text-secondary hover:bg-surface-container text-xs font-bold transition-colors">
+              Reject
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Empty State (hidden by default) -->
+      <div id="emptyState" class="hidden p-8 text-center space-y-3">
+        <div class="w-12 h-12 rounded-full bg-surface-container mx-auto flex items-center justify-center text-secondary">
+          <span class="material-symbols-outlined text-2xl">search_off</span>
+        </div>
+        <div>
+          <h4 class="font-bold text-on-surface text-sm">No matching reconciliation records</h4>
+          <p class="text-xs text-secondary mt-1">Try adjusting your search criteria, bank filter, or status selection.</p>
+        </div>
+        <button onclick="resetAllFilters()" class="px-4 py-2 rounded-xl bg-surface-container-high text-xs font-bold text-on-surface hover:bg-surface-container">
+          Clear All Filters
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <!-- Bottom Navigation Bar (Synchronized with EDFlow Shell) -->
+  <nav class="fixed bottom-0 inset-x-0 z-40 bg-surface-container-lowest/95 backdrop-blur-md border-t border-outline-variant/40 px-3 py-2 sm:py-2.5">
+    <div class="max-w-md mx-auto grid grid-cols-5 gap-1 text-center">
+      <!-- 1. Dashboard -->
+      <a href="#" class="flex flex-col items-center justify-center py-1 text-secondary hover:text-on-surface transition-colors group">
+        <span class="material-symbols-outlined text-2xl group-hover:scale-110 transition-transform">dashboard</span>
+        <span class="text-[10px] font-medium tracking-tight mt-0.5">Dashboard</span>
+      </a>
+
+      <!-- 2. Invoices -->
+      <a href="#" class="flex flex-col items-center justify-center py-1 text-secondary hover:text-on-surface transition-colors group">
+        <span class="material-symbols-outlined text-2xl group-hover:scale-110 transition-transform">receipt_long</span>
+        <span class="text-[10px] font-medium tracking-tight mt-0.5">Invoices</span>
+      </a>
+
+      <!-- 3. Matching Center (ACTIVE) -->
+      <a href="#" class="flex flex-col items-center justify-center py-1 text-primary relative group">
+        <span class="material-symbols-outlined text-2xl fill scale-110 transition-transform">compare_arrows</span>
+        <span class="text-[10px] font-bold tracking-tight mt-0.5 text-primary">Matching</span>
+        <span class="absolute -top-1 w-8 h-1 bg-primary rounded-full"></span>
+      </a>
+
+      <!-- 4. Exceptions Hub -->
+      <a href="#" class="flex flex-col items-center justify-center py-1 text-secondary hover:text-on-surface transition-colors relative group">
+        <span class="material-symbols-outlined text-2xl group-hover:scale-110 transition-transform">warning</span>
+        <span class="text-[10px] font-medium tracking-tight mt-0.5">Exceptions</span>
+        <span class="absolute top-0 right-3 w-2 h-2 rounded-full bg-error"></span>
+      </a>
+
+      <!-- 5. EDF Packs -->
+      <a href="#" class="flex flex-col items-center justify-center py-1 text-secondary hover:text-on-surface transition-colors group">
+        <span class="material-symbols-outlined text-2xl group-hover:scale-110 transition-transform">inventory_2</span>
+        <span class="text-[10px] font-medium tracking-tight mt-0.5">Packs</span>
+      </a>
+    </div>
+  </nav>
+
+  <!-- Interactive JavaScript Engine -->
+  <script>
+    // In-memory data store for the reconciliation rows
+    const reconciliationData = {
+      1: {
+        id: 1,
+        status: 'matched',
+        firaRef: 'FIRA-2024-0047',
+        utr: 'UTR-994118',
+        invoiceRef: 'INV-2024-918',
+        remitter: 'Apex Robotics Inc.',
+        country: 'United States (USD)',
+        amount: '$49,965.00 USD',
+        amountNum: 49965,
+        bank: 'JPMorgan Chase',
+        nostroAcc: 'CHASE-NY-09941',
+        confidence: 99.2,
+        purposeCode: 'P0802 (Software Consultancy & Dev)',
+        aiRecommendation: 'Auto-matched via Swift MT103',
+        details: 'Nostro inward credit credited at JPMorgan Chase matches commercial invoice contract §3 with 100% tax ID alignment. Zero deduction haircut observed.',
+        auditProof: 'SHA256: 88c1a90f4219bfe9930f782'
+      },
+      2: {
+        id: 2,
+        status: 'unmatched',
+        firaRef: 'FIRA-2024-0044',
+        utr: 'UTR-99120',
+        invoiceRef: 'INV-2024-885',
+        remitter: 'Kyoto Digital KK',
+        country: 'Japan (JPY)',
+        amount: '¥4,800,000 JPY ($32,400.00 USD)',
+        amountNum: 32400,
+        bank: 'MUFG',
+        nostroAcc: 'MUFG-TKY-7712',
+        confidence: 64.2,
+        purposeCode: 'P0803 (Bank default) vs P0802 (Contract)',
+        aiRecommendation: 'Bank code P0803 vs contract P0802 mismatch',
+        details: 'MUFG wire initially tagged under P0803 (Data Hosting) divergent from MSA deliverables for custom backend development. Reclassification to P0802 eliminates statutory FEMA penalty.',
+        auditProof: 'SHA256: 4ce77e9a11d8820f12c9b19'
+      },
+      3: {
+        id: 3,
+        status: 'pending',
+        firaRef: 'FIRA-2024-0042',
+        utr: 'UTR-99085',
+        invoiceRef: 'INV-2024-870',
+        remitter: 'Seoul BioTech Corp',
+        country: 'South Korea (USD)',
+        amount: '$14,200.00 USD',
+        amountNum: 14200,
+        bank: 'HSBC',
+        nostroAcc: 'HSBC-HK-00219',
+        confidence: 88.7,
+        purposeCode: 'P1006 (Biotech & Clinical R&D)',
+        aiRecommendation: 'Awaiting ICEGATE customs endorsement',
+        details: 'Air cargo departed Nhava Sheva (INNSA1). Customs shipping bill electronic confirmation payload currently pending from DGFT customs API gateway.',
+        auditProof: 'SHA256: f190a8813bc3098e44192b0'
+      }
+    };
+
+    let activeFilterType = 'all';
+    let currentSearchTerm = '';
+    let selectedModalId = null;
+
+    // Show Toast Notification
+    function showToast(message, type = 'success') {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      
+      const isSuccess = type === 'success';
+      const isError = type === 'error';
+      const icon = isSuccess ? 'check_circle' : isError ? 'error' : 'info';
+      const bg = isSuccess ? 'bg-emerald-900 text-white' : isError ? 'bg-red-900 text-white' : 'bg-on-surface text-surface';
+
+      toast.className = `${bg} pointer-events-auto p-4 rounded-xl shadow-xl border border-white/10 flex items-start gap-3 transform transition-all duration-300 translate-y-2 opacity-0 text-xs sm:text-sm`;
+      toast.innerHTML = `
+        <span class="material-symbols-outlined text-base sm:text-lg flex-shrink-0">${icon}</span>
+        <div class="flex-1 font-medium leading-snug">${message}</div>
+        <button onclick="this.parentElement.remove()" class="opacity-70 hover:opacity-100">
+          <span class="material-symbols-outlined text-sm">close</span>
+        </button>
+      `;
+
+      container.appendChild(toast);
+
+      // Trigger entrance animation
+      setTimeout(() => {
+        toast.classList.remove('translate-y-2', 'opacity-0');
+      }, 10);
+
+      // Auto dismiss after 4s
+      setTimeout(() => {
+        toast.classList.add('translate-y-2', 'opacity-0');
+        setTimeout(() => toast.remove(), 300);
+      }, 4000);
+    }
+
+    // Filter Matching by Type
+    function filterMatching(type, button) {
+      activeFilterType = type;
+      
+      // Update filter pills active state
+      document.querySelectorAll('.filter-pill').forEach(btn => {
+        btn.classList.remove('active', 'bg-primary', 'text-white', 'shadow-sm');
+        btn.classList.add('bg-surface-container', 'text-on-surface');
+      });
+
+      if (button) {
+        button.classList.add('active', 'bg-primary', 'text-white', 'shadow-sm');
+        button.classList.remove('bg-surface-container', 'text-on-surface');
+      }
+
+      applyFilters();
+    }
+
+    // Search Handler
+    function handleSearch(term) {
+      currentSearchTerm = term.trim().toLowerCase();
+      const clearBtn = document.getElementById('clearSearchBtn');
+      if (currentSearchTerm) {
+        clearBtn.classList.remove('hidden');
+      } else {
+        clearBtn.classList.add('hidden');
+      }
+      applyFilters();
+    }
+
+    function clearSearch() {
+      const input = document.getElementById('searchInput');
+      input.value = '';
+      handleSearch('');
+      input.focus();
+    }
+
+    // Consolidated filter logic for table and mobile cards
+    function applyFilters() {
+      const bankVal = document.getElementById('bankFilter').value;
+      const amountVal = document.getElementById('amountFilter').value;
+
+      const rows = document.querySelectorAll('.table-row-item');
+      const cards = document.querySelectorAll('.mobile-card-item');
+
+      let visibleCount = 0;
+
+      const checkMatch = (id) => {
+        const item = reconciliationData[id];
+        if (!item) return false;
+
+        // Status Filter
+        if (activeFilterType === 'matched' && item.status !== 'matched') return false;
+        if (activeFilterType === 'unmatched' && item.status !== 'unmatched') return false;
+        if (activeFilterType === 'pending' && item.status !== 'pending') return false;
+        if (activeFilterType === 'high_conf' && item.confidence <= 95) return false;
+
+        // Bank Filter
+        if (bankVal && !item.bank.includes(bankVal)) return false;
+
+        // Amount Filter
+        if (amountVal === 'under10k' && item.amountNum >= 10000) return false;
+        if (amountVal === '10k-50k' && (item.amountNum < 10000 || item.amountNum > 50000)) return false;
+        if (amountVal === 'over50k' && item.amountNum <= 50000) return false;
+
+        // Search Term
+        if (currentSearchTerm) {
+          const haystack = `${item.firaRef} ${item.utr} ${item.invoiceRef} ${item.remitter} ${item.bank} ${item.purposeCode}`.toLowerCase();
+          if (!haystack.includes(currentSearchTerm)) return false;
+        }
+
+        return true;
+      };
+
+      // Update Desktop Table Rows
+      rows.forEach(row => {
+        const id = row.id.replace('row-', '');
+        const isMatch = checkMatch(id);
+        if (isMatch) {
+          row.style.display = '';
+          visibleCount++;
+        } else {
+          row.style.display = 'none';
+        }
+      });
+
+      // Update Mobile Cards
+      cards.forEach(card => {
+        const id = card.id.replace('mcard-', '');
+        const isMatch = checkMatch(id);
+        if (isMatch) {
+          card.style.display = '';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+
+      // Queue badge & empty state
+      document.getElementById('queueBadge').innerText = `${visibleCount} item${visibleCount !== 1 ? 's' : ''}`;
+      const emptyState = document.getElementById('emptyState');
+      if (visibleCount === 0) {
+        emptyState.classList.remove('hidden');
+      } else {
+        emptyState.classList.add('hidden');
+      }
+    }
+
+    function resetAllFilters() {
+      activeFilterType = 'all';
+      currentSearchTerm = '';
+      document.getElementById('searchInput').value = '';
+      document.getElementById('clearSearchBtn').classList.add('hidden');
+      document.getElementById('bankFilter').value = '';
+      document.getElementById('amountFilter').value = '';
+      
+      const firstPill = document.querySelector('.filter-pill');
+      if (firstPill) filterMatching('all', firstPill);
+    }
+
+    // Force Match Action
+    function forceMatch(id) {
+      const item = reconciliationData[id];
+      if (!item) return;
+
+      item.status = 'matched';
+      item.confidence = 99.8;
+      item.aiRecommendation = 'Manually Affirmed & CA Sealed';
+
+      // Update UI row
+      const row = document.getElementById(`row-${id}`);
+      if (row) {
+        row.classList.remove('bg-red-50/20', 'bg-amber-50/20');
+        row.querySelector('td:first-child').innerHTML = `
+          <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+            MATCHED
+          </span>
+        `;
+        row.querySelector('td:nth-child(5) .font-bold').innerText = '99.8%';
+        row.querySelector('td:nth-child(5) .h-full').style.width = '99.8%';
+        row.querySelector('td:nth-child(5) .h-full').className = 'h-full bg-emerald-500 rounded-full';
+        row.querySelector('td:nth-child(5) p:first-of-type').className = 'text-xs text-on-surface font-medium';
+        row.querySelector('td:nth-child(5) p:first-of-type').innerText = 'Manually Affirmed & CA Sealed';
+      }
+
+      // Update Mobile Card
+      const card = document.getElementById(`mcard-${id}`);
+      if (card) {
+        card.classList.remove('bg-red-50/20', 'bg-amber-50/20');
+        card.querySelector('.mobile-card-item > div:first-child span').className = 'inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800';
+        card.querySelector('.mobile-card-item > div:first-child span').innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>MATCHED';
+      }
+
+      showToast(`Remittance ${item.utr} successfully matched with ${item.invoiceRef}! Proof sealed to Merkle tree.`);
+      closeModal();
+    }
+
+    // Reject Match Action
+    function rejectMatch(id) {
+      const item = reconciliationData[id];
+      if (!item) return;
+
+      item.status = 'unmatched';
+      showToast(`Remittance ${item.utr} rejected and routed to Exceptions Hub (Alert created).`, 'error');
+      
+      const row = document.getElementById(`row-${id}`);
+      if (row) {
+        row.classList.add('bg-red-50/20');
+        row.querySelector('td:first-child').innerHTML = `
+          <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-error-container text-error">
+            <span class="w-1.5 h-1.5 rounded-full bg-error"></span>
+            UNMATCHED
+          </span>
+        `;
+      }
+      closeModal();
+    }
+
+    // Show Details Modal
+    function showDetails(id) {
+      selectedModalId = id;
+      const item = reconciliationData[id];
+      if (!item) return;
+
+      const modalBody = document.getElementById('modalBody');
+      const actionBtn = document.getElementById('modalActionBtn');
+
+      modalBody.innerHTML = `
+        <div class="bg-surface-container-low p-4 rounded-xl space-y-2 border border-outline-variant/30">
+          <div class="flex items-center justify-between">
+            <span class="font-mono text-xs font-bold text-primary">${item.firaRef}</span>
+            <span class="px-2 py-0.5 rounded text-[11px] font-bold uppercase ${item.status === 'matched' ? 'bg-emerald-100 text-emerald-800' : item.status === 'unmatched' ? 'bg-error-container text-error' : 'bg-amber-100 text-amber-800'}">
+              ${item.status}
+            </span>
+          </div>
+          <div class="text-base font-extrabold text-on-surface">${item.remitter}</div>
+          <div class="text-xs text-secondary">${item.country} • Account: <strong class="text-on-surface font-mono">${item.nostroAcc}</strong></div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3 text-xs">
+          <div class="p-3 bg-surface-container-low rounded-xl">
+            <span class="text-secondary font-medium block">Remittance Amount</span>
+            <strong class="text-base text-on-surface font-mono">${item.amount}</strong>
+          </div>
+          <div class="p-3 bg-surface-container-low rounded-xl">
+            <span class="text-secondary font-medium block">Matched Invoice</span>
+            <strong class="text-base text-primary font-mono">${item.invoiceRef}</strong>
+          </div>
+        </div>
+
+        <div class="space-y-1.5 text-xs">
+          <span class="font-bold text-on-surface flex items-center gap-1">
+            <span class="material-symbols-outlined text-primary text-base">psychology</span>
+            AI Classification & Rationale
+          </span>
+          <p class="text-secondary bg-surface-container-low p-3 rounded-xl leading-relaxed border border-outline-variant/20">
+            ${item.details}
+          </p>
+        </div>
+
+        <div class="p-3 bg-surface-container-low rounded-xl text-xs space-y-1 font-mono">
+          <div class="flex justify-between text-secondary">
+            <span>UTR Reference:</span>
+            <strong class="text-on-surface">${item.utr}</strong>
+          </div>
+          <div class="flex justify-between text-secondary">
+            <span>Bank Partner:</span>
+            <strong class="text-on-surface">${item.bank}</strong>
+          </div>
+          <div class="flex justify-between text-secondary">
+            <span>Purpose Code:</span>
+            <strong class="text-primary">${item.purposeCode}</strong>
+          </div>
+          <div class="flex justify-between text-secondary">
+            <span>Audit Seal:</span>
+            <strong class="text-emerald-700 truncate max-w-[200px]">${item.auditProof}</strong>
+          </div>
+        </div>
+      `;
+
+      actionBtn.onclick = () => forceMatch(id);
+
+      const modal = document.getElementById('detailModal');
+      modal.classList.remove('hidden');
+    }
+
+    function closeModal() {
+      const modal = document.getElementById('detailModal');
+      modal.classList.add('hidden');
+      selectedModalId = null;
+    }
+
+    // Run Auto-Match Simulation
+    function runAutoMatch() {
+      const syncIcon = document.getElementById('syncIcon');
+      syncIcon.classList.add('animate-spin');
+      
+      showToast('Initiating AI reconciliation sweep across JPMorgan, MUFG, and HSBC Nostro pipelines...', 'info');
+
+      setTimeout(() => {
+        syncIcon.classList.remove('animate-spin');
+        
+        // Update Progress Bar
+        const bar = document.getElementById('reconcileProgressBar');
+        if (bar) bar.style.width = '100%';
+
+        showToast('Auto-Match completed! 3 remittances reconciled with 98.6% composite confidence.');
+      }, 1400);
+    }
+
+    // Re-run All Unmatched
+    function rerunUnmatched() {
+      showToast('Re-evaluating 3 unmatched records against updated FEDAI circular rules...', 'info');
+      setTimeout(() => {
+        showToast('Rule scan complete. 1 item eligible for 1-click reclassification.', 'success');
+      }, 1000);
+    }
+
+    // Export Report
+    function exportReport() {
+      showToast('Exporting Reconciliation Dossier (EDFlow-Reconcile-Report.csv)...', 'info');
+      setTimeout(() => {
+        showToast('Report downloaded successfully with SHA-256 Merkle certificate.');
+      }, 800);
+    }
+
+    // View Audit Log
+    function viewAuditLog() {
+      showToast('Opening FEDAI Compliance Immutable Audit Ledger (Block #209841)...', 'info');
+    }
+
+    // Close modal on escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeModal();
+    });
+  </script>
+</body>
+</html>

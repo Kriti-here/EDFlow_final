@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100vw;margin:0;padding:0;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "secondary": "#00687a", "on-surface-variant": "#464555", "secondary-container": "#57dffe", "primary": "#3525cd", "tertiary-fixed-dim": "#4edea3", "on-tertiary-fixed": "#002113", "outline": "#777587", "on-background": "#131b2e", "surface-container-lowest": "#ffffff", "on-secondary": "#ffffff", "surface-container-highest": "#dae2fd", "on-error": "#ffffff", "on-primary-fixed": "#0f0069", "on-tertiary-container": "#67f4b7", "surface-container": "#eaedff", "primary-fixed-dim": "#c3c0ff", "surface-container-high": "#e2e7ff", "tertiary-fixed": "#6ffbbe", "inverse-surface": "#283044", "outline-variant": "#c7c4d8", "on-secondary-fixed": "#001f26", "secondary-fixed": "#acedff", "surface-container-low": "#f2f3ff", "surface-tint": "#4d44e3", "inverse-primary": "#c3c0ff", "tertiary": "#005338", "on-primary": "#ffffff", "tertiary-container": "#006e4b", "surface": "#faf8ff", "error": "#ba1a1a", "error-container": "#ffdad6", "on-primary-container": "#dad7ff", "inverse-on-surface": "#eef0ff", "background": "#faf8ff", "primary-container": "#4f46e5", "on-tertiary-fixed-variant": "#005236", "secondary-fixed-dim": "#4cd7f6", "primary-fixed": "#e2dfff", "on-primary-fixed-variant": "#3323cc", "surface-bright": "#faf8ff", "on-secondary-container": "#006172", "on-error-container": "#93000a", "on-tertiary": "#ffffff", "surface-dim": "#d2d9f4", "surface-variant": "#dae2fd", "on-secondary-fixed-variant": "#004e5c", "on-surface": "#131b2e" }, "borderRadius": { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" }, "spacing": { "space-2xs": "0.125rem", "margin-md": "2rem", "space-lg": "1.5rem", "space-base": "1rem", "margin-lg": "3rem", "space-sm": "0.5rem", "space-xl": "2rem", "gutter-lg": "2rem", "margin": "1rem", "space-md": "0.75rem", "gutter-md": "1.5rem", "space-2xl": "3rem", "space-xs": "0.25rem", "gutter": "1rem" }, "fontFamily": { "code-sm": ["Inter"], "headline-sm": ["Plus Jakarta Sans"], "headline-lg": ["Plus Jakarta Sans"], "body-sm": ["Inter"], "headline-xl": ["Plus Jakarta Sans"], "headline-lg-mobile": ["Plus Jakarta Sans"], "body-md": ["Inter"], "label-sm": ["Inter"], "headline-md": ["Plus Jakarta Sans"], "body-lg": ["Inter"], "headline-xl-mobile": ["Plus Jakarta Sans"], "label-md": ["Inter"] }, "fontSize": { "code-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0em", "fontWeight": "500"}], "headline-sm": ["18px", {"lineHeight": "24px", "letterSpacing": "-0.01em", "fontWeight": "600"}], "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "600"}], "body-sm": ["13px", {"lineHeight": "18px", "letterSpacing": "0em", "fontWeight": "400"}], "headline-xl": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.025em", "fontWeight": "700"}], "headline-lg-mobile": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.015em", "fontWeight": "600"}], "body-md": ["14px", {"lineHeight": "20px", "letterSpacing": "-0.005em", "fontWeight": "400"}], "label-sm": ["11px", {"lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "600"}], "headline-md": ["22px", {"lineHeight": "28px", "letterSpacing": "-0.015em", "fontWeight": "600"}], "body-lg": ["16px", {"lineHeight": "24px", "letterSpacing": "-0.01em", "fontWeight": "400"}], "headline-xl-mobile": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700"}], "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "500"}] } } } };</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface text-on-surface antialiased"><header class="fixed top-0 w-full z-50 pt-safe bg-surface/80 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-16 px-space-base flex items-center justify-between gap-space-sm"><div class="flex items-center gap-space-sm"><button aria-label="Open Workspace Menu" class="w-11 h-11 flex items-center justify-center rounded-xl text-on-surface hover:bg-surface-container-high transition-colors" onclick="document.getElementById('nav-drawer').classList.toggle('-translate-x-full')" type="button"><span class="material-symbols-outlined text-[24px]">menu</span></button><div class="flex items-center gap-space-xs"><div class="w-7 h-7 rounded-xl bg-primary-container flex items-center justify-center text-on-primary font-headline-sm text-headline-sm font-bold">E</div><span class="font-headline-sm text-headline-sm text-on-surface tracking-tight font-bold">EDFlow</span></div></div><div class="flex items-center gap-space-xs"><div class="hidden sm:flex items-center gap-1.5 px-space-sm py-space-xs rounded-full bg-[#ECFDF5] text-[#065F46] font-label-sm text-label-sm"><span class="w-1.5 h-1.5 rounded-full bg-[#10B981]"></span><span>COMPLIANT</span></div><button aria-label="Notifications" class="w-11 h-11 flex items-center justify-center rounded-xl text-on-surface-variant hover:bg-surface-container-high transition-colors" type="button"><span class="material-symbols-outlined text-[22px]">notifications</span></button><button aria-label="Toggle Theme" class="w-11 h-11 flex items-center justify-center rounded-xl text-on-surface-variant hover:bg-surface-container-high transition-colors" onclick="document.documentElement.classList.toggle('dark')" type="button"><span class="material-symbols-outlined text-[20px]">contrast</span></button><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center ml-space-xs"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><div class="fixed inset-y-0 left-0 z-50 w-72 max-w-[80vw] bg-surface-container-lowest shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1)] -translate-x-full transition-transform duration-200 ease-in-out flex flex-col pt-safe pb-safe" id="nav-drawer"><div class="h-16 px-space-base flex items-center justify-between"><div class="flex items-center gap-space-xs"><div class="w-6 h-6 rounded-xl bg-primary-container flex items-center justify-center text-on-primary font-headline-sm text-headline-sm font-bold">E</div><span class="font-headline-sm text-headline-sm text-on-surface font-bold">Workspace</span></div><button aria-label="Close Drawer" class="w-11 h-11 flex items-center justify-center rounded-xl text-on-surface-variant hover:bg-surface-container-high" onclick="document.getElementById('nav-drawer').classList.add('-translate-x-full')" type="button"><span class="material-symbols-outlined text-[22px]">close</span></button></div><div class="flex-1 overflow-y-auto px-space-sm py-space-xs flex flex-col gap-space-2xs"><a class="flex items-center gap-space-md px-space-base h-11 rounded-xl text-on-surface-variant hover:bg-surface-container font-body-md text-body-md" data-path="dashboard" href="#"><span class="material-symbols-outlined text-[20px]">dashboard</span><span>Dashboard</span></a><a class="flex items-center gap-space-md px-space-base h-11 rounded-xl text-on-surface-variant hover:bg-surface-container font-body-md text-body-md" data-path="invoices" href="#"><span class="material-symbols-outlined text-[20px]">receipt_long</span><span>Invoices</span></a><a class="flex items-center gap-space-md px-space-base h-11 rounded-xl text-on-surface-variant hover:bg-surface-container font-body-md text-body-md" data-path="fira-documents" href="#"><span class="material-symbols-outlined text-[20px]">description</span><span>FIRA Documents</span></a><a class="flex items-center gap-space-md px-space-base h-11 rounded-xl text-on-surface-variant hover:bg-surface-container font-body-md text-body-md" data-path="matching-center" href="#"><span class="material-symbols-outlined text-[20px]">compare_arrows</span><span>Matching Center</span></a><a class="flex items-center gap-space-md px-space-base h-11 rounded-xl text-on-surface-variant hover:bg-surface-container font-body-md text-body-md" data-path="exceptions-hub" href="#"><span class="material-symbols-outlined text-[20px]">warning</span><span>Exceptions Hub</span></a><a class="flex items-center gap-space-md px-space-base h-11 rounded-xl text-on-surface-variant hover:bg-surface-container font-body-md text-body-md" data-path="purpose-adviser" href="#"><span class="material-symbols-outlined text-[20px]">psychology_alt</span><span>Purpose Adviser</span></a><a class="flex items-center gap-space-md px-space-base h-11 rounded-xl text-on-surface-variant hover:bg-surface-container font-body-md text-body-md" data-path="ai-insights" href="#"><span class="material-symbols-outlined text-[20px]">insights</span><span>AI Insights</span></a><a class="flex items-center gap-space-md px-space-base h-11 rounded-xl text-on-surface-variant hover:bg-surface-container font-body-md text-body-md" data-path="edf-packs" href="#"><span class="material-symbols-outlined text-[20px]">inventory_2</span><span>EDF Packs</span></a><a class="flex items-center gap-space-md px-space-base h-11 rounded-xl text-on-surface-variant hover:bg-surface-container font-body-md text-body-md" data-path="audit-log" href="#"><span class="material-symbols-outlined text-[20px]">history</span><span>Audit Log</span></a><a class="flex items-center gap-space-md px-space-base h-11 rounded-xl text-on-surface-variant hover:bg-surface-container font-body-md text-body-md" data-path="settings" href="#"><span class="material-symbols-outlined text-[20px]">settings</span><span>Settings</span></a><a class="flex items-center gap-space-md px-space-base h-11 rounded-xl text-on-surface-variant hover:bg-surface-container font-body-md text-body-md" data-path="user-guide" href="#"><span class="material-symbols-outlined text-[20px]">menu_book</span><span>User Guide</span></a></div></div><main class="flex flex-col relative w-full pt-16 pb-24 bg-surface"><div class="flex flex-col w-full">
+<div class="px-space-base pt-space-md pb-space-lg flex flex-col gap-space-md">
+<!-- Progress / Welcome Header -->
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<div class="inline-flex items-center gap-1.5 px-space-sm py-0.5 rounded-full bg-surface-container-high text-primary font-label-sm text-label-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+<span>Interactive Onboarding • 6 Essential Steps</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-primary">schedule</span>
+          ~2 min
+        </span>
+</div>
+<div class="flex flex-col">
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile font-bold text-on-surface tracking-tight">Quick Start Guide</h1>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Master automated export compliance &amp; EDPMS reconciliation in record time.</p>
+</div>
+</div>
+<!-- Mode Selector & Step Navigator -->
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<span class="font-headline-sm text-headline-sm text-on-surface" id="step-counter-text">Step 1 of 6</span>
+<span class="px-2 py-0.5 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm font-semibold" id="step-tag">Active</span>
+</div>
+<!-- Mode Toggle -->
+<div class="bg-surface-container-high p-0.5 rounded-lg flex items-center gap-1 text-label-sm">
+<button class="px-space-sm py-1 rounded-md bg-surface-container-lowest text-primary font-semibold transition-all" id="mode-tour" onclick="setMode('tour')">Tour</button>
+<button class="px-space-sm py-1 rounded-md text-on-surface-variant font-medium hover:text-on-surface transition-all" id="mode-sheet" onclick="setMode('sheet')">Cheat Sheet</button>
+</div>
+</div>
+<!-- Stepper Progress Bar -->
+<div class="w-full bg-surface-container rounded-full h-1.5 overflow-hidden">
+<div class="bg-primary-container h-full rounded-full transition-all duration-300 w-1/6" id="step-progress-fill"></div>
+</div>
+<!-- Interactive Stepper Pills -->
+<div class="grid grid-cols-6 gap-1 pt-1" id="stepper-dots">
+<button class="step-btn h-9 rounded-lg flex flex-col items-center justify-center bg-primary-container text-on-primary font-label-sm text-label-sm transition-all" data-step="0" onclick="goToStep(0)">
+<span>01</span>
+<span class="text-[9px] opacity-80">Invoice</span>
+</button>
+<button class="step-btn h-9 rounded-lg flex flex-col items-center justify-center bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm hover:bg-surface-container transition-all" data-step="1" onclick="goToStep(1)">
+<span>02</span>
+<span class="text-[9px] opacity-80">e-FIRA</span>
+</button>
+<button class="step-btn h-9 rounded-lg flex flex-col items-center justify-center bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm hover:bg-surface-container transition-all" data-step="2" onclick="goToStep(2)">
+<span>03</span>
+<span class="text-[9px] opacity-80">Match</span>
+</button>
+<button class="step-btn h-9 rounded-lg flex flex-col items-center justify-center bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm hover:bg-surface-container transition-all" data-step="3" onclick="goToStep(3)">
+<span>04</span>
+<span class="text-[9px] opacity-80">Resolve</span>
+</button>
+<button class="step-btn h-9 rounded-lg flex flex-col items-center justify-center bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm hover:bg-surface-container transition-all" data-step="4" onclick="goToStep(4)">
+<span>05</span>
+<span class="text-[9px] opacity-80">Purpose</span>
+</button>
+<button class="step-btn h-9 rounded-lg flex flex-col items-center justify-center bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm hover:bg-surface-container transition-all" data-step="5" onclick="goToStep(5)">
+<span>06</span>
+<span class="text-[9px] opacity-80">Seal Pack</span>
+</button>
+</div>
+</div>
+<!-- CAROUSEL / STEPPER VIEW CONTAINER -->
+<div class="flex flex-col gap-space-md" id="tour-view">
+<!-- STEP 1 CARD -->
+<div class="step-card flex flex-col gap-space-sm bg-surface-container-lowest rounded-xl p-space-base shadow-sm" id="step-card-0">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<div class="w-10 h-10 rounded-xl bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[24px]">receipt_long</span>
+</div>
+<div>
+<span class="font-label-sm text-label-sm text-primary font-bold tracking-wide uppercase">Phase 01</span>
+<h2 class="font-headline-sm text-headline-sm font-bold text-on-surface">Record Export Invoice</h2>
+</div>
+</div>
+<span class="px-2 py-1 rounded-md bg-surface-container text-on-surface-variant font-code-sm text-code-sm">ICEGATE</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant">Sync automatically from NetSuite, QuickBooks, Stripe or manually log commercial export invoices with Shipping Bills.</p>
+<!-- Visual Micro-Demo -->
+<div class="bg-surface-container-low rounded-xl p-space-md flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<span class="font-code-sm text-code-sm font-bold text-on-surface">INV-2024-088</span>
+<span class="px-2 py-0.5 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm font-semibold">USD 84,200.00</span>
+</div>
+<div class="flex items-center justify-between text-on-surface-variant font-body-sm text-body-sm">
+<span>Client: Acme Global BV</span>
+<span class="font-code-sm text-code-sm text-primary font-medium">SB #9921-DEL</span>
+</div>
+<div class="h-1 w-full bg-surface-container-high rounded-full overflow-hidden mt-1">
+<div class="h-full bg-secondary-fixed-dim w-full"></div>
+</div>
+<div class="flex items-center gap-1 font-label-sm text-label-sm text-on-surface-variant mt-0.5">
+<span class="material-symbols-outlined text-[16px] text-tertiary">check_circle</span>
+<span>ICEGATE Shipping Bill Confirmed • FOB $84,200</span>
+</div>
+</div>
+<!-- Pro Tip -->
+<div class="flex items-start gap-space-xs p-space-sm rounded-lg bg-surface-container">
+<span class="material-symbols-outlined text-[18px] text-primary">bolt</span>
+<p class="font-body-sm text-body-sm text-on-surface"><strong class="font-semibold text-primary">Pro Tip:</strong> Auto-ingest directly using our ERP webhook connector in 1-click.</p>
+</div>
+<!-- Stepper Navigation Controls -->
+<div class="flex items-center justify-between pt-space-xs">
+<span class="text-on-surface-variant font-label-sm text-label-sm">Step 1 of 6</span>
+<button class="h-10 px-space-base rounded-xl bg-primary-container text-on-primary font-label-md text-label-md font-semibold flex items-center gap-1 shadow-sm active:scale-95 transition-all" onclick="goToStep(1)">
+<span>Next: Ingest e-FIRA</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- STEP 2 CARD -->
+<div class="step-card hidden flex flex-col gap-space-sm bg-surface-container-lowest rounded-xl p-space-base shadow-sm" id="step-card-1">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<div class="w-10 h-10 rounded-xl bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[24px]">document_scanner</span>
+</div>
+<div>
+<span class="font-label-sm text-label-sm text-primary font-bold tracking-wide uppercase">Phase 02</span>
+<h2 class="font-headline-sm text-headline-sm font-bold text-on-surface">Ingest Bank e-FIRA / MT103</h2>
+</div>
+</div>
+<span class="px-2 py-1 rounded-md bg-secondary-fixed text-on-secondary-fixed font-code-sm text-code-sm">Neural OCR</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant">Connect AD-Cat 1 Bank APIs (JPMorgan, Citi, HSBC) or drop MT103 Nostro wire advice PDFs for sub-second ingestion.</p>
+<!-- Visual Micro-Demo -->
+<div class="bg-surface-container-low rounded-xl p-space-md flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[18px] text-primary animate-spin">sync</span>
+<span class="font-body-sm text-body-sm font-semibold text-on-surface">Scanning Nostro Advice...</span>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-surface-container-high text-primary font-label-sm text-label-sm font-semibold">Swift Field 70</span>
+</div>
+<div class="bg-surface-container-lowest rounded-lg p-2 flex flex-col gap-1 font-code-sm text-code-sm">
+<div class="text-on-surface font-semibold flex justify-between">
+<span>Inflow Detected</span>
+<span class="text-secondary">$84,165.00 USD</span>
+</div>
+<div class="text-on-surface-variant text-[11px] truncate">UTR #CITINOS-2024-99410 • Intermediary Haircut: -$35</div>
+</div>
+<div class="flex items-center gap-1 font-label-sm text-label-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px] text-tertiary">verified_user</span>
+<span>Cryptographic signature validated via bank gateway</span>
+</div>
+</div>
+<!-- Pro Tip -->
+<div class="flex items-start gap-space-xs p-space-sm rounded-lg bg-surface-container">
+<span class="material-symbols-outlined text-[18px] text-primary">lightbulb</span>
+<p class="font-body-sm text-body-sm text-on-surface"><strong class="font-semibold text-primary">Field 70 Intelligence:</strong> Automatically isolates buyer invoice handles from wire free-text notes.</p>
+</div>
+<!-- Stepper Navigation Controls -->
+<div class="flex items-center justify-between pt-space-xs">
+<button class="h-10 px-space-base rounded-xl bg-surface-container-low text-on-surface-variant font-label-md text-label-md font-semibold flex items-center gap-1" onclick="goToStep(0)">
+<span class="material-symbols-outlined text-[18px]">arrow_back</span>
+<span>Back</span>
+</button>
+<button class="h-10 px-space-base rounded-xl bg-primary-container text-on-primary font-label-md text-label-md font-semibold flex items-center gap-1 shadow-sm active:scale-95 transition-all" onclick="goToStep(2)">
+<span>Next: Matching</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- STEP 3 CARD -->
+<div class="step-card hidden flex flex-col gap-space-sm bg-surface-container-lowest rounded-xl p-space-base shadow-sm" id="step-card-2">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<div class="w-10 h-10 rounded-xl bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[24px]">compare_arrows</span>
+</div>
+<div>
+<span class="font-label-sm text-label-sm text-primary font-bold tracking-wide uppercase">Phase 03</span>
+<h2 class="font-headline-sm text-headline-sm font-bold text-on-surface">Run Automated Matching</h2>
+</div>
+</div>
+<span class="px-2 py-1 rounded-md bg-tertiary-fixed text-on-tertiary-fixed font-code-sm text-code-sm">99.8% Match</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant">Our dual-node ledger engine pairs trade invoices with correspondent bank wires within customizable micro-tolerances.</p>
+<!-- Visual Micro-Demo -->
+<div class="bg-surface-container-low rounded-xl p-space-md flex flex-col gap-space-sm">
+<div class="flex items-center justify-between bg-surface-container-lowest p-2.5 rounded-lg">
+<div class="flex flex-col">
+<span class="font-code-sm text-code-sm font-bold text-on-surface">INV #088</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">$84,200.00</span>
+</div>
+<div class="flex flex-col items-center">
+<span class="material-symbols-outlined text-[20px] text-tertiary">sync_alt</span>
+<span class="text-[10px] text-tertiary font-bold">100% PAIR</span>
+</div>
+<div class="flex flex-col text-right">
+<span class="font-code-sm text-code-sm font-bold text-on-surface">FIRA #9941</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">$84,165.00</span>
+</div>
+</div>
+<div class="flex items-center justify-between text-[11px] px-1 text-on-surface-variant">
+<span>FX Variance: 0.00%</span>
+<span class="text-tertiary font-semibold flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[14px]">done_all</span> Auto-Reconciled
+            </span>
+</div>
+</div>
+<!-- Pro Tip -->
+<div class="flex items-start gap-space-xs p-space-sm rounded-lg bg-surface-container">
+<span class="material-symbols-outlined text-[18px] text-primary">tune</span>
+<p class="font-body-sm text-body-sm text-on-surface"><strong class="font-semibold text-primary">Multi-Currency:</strong> Handles split shipments and EUR/GBP/USD cross-currency triangulation seamlessly.</p>
+</div>
+<!-- Stepper Navigation Controls -->
+<div class="flex items-center justify-between pt-space-xs">
+<button class="h-10 px-space-base rounded-xl bg-surface-container-low text-on-surface-variant font-label-md text-label-md font-semibold flex items-center gap-1" onclick="goToStep(1)">
+<span class="material-symbols-outlined text-[18px]">arrow_back</span>
+<span>Back</span>
+</button>
+<button class="h-10 px-space-base rounded-xl bg-primary-container text-on-primary font-label-md text-label-md font-semibold flex items-center gap-1 shadow-sm active:scale-95 transition-all" onclick="goToStep(3)">
+<span>Next: Exceptions</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- STEP 4 CARD -->
+<div class="step-card hidden flex flex-col gap-space-sm bg-surface-container-lowest rounded-xl p-space-base shadow-sm" id="step-card-3">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<div class="w-10 h-10 rounded-xl bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[24px]">gavel</span>
+</div>
+<div>
+<span class="font-label-sm text-label-sm text-primary font-bold tracking-wide uppercase">Phase 04</span>
+<h2 class="font-headline-sm text-headline-sm font-bold text-on-surface">Resolve Exceptions in 1-Tap</h2>
+</div>
+</div>
+<span class="px-2 py-1 rounded-md bg-error-container text-on-error-container font-code-sm text-code-sm">Safe Harbor</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant">Spot bank wire haircuts (-$35 intermediate deductions) or short settlements. Remediate with statutory RBI FEMA rules.</p>
+<!-- Visual Micro-Demo -->
+<div class="bg-surface-container-low rounded-xl p-space-md flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-1 text-on-surface font-body-sm text-body-sm font-semibold">
+<span class="material-symbols-outlined text-[18px] text-error">trending_down</span>
+<span>Intermediary Haircut: -$35.00 USD</span>
+</div>
+<span class="text-[11px] text-on-surface-variant">0.04% of FOB</span>
+</div>
+<div class="flex items-center justify-between p-2 rounded-lg bg-surface-container-lowest">
+<span class="font-body-sm text-body-sm text-on-surface">FEMA 2% Auto-Remediation</span>
+<button class="px-3 py-1 bg-primary-container text-on-primary rounded-md font-label-sm text-label-sm font-semibold active:scale-95 shadow-sm transition-all">
+              Auto-Absorb
+            </button>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Generates non-realization indemnity certificate instantly.</span>
+</div>
+<!-- Pro Tip -->
+<div class="flex items-start gap-space-xs p-space-sm rounded-lg bg-surface-container">
+<span class="material-symbols-outlined text-[18px] text-primary">shield</span>
+<p class="font-body-sm text-body-sm text-on-surface"><strong class="font-semibold text-primary">Zero Hang-Ups:</strong> Eliminates pending CA caveats or bank ledger stagnation on minor fees.</p>
+</div>
+<!-- Stepper Navigation Controls -->
+<div class="flex items-center justify-between pt-space-xs">
+<button class="h-10 px-space-base rounded-xl bg-surface-container-low text-on-surface-variant font-label-md text-label-md font-semibold flex items-center gap-1" onclick="goToStep(2)">
+<span class="material-symbols-outlined text-[18px]">arrow_back</span>
+<span>Back</span>
+</button>
+<button class="h-10 px-space-base rounded-xl bg-primary-container text-on-primary font-label-md text-label-md font-semibold flex items-center gap-1 shadow-sm active:scale-95 transition-all" onclick="goToStep(4)">
+<span>Next: RBI Codes</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- STEP 5 CARD -->
+<div class="step-card hidden flex flex-col gap-space-sm bg-surface-container-lowest rounded-xl p-space-base shadow-sm" id="step-card-4">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<div class="w-10 h-10 rounded-xl bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[24px]">psychology_alt</span>
+</div>
+<div>
+<span class="font-label-sm text-label-sm text-primary font-bold tracking-wide uppercase">Phase 05</span>
+<h2 class="font-headline-sm text-headline-sm font-bold text-on-surface">Review RBI Purpose Codes</h2>
+</div>
+</div>
+<span class="px-2 py-1 rounded-md bg-surface-container text-primary font-code-sm text-code-sm">AI Co-Pilot</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant">Our intelligence model audits your Master Service Agreements (MSA) and cross-checks DGFT rules to recommend exact trade codes.</p>
+<!-- Visual Micro-Demo -->
+<div class="bg-surface-container-low rounded-xl p-space-md flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<span class="font-code-sm text-code-sm font-bold text-on-surface">Recommended: P0802</span>
+<span class="px-2 py-0.5 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm font-bold">98.6% Confidence</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">"Software Consultancy / Implementation Services" — Validated against MSA Clause 4.1</p>
+<div class="flex items-center gap-2 mt-1">
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-on-surface font-label-sm text-label-sm">P0802 (Consultancy)</span>
+<span class="px-2 py-0.5 rounded bg-surface-container-lowest text-on-surface-variant font-label-sm text-label-sm line-through">P0803 (Data Ingestion)</span>
+</div>
+</div>
+<!-- Pro Tip -->
+<div class="flex items-start gap-space-xs p-space-sm rounded-lg bg-surface-container">
+<span class="material-symbols-outlined text-[18px] text-primary">verified</span>
+<p class="font-body-sm text-body-sm text-on-surface"><strong class="font-semibold text-primary">Human-in-the-Loop:</strong> You retain final approval; single-tap confirms compliance before seal.</p>
+</div>
+<!-- Stepper Navigation Controls -->
+<div class="flex items-center justify-between pt-space-xs">
+<button class="h-10 px-space-base rounded-xl bg-surface-container-low text-on-surface-variant font-label-md text-label-md font-semibold flex items-center gap-1" onclick="goToStep(3)">
+<span class="material-symbols-outlined text-[18px]">arrow_back</span>
+<span>Back</span>
+</button>
+<button class="h-10 px-space-base rounded-xl bg-primary-container text-on-primary font-label-md text-label-md font-semibold flex items-center gap-1 shadow-sm active:scale-95 transition-all" onclick="goToStep(5)">
+<span>Next: Seal EDF Pack</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- STEP 6 CARD -->
+<div class="step-card hidden flex flex-col gap-space-sm bg-surface-container-lowest rounded-xl p-space-base shadow-sm" id="step-card-5">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<div class="w-10 h-10 rounded-xl bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[24px]">inventory_2</span>
+</div>
+<div>
+<span class="font-label-sm text-label-sm text-primary font-bold tracking-wide uppercase">Phase 06</span>
+<h2 class="font-headline-sm text-headline-sm font-bold text-on-surface">Generate &amp; Seal EDF Pack</h2>
+</div>
+</div>
+<span class="px-2 py-1 rounded-md bg-secondary-fixed text-on-secondary-fixed font-code-sm text-code-sm">Audit-Ready</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant">Bundle matched invoices, verified e-FIRAs, and CA signatures into a sealed cryptographic compliance dossier.</p>
+<!-- Visual Micro-Demo -->
+<div class="bg-surface-container-low rounded-xl p-space-md flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<span class="font-code-sm text-code-sm font-bold text-on-surface">EDF-PACK-2024-089</span>
+<span class="px-2 py-0.5 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm font-semibold">100% Reconciled</span>
+</div>
+<div class="font-code-sm text-code-sm text-on-surface-variant truncate">
+            SHA-256: 7f83b1657ff1fc53b92dc18148a1d65dfc2d4b1fa...
+          </div>
+<div class="flex items-center gap-2 pt-1">
+<span class="flex-1 py-1.5 text-center rounded bg-surface-container-lowest text-on-surface font-code-sm text-code-sm font-semibold shadow-sm">
+              JSON (DGFT Format)
+            </span>
+<span class="flex-1 py-1.5 text-center rounded bg-surface-container-lowest text-on-surface font-code-sm text-code-sm font-semibold shadow-sm">
+              Signed PDF Bundle
+            </span>
+</div>
+</div>
+<!-- Pro Tip -->
+<div class="flex items-start gap-space-xs p-space-sm rounded-lg bg-surface-container">
+<span class="material-symbols-outlined text-[18px] text-primary">lock</span>
+<p class="font-body-sm text-body-sm text-on-surface"><strong class="font-semibold text-primary">AD-Cat 1 Compliant:</strong> Accepted immediately by major banks to close EDPMS pending items.</p>
+</div>
+<!-- Stepper Navigation Controls -->
+<div class="flex items-center justify-between pt-space-xs">
+<button class="h-10 px-space-base rounded-xl bg-surface-container-low text-on-surface-variant font-label-md text-label-md font-semibold flex items-center gap-1" onclick="goToStep(4)">
+<span class="material-symbols-outlined text-[18px]">arrow_back</span>
+<span>Back</span>
+</button>
+<button class="h-10 px-space-base rounded-xl bg-tertiary-container text-on-tertiary font-label-md text-label-md font-semibold flex items-center gap-1 shadow-sm active:scale-95 transition-all" onclick="finishTour()">
+<span>Complete Guide</span>
+<span class="material-symbols-outlined text-[18px]">done</span>
+</button>
+</div>
+</div>
+</div>
+<!-- CHEAT SHEET VIEW (Alternative Mode) -->
+<div class="hidden flex flex-col gap-space-sm" id="cheat-sheet-view">
+<div class="bg-surface-container-lowest rounded-xl p-space-base shadow-sm flex flex-col gap-space-sm">
+<h2 class="font-headline-sm text-headline-sm font-bold text-on-surface">EDFlow Workflow at a Glance</h2>
+<div class="flex flex-col gap-space-sm">
+<div class="flex items-start gap-3 p-2 rounded-lg bg-surface-container-low">
+<span class="w-6 h-6 rounded-md bg-primary-container text-on-primary font-bold text-center text-[12px] flex items-center justify-center shrink-0">1</span>
+<div class="flex flex-col">
+<span class="font-body-md text-body-md font-bold text-on-surface">Invoice Sync</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">NetSuite/Stripe connection with automated ICEGATE SB cross-check.</span>
+</div>
+</div>
+<div class="flex items-start gap-3 p-2 rounded-lg bg-surface-container-low">
+<span class="w-6 h-6 rounded-md bg-primary-container text-on-primary font-bold text-center text-[12px] flex items-center justify-center shrink-0">2</span>
+<div class="flex flex-col">
+<span class="font-body-md text-body-md font-bold text-on-surface">e-FIRA Ingestion</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Neural OCR extracts Nostro UTR and Swift Field 70 reference notes.</span>
+</div>
+</div>
+<div class="flex items-start gap-3 p-2 rounded-lg bg-surface-container-low">
+<span class="w-6 h-6 rounded-md bg-primary-container text-on-primary font-bold text-center text-[12px] flex items-center justify-center shrink-0">3</span>
+<div class="flex flex-col">
+<span class="font-body-md text-body-md font-bold text-on-surface">Automated Match</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Pairs invoices with Nostro bank wires up to 99.8% precision.</span>
+</div>
+</div>
+<div class="flex items-start gap-3 p-2 rounded-lg bg-surface-container-low">
+<span class="w-6 h-6 rounded-md bg-primary-container text-on-primary font-bold text-center text-[12px] flex items-center justify-center shrink-0">4</span>
+<div class="flex flex-col">
+<span class="font-body-md text-body-md font-bold text-on-surface">1-Tap Safe Harbor</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Absorb -$35 intermediary haircut fees within statutory 2% limit.</span>
+</div>
+</div>
+<div class="flex items-start gap-3 p-2 rounded-lg bg-surface-container-low">
+<span class="w-6 h-6 rounded-md bg-primary-container text-on-primary font-bold text-center text-[12px] flex items-center justify-center shrink-0">5</span>
+<div class="flex flex-col">
+<span class="font-body-md text-body-md font-bold text-on-surface">RBI Purpose Verification</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">AI verifies contract MSA vs P0802 code to shield from FEMA audit fines.</span>
+</div>
+</div>
+<div class="flex items-start gap-3 p-2 rounded-lg bg-surface-container-low">
+<span class="w-6 h-6 rounded-md bg-primary-container text-on-primary font-bold text-center text-[12px] flex items-center justify-center shrink-0">6</span>
+<div class="flex flex-col">
+<span class="font-body-md text-body-md font-bold text-on-surface">Seal &amp; File Dossier</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Cryptographic SHA-256 seal pushed to EDPMS bank portal.</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- PLAYGROUND & INTERACTIVE ACTIONS -->
+<div class="bg-surface-container-lowest rounded-xl p-space-base shadow-sm flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<span class="font-headline-sm text-headline-sm font-bold text-on-surface">Quick Simulations</span>
+<span class="material-symbols-outlined text-primary text-[20px]">science</span>
+</div>
+<div class="grid grid-cols-1 gap-2">
+<button class="w-full h-11 px-space-md rounded-xl bg-surface-container-high text-primary font-label-md text-label-md font-semibold flex items-center justify-between hover:bg-surface-container transition-all" onclick="triggerDemoSim()">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px]">play_circle</span>
+<span>Launch Sandbox Simulation</span>
+</div>
+<span class="text-[11px] text-on-surface-variant">Demo Flow</span>
+</button>
+<button class="w-full h-11 px-space-md rounded-xl bg-surface-container-low text-on-surface font-label-md text-label-md font-semibold flex items-center justify-between hover:bg-surface-container-high transition-all" onclick="downloadChecklist()">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px]">download</span>
+<span>Export Compliance Checklist</span>
+</div>
+<span class="text-[11px] text-on-surface-variant">.PDF (1.2 MB)</span>
+</button>
+</div>
+<!-- FAQ Accordions -->
+<div class="flex flex-col gap-2 pt-space-xs">
+<span class="font-label-sm text-label-sm font-bold text-on-surface-variant uppercase tracking-wider">Frequently Asked</span>
+<!-- Q1 -->
+<details class="group bg-surface-container-low rounded-lg p-space-sm cursor-pointer">
+<summary class="flex items-center justify-between font-body-sm text-body-sm font-semibold text-on-surface list-none">
+<span>What is the EDPMS 21-day rule?</span>
+<span class="material-symbols-outlined text-[18px] group-open:rotate-180 transition-transform">expand_more</span>
+</summary>
+<p class="font-body-sm text-body-sm text-on-surface-variant pt-2">
+            Under RBI Master Directions, shipping bills must be matched against realization FIRAs within statutory deadlines (ordinarily 9 months for realization, but bank cautionary notifications begin flagging unclosed EDPMS entries). EDFlow reconciles these instantly.
+          </p>
+</details>
+<!-- Q2 -->
+<details class="group bg-surface-container-low rounded-lg p-space-sm cursor-pointer">
+<summary class="flex items-center justify-between font-body-sm text-body-sm font-semibold text-on-surface list-none">
+<span>How are bank haircut fees handled?</span>
+<span class="material-symbols-outlined text-[18px] group-open:rotate-180 transition-transform">expand_more</span>
+</summary>
+<p class="font-body-sm text-body-sm text-on-surface-variant pt-2">
+            FEMA guidelines allow writing off or auto-absorbing intermediary correspondent bank charges up to specified percentage thresholds. EDFlow automates statutory justification without manual bank visits.
+          </p>
+</details>
+<!-- Q3 -->
+<details class="group bg-surface-container-low rounded-lg p-space-sm cursor-pointer">
+<summary class="flex items-center justify-between font-body-sm text-body-sm font-semibold text-on-surface list-none">
+<span>Can I invite our Chartered Accountant (CA)?</span>
+<span class="material-symbols-outlined text-[18px] group-open:rotate-180 transition-transform">expand_more</span>
+</summary>
+<p class="font-body-sm text-body-sm text-on-surface-variant pt-2">
+            Yes. CA collaborator seats are unlimited. They receive read-only review rights to sign off on 15CA/CB documentation directly inside the EDF Pack dossier module.
+          </p>
+</details>
+</div>
+</div>
+<!-- COMPLETION HERO BANNER -->
+<div class="relative overflow-hidden bg-primary-container text-on-primary rounded-xl p-space-base shadow-md flex flex-col gap-space-sm">
+<div class="flex items-center gap-space-xs">
+<span class="w-8 h-8 rounded-full bg-surface-container-lowest/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">rocket_launch</span>
+</span>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-primary-container font-semibold uppercase tracking-wider">All Clear</span>
+<h3 class="font-headline-sm text-headline-sm font-bold text-on-primary">Ready to automate compliance!</h3>
+</div>
+</div>
+<p class="font-body-sm text-body-sm text-on-primary-container">
+        Your workspace is pre-configured with default tolerances and RBI DGFT safe harbor rules. Jump right in or run your first invoice match.
+      </p>
+<div class="flex flex-col gap-2 pt-1">
+<a class="w-full h-11 rounded-xl bg-surface-container-lowest text-primary font-label-md text-label-md font-bold flex items-center justify-center gap-1 shadow-sm active:scale-95 transition-all" data-path="dashboard" href="#">
+<span>Go to Workspace Dashboard</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</a>
+<button class="w-full h-10 rounded-xl bg-surface-container-lowest/15 text-on-primary font-label-md text-label-md font-semibold flex items-center justify-center gap-1 hover:bg-surface-container-lowest/25 transition-all" onclick="goToStep(0)">
+<span class="material-symbols-outlined text-[18px]">replay</span>
+<span>Replay 2-Min Walkthrough</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<script>
+  let currentStep = 0;
+  const totalSteps = 6;
+
+  function goToStep(index) {
+    currentStep = index;
+    // Hide all cards
+    for (let i = 0; i < totalSteps; i++) {
+      const card = document.getElementById(`step-card-${i}`);
+      if (card) {
+        if (i === index) {
+          card.classList.remove('hidden');
+        } else {
+          card.classList.add('hidden');
+        }
+      }
+    }
+
+    // Update buttons
+    const stepBtns = document.querySelectorAll('.step-btn');
+    stepBtns.forEach((btn, i) => {
+      if (i === index) {
+        btn.classList.remove('bg-surface-container-low', 'text-on-surface-variant');
+        btn.classList.add('bg-primary-container', 'text-on-primary');
+      } else {
+        btn.classList.remove('bg-primary-container', 'text-on-primary');
+        btn.classList.add('bg-surface-container-low', 'text-on-surface-variant');
+      }
+    });
+
+    // Update progress fill
+    const progressFill = document.getElementById('step-progress-fill');
+    if (progressFill) {
+      const percent = ((index + 1) / totalSteps) * 100;
+      progressFill.style.width = `${percent}%`;
+    }
+
+    // Update counter text
+    const counterText = document.getElementById('step-counter-text');
+    if (counterText) {
+      counterText.textContent = `Step ${index + 1} of ${totalSteps}`;
+    }
+
+    // Update tag text
+    const tag = document.getElementById('step-tag');
+    if (tag) {
+      if (index === 5) {
+        tag.textContent = 'Final Step';
+        tag.className = 'px-2 py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed font-label-sm text-label-sm font-semibold';
+      } else {
+        tag.textContent = 'Active';
+        tag.className = 'px-2 py-0.5 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm font-semibold';
+      }
+    }
+  }
+
+  function setMode(mode) {
+    const tourView = document.getElementById('tour-view');
+    const sheetView = document.getElementById('cheat-sheet-view');
+    const modeTourBtn = document.getElementById('mode-tour');
+    const modeSheetBtn = document.getElementById('mode-sheet');
+
+    if (mode === 'tour') {
+      tourView.classList.remove('hidden');
+      sheetView.classList.add('hidden');
+      modeTourBtn.className = 'px-space-sm py-1 rounded-md bg-surface-container-lowest text-primary font-semibold transition-all';
+      modeSheetBtn.className = 'px-space-sm py-1 rounded-md text-on-surface-variant font-medium hover:text-on-surface transition-all';
+    } else {
+      tourView.classList.add('hidden');
+      sheetView.classList.remove('hidden');
+      modeSheetBtn.className = 'px-space-sm py-1 rounded-md bg-surface-container-lowest text-primary font-semibold transition-all';
+      modeTourBtn.className = 'px-space-sm py-1 rounded-md text-on-surface-variant font-medium hover:text-on-surface transition-all';
+    }
+  }
+
+  function finishTour() {
+    alert("Guide completed! You're ready to reconcile in EDFlow.");
+  }
+
+  function triggerDemoSim() {
+    alert("Sandbox Simulation Mode: Ingesting mock NetSuite INV-2024-099 and JPMorgan MT103 wire...");
+    goToStep(2);
+  }
+
+  function downloadChecklist() {
+    alert("Downloading 'EDFlow-FEMA-EDPMS-Exporter-Checklist.pdf'...");
+  }
+</script></main><nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface/80 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]" data-active-classes="text-primary font-bold"><div class="flex justify-around items-center h-16 px-space-xs"><a class="flex flex-col items-center justify-center min-w-[56px] h-12 text-on-surface-variant hover:text-on-surface transition-colors" data-path="dashboard" href="#"><span class="material-symbols-outlined text-[22px]">dashboard</span><span class="font-label-sm text-label-sm">Dashboard</span></a><a class="flex flex-col items-center justify-center min-w-[56px] h-12 text-on-surface-variant hover:text-on-surface transition-colors" data-path="invoices" href="#"><span class="material-symbols-outlined text-[22px]">receipt_long</span><span class="font-label-sm text-label-sm">Invoices</span></a><a class="flex flex-col items-center justify-center min-w-[56px] h-12 text-on-surface-variant hover:text-on-surface transition-colors" data-path="matching-center" href="#"><span class="material-symbols-outlined text-[22px]">compare_arrows</span><span class="font-label-sm text-label-sm">Matching</span></a><a class="flex flex-col items-center justify-center min-w-[56px] h-12 text-on-surface-variant hover:text-on-surface transition-colors" data-path="exceptions-hub" href="#"><span class="material-symbols-outlined text-[22px]">warning</span><span class="font-label-sm text-label-sm">Exceptions</span></a><a class="flex flex-col items-center justify-center min-w-[56px] h-12 text-on-surface-variant hover:text-on-surface transition-colors" data-path="edf-packs" href="#"><span class="material-symbols-outlined text-[22px]">inventory_2</span><span class="font-label-sm text-label-sm">Packs</span></a></div></nav></body></html>

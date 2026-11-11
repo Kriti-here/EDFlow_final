@@ -1,0 +1,116 @@
+{
+  "synthetic": true,
+  "dataset": "SYNTHETIC",
+  "watermark": "SYNTHETIC - NOT A REAL DOCUMENT",
+  "fixture_id": "fira_02_fx_variance",
+  "source": "simulated",
+  "scenarios": [
+    "fx_variance"
+  ],
+  "fira": {
+    "fira_reference": "SYN-FIRA-2026-11-0002",
+    "bank": "Synthetic Bank of Exampleland (FICTIONAL)",
+    "ad_code": "00000000000000",
+    "statement_period": "2026-10-31 to 2026-11-06",
+    "generated_on": "2026-11-06"
+  },
+  "fx_rates_simulated": {
+    "USD": "84.00",
+    "GBP": "106.00",
+    "EUR": "91.00",
+    "SGD": "62.00"
+  },
+  "exporter": {
+    "legal_name": "Synthetic Exporter Pvt Ltd (FICTIONAL)",
+    "entity_type": "company",
+    "pan": "AAAAA0000A",
+    "gstin": "00AAAAA0000A1Z0",
+    "lut_number": "SYN-LUT-0001",
+    "ad_bank_name": "Synthetic Bank of Exampleland (FICTIONAL)",
+    "ad_code": "00000000000000"
+  },
+  "lines": [
+    {
+      "line_no": 1,
+      "utr": "SYN-UTR-02-001",
+      "value_date": "2026-11-02",
+      "remitter_name": "Demo Analytics GmbH",
+      "remitter_country": "DE",
+      "remitter_email": "analytics.de@example.com",
+      "currency": "EUR",
+      "gross_amount": "3000.00",
+      "bank_charges": "87.00",
+      "net_amount_inr": "257800.50",
+      "purpose_code": "P0803",
+      "invoice_reference": "INV-2026-1004"
+    },
+    {
+      "line_no": 2,
+      "utr": "SYN-UTR-02-002",
+      "value_date": "2026-11-03",
+      "remitter_name": "Test Retail Pte Ltd",
+      "remitter_country": "SG",
+      "remitter_email": "retail.sg@example.com",
+      "currency": "SGD",
+      "gross_amount": "2200.00",
+      "bank_charges": "63.80",
+      "net_amount_inr": "130094.58",
+      "purpose_code": "P1006",
+      "invoice_reference": "INV-2026-1005"
+    }
+  ],
+  "expected_matching": [
+    {
+      "line_no": 1,
+      "invoice_number": "INV-2026-1004",
+      "match_type": "fx_variance",
+      "expected_status": "matched_with_variance",
+      "confidence": "high",
+      "candidates": [
+        "INV-2026-1004"
+      ],
+      "expected_rate": "91.00",
+      "actual_rate": "88.50",
+      "expected_net_inr": "265083.00",
+      "actual_net_inr": "257800.50",
+      "variance_percent": "-2.75",
+      "notes": "Realised INR conversion is below the simulated mid-market rate."
+    },
+    {
+      "line_no": 2,
+      "invoice_number": "INV-2026-1005",
+      "match_type": "fx_variance",
+      "expected_status": "matched_with_variance",
+      "confidence": "high",
+      "candidates": [
+        "INV-2026-1005"
+      ],
+      "expected_rate": "62.00",
+      "actual_rate": "60.90",
+      "expected_net_inr": "132444.40",
+      "actual_net_inr": "130094.58",
+      "variance_percent": "-1.77",
+      "notes": "Realised INR conversion is below the simulated mid-market rate."
+    }
+  ],
+  "expected_exceptions": [
+    {
+      "line_no": 1,
+      "category": "fx_variance",
+      "severity": "low"
+    },
+    {
+      "line_no": 2,
+      "category": "fx_variance",
+      "severity": "low"
+    }
+  ],
+  "expectations": {
+    "variance_tolerance_percent": "0.50",
+    "expected_rates": {
+      "EUR": "91.00",
+      "SGD": "62.00"
+    },
+    "note_usd_rate": "USD simulated rate 84.00 is unused here."
+  }
+}

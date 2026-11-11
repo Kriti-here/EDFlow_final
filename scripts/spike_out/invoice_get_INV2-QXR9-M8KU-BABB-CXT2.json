@@ -1,0 +1,125 @@
+{
+  "id": "INV2-QXR9-M8KU-BABB-CXT2",
+  "status": "SENT",
+  "detail": {
+    "reference": "CONTRACT-001",
+    "currency_code": "USD",
+    "note": "PurposeCode: TEST; GSTIN: TESTGSTIN; LUT: TESTLUT",
+    "terms_and_conditions": "Payment due within 30 days of issuance.",
+    "memo": "Spike draft invoice test memo",
+    "category_code": "SHIPPABLE",
+    "invoice_number": "0005",
+    "invoice_date": "2026-11-05",
+    "payment_term": {
+      "term_type": "NO_DUE_DATE"
+    },
+    "viewed_by_recipient": false,
+    "group_draft": false,
+    "metadata": {
+      "create_time": "2026-11-05T07:00:16Z",
+      "last_update_time": "2026-11-05T07:00:16Z",
+      "first_sent_time": "2026-11-05T07:00:18Z",
+      "last_sent_time": "2026-11-05T07:00:18Z",
+      "created_by_flow": "REGULAR_SINGLE",
+      "recipient_view_url": "https://www.sandbox.paypal.com/invoice/p/#QXR9M8KUBABBCXT2",
+      "invoicer_view_url": "https://www.sandbox.paypal.com/invoice/details/INV2-QXR9-M8KU-BABB-CXT2",
+      "caller_type": "API_V2_INVOICE",
+      "spam_info": {}
+    },
+    "archived": false
+  },
+  "invoicer": {},
+  "primary_recipients": [
+    {
+      "billing_info": {
+        "email_address": "sb-buyer@personal.example.com"
+      }
+    }
+  ],
+  "items": [
+    {
+      "id": "ITEM-8D390813L5815551G",
+      "name": "Consulting Services",
+      "description": "Standard spike consulting unit",
+      "quantity": "1",
+      "unit_amount": {
+        "currency_code": "USD",
+        "value": "100.00"
+      },
+      "unit_of_measure": "QUANTITY"
+    }
+  ],
+  "configuration": {
+    "tax_calculated_after_discount": false,
+    "tax_inclusive": false,
+    "allow_tip": false,
+    "allow_only_pay_by_bank": false,
+    "allow_vba_payments": false,
+    "save_item_for_future": true,
+    "template_id": "TEMP-4S326460LG541964K"
+  },
+  "amount": {
+    "breakdown": {
+      "item_total": {
+        "currency_code": "USD",
+        "value": "100.00"
+      },
+      "discount": {
+        "invoice_discount": {
+          "amount": {
+            "currency_code": "USD",
+            "value": "0.00"
+          }
+        },
+        "item_discount": {
+          "currency_code": "USD",
+          "value": "0.00"
+        }
+      },
+      "tax_total": {
+        "currency_code": "USD",
+        "value": "0.00"
+      }
+    },
+    "currency_code": "USD",
+    "value": "100.00"
+  },
+  "due_amount": {
+    "currency_code": "USD",
+    "value": "100.00"
+  },
+  "links": [
+    {
+      "href": "https://api.sandbox.paypal.com/v2/invoicing/invoices/INV2-QXR9-M8KU-BABB-CXT2",
+      "rel": "self",
+      "method": "GET"
+    },
+    {
+      "href": "https://api.sandbox.paypal.com/v2/invoicing/invoices/INV2-QXR9-M8KU-BABB-CXT2",
+      "rel": "replace",
+      "method": "PUT"
+    },
+    {
+      "href": "https://api.sandbox.paypal.com/v2/invoicing/invoices/INV2-QXR9-M8KU-BABB-CXT2/cancel",
+      "rel": "cancel",
+      "method": "POST"
+    },
+    {
+      "href": "https://api.sandbox.paypal.com/v2/invoicing/invoices/INV2-QXR9-M8KU-BABB-CXT2/remind",
+      "rel": "remind",
+      "method": "POST"
+    },
+    {
+      "href": "https://api.sandbox.paypal.com/v2/invoicing/invoices/INV2-QXR9-M8KU-BABB-CXT2/payments",
+      "rel": "record-payment",
+      "method": "POST"
+    },
+    {
+      "href": "https://api.sandbox.paypal.com/v2/invoicing/invoices/INV2-QXR9-M8KU-BABB-CXT2/generate-qr-code",
+      "rel": "qr-code",
+      "method": "GET"
+    }
+  ],
+  "unilateral": false,
+  "settings": {}
+}

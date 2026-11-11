@@ -1,0 +1,20 @@
+fastapi>=0.115,<1.0
+uvicorn[standard]>=0.30,<1.0
+sqlalchemy>=2.0,<3.0
+pydantic-settings>=2.6,<3.0
+httpx>=0.27,<1.0
+# Regulatory rules live in rules/india_export.yaml (AGENTS.md rule 6); Python has no
+# stdlib YAML parser, so PyYAML is required to load and validate that config.
+pyyaml>=6.0,<7.0
+# B10 FIRA extraction: pdfplumber parses the PDF with layout/word geometry (pypdf cannot).
+pdfplumber>=0.11,<1.0
+# FastAPI multipart form parsing for the FIRA file upload endpoint (UploadFile).
+python-multipart>=0.0.9,<1.0
+
+# Development and test dependencies
+pytest>=8.0,<9.0
+respx>=0.21,<1.0
+# Synthetic FIRA fixtures are PDFs; reportlab generates them (scripts/gen_fixtures.py)
+# and pypdf is used only by tests to assert the PDFs are readable and text-extractable.
+reportlab>=4.0,<6.0
+pypdf>=5.0,<6.0
