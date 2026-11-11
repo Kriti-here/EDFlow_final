@@ -25,6 +25,7 @@ dist-ssr
 
 # Environment files — never commit real secrets
 .env
+.env.*
 .env.production
 backend/.env
 backend/.env.production
