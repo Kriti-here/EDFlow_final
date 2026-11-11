@@ -45,3 +45,13 @@ def test_mapper_with_exchange_rate_and_wrapped_response():
     m = map_capture(extract_capture(wrapped))
     assert m["fx_rate"] == Decimal("0.91") and m["fx_rate_source"] == "paypal"
     assert m["receivable_amount"] == Decimal("43.10") and m["receivable_currency"] == "EUR"
+
+
+def test_cors_allows_local_vite_dev_origin(client):
+    r = client.get("/healthz", headers={"Origin": "http://localhost:5173"})
+    assert r.headers.get("access-control-allow-origin") == "http://localhost:5173"
+
+
+def test_cors_rejects_unconfigured_origin(client):
+    r = client.get("/healthz", headers={"Origin": "https://not-allowed.example"})
+    assert "access-control-allow-origin" not in r.headers

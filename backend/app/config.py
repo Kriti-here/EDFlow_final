@@ -27,8 +27,10 @@ class Settings(BaseSettings):
     allow_unverified_webhooks: bool = False  # local testing only, never in production
 
     public_base_url: str = "http://localhost:8000"
-    frontend_url: str = "http://localhost:3000"
-    cors_origins: str = "http://localhost:3000"
+    # Local Vite dev server (see DEPLOY.md). Deployed origins (e.g. the Vercel URL)
+    # come from CORS_ORIGINS / FRONTEND_URL in the environment, never hardcoded here.
+    frontend_url: str = "http://localhost:5173"
+    cors_origins: str = "http://localhost:5173,http://127.0.0.1:5173"
     database_url: str = f"sqlite:///{ROOT / 'edflow.sqlite'}"
     demo_admin_key: str = ""
 
