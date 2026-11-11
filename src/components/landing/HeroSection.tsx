@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 
 import HeroCompliancePanel from "./HeroCompliancePanel";
+import HeroPipeline from "./HeroPipeline";
 import HeroWorkflowPanel from "./HeroWorkflowPanel";
 import MaterialIcon from "./MaterialIcon";
 
@@ -135,6 +136,8 @@ function HeroSection() {
 
         <HeroCompliancePanel />
       </div>
+
+      <HeroPipeline />
     </section>
   );
 }

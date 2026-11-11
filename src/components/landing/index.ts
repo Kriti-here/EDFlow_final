@@ -2,6 +2,7 @@ export { default as DiscoveredSection } from "./DiscoveredSection";
 export { default as FinalCtaSection } from "./FinalCtaSection";
 export { default as FrictionCard } from "./FrictionCard";
 export { default as HeroCompliancePanel } from "./HeroCompliancePanel";
+export { default as HeroPipeline } from "./HeroPipeline";
 export { default as HeroSection } from "./HeroSection";
 export { default as HeroWorkflowPanel } from "./HeroWorkflowPanel";
 export { default as LandingBottomNav } from "./LandingBottomNav";
