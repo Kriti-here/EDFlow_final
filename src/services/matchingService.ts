@@ -8,6 +8,8 @@
 //   fx_expected_rate, fx_actual_rate, fx_variance_bp, engine_version,
 //   is_synthetic, confirmed_at, confirmed_by, created_at, updated_at
 
+import { apiUrl } from './api';
+
 /** Raw match record as returned by GET /matches */
 export interface BackendMatchRecord {
   id: number;
@@ -139,8 +141,7 @@ function adaptMatches(raw: BackendMatchListResponse): MatchingResultsResponse {
 
 /** Fetch all match records from GET /matches and adapt to UI shape. */
 export async function fetchMatchingResults(): Promise<MatchingResultsResponse> {
-  const base = import.meta.env.VITE_API_BASE_URL ?? '';
-  const response = await fetch(`${base}/matches`);
+  const response = await fetch(apiUrl('/matches'));
   if (!response.ok) {
     const text = await response.text();
     throw new Error(`Failed to fetch matching results: ${response.status} ${text}`);

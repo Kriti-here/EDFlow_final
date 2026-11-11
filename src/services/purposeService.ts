@@ -10,6 +10,7 @@
 //   decision_note, last_seen_at, created_at, updated_at
 
 import type { QueueItem, Metric } from '../types/purpose';
+import { apiUrl } from './api';
 
 /** Raw recommendation record from backend */
 export interface BackendRecommendation {
@@ -64,7 +65,7 @@ function bpToPercent(bp: number | null): string {
   return `${(bp / 100).toFixed(1)}%`;
 }
 
-/** Adapt a pending backend recommendation to a UI QueueItem */
+/** Adapt a proposed backend recommendation to a UI QueueItem */
 function toQueueItem(r: BackendRecommendation): QueueItem {
   return {
     id: String(r.id),
@@ -82,13 +83,13 @@ function toQueueItem(r: BackendRecommendation): QueueItem {
       category: r.code_category,
       confidence: bpToPercent(r.confidence_bp),
     },
-    status: r.status === 'pending' ? 'pending' : r.status === 'accepted' ? 'approved' : 'escalated',
+    status: r.status === 'proposed' ? 'pending' : r.status === 'accepted' ? 'approved' : 'escalated',
   };
 }
 
 /** Build summary metric cards from summary counts */
 function buildMetrics(summary: BackendPurposeSummary, recs: BackendRecommendation[]): Metric[] {
-  const pending = recs.filter((r) => r.status === 'pending').length;
+  const pending = recs.filter((r) => r.status === 'proposed').length;
   const highConf = recs.filter(
     (r) => r.confidence_bp !== null && r.confidence_bp >= 9500,
   ).length;
@@ -105,15 +106,13 @@ function buildMetrics(summary: BackendPurposeSummary, recs: BackendRecommendatio
 }
 
 /**
- * Fetch pending purpose recommendations from backend.
- * Calls GET /purpose-recommendations (status=pending) and GET /purpose-recommendations/summary.
+ * Fetch proposed purpose recommendations from backend.
+ * Calls GET /purpose-recommendations (status=proposed) and GET /purpose-recommendations/summary.
  */
 export async function fetchPurposeQueue(): Promise<PurposeQueueResponse> {
-  const base = import.meta.env.VITE_API_BASE_URL ?? '';
-
   const [listRes, summaryRes] = await Promise.all([
-    fetch(`${base}/purpose-recommendations?status=pending&limit=200`),
-    fetch(`${base}/purpose-recommendations/summary`),
+    fetch(apiUrl('/purpose-recommendations', { status: 'proposed', limit: 200 })),
+    fetch(apiUrl('/purpose-recommendations/summary')),
   ]);
 
   if (!listRes.ok) {

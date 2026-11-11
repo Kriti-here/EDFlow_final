@@ -9,6 +9,7 @@
 //   exported_at, exported_by, note, created_at, updated_at
 
 import type { EDFPack, PackMetric, ActiveCompilation } from '../types/edf';
+import { apiUrl } from './api';
 
 /** Raw EDF pack record from backend (list form, snapshot omitted) */
 export interface BackendEDFPack {
@@ -112,11 +113,9 @@ function buildMetrics(summary: BackendEDFSummary): PackMetric[] {
  * Calls GET /edf-packs and GET /edf-packs/summary in parallel.
  */
 export async function fetchEDFPacks(): Promise<EDFPacksResponse> {
-  const base = import.meta.env.VITE_API_BASE_URL ?? '';
-
   const [listRes, summaryRes] = await Promise.all([
-    fetch(`${base}/edf-packs?limit=200`),
-    fetch(`${base}/edf-packs/summary`),
+    fetch(apiUrl('/edf-packs', { limit: 200 })),
+    fetch(apiUrl('/edf-packs/summary')),
   ]);
 
   if (!listRes.ok) {

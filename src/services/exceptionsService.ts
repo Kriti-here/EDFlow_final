@@ -12,6 +12,7 @@
 //   last_seen_at, created_at, updated_at
 
 import type { ExceptionKpi } from '../types/exceptions';
+import { apiUrl } from './api';
 
 /** Raw exception record from backend */
 export interface BackendException {
@@ -87,11 +88,9 @@ function buildKpis(list: BackendException[], summary: BackendExceptionSummary): 
  * Calls GET /exceptions (open only) and GET /exceptions/summary in parallel.
  */
 export async function fetchExceptions(): Promise<ExceptionsResponse> {
-  const base = import.meta.env.VITE_API_BASE_URL ?? '';
-
   const [listRes, summaryRes] = await Promise.all([
-    fetch(`${base}/exceptions?status=open&limit=200`),
-    fetch(`${base}/exceptions/summary`),
+    fetch(apiUrl('/exceptions', { status: 'open', limit: 200 })),
+    fetch(apiUrl('/exceptions/summary')),
   ]);
 
   if (!listRes.ok) {
