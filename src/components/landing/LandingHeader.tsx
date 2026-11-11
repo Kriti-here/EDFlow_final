@@ -4,8 +4,8 @@ import { Link } from "react-router-dom";
 
 import MaterialIcon from "./MaterialIcon";
 
-const BRANDMARK_SRC =
-  "https://lh3.googleusercontent.com/aida/ALJJyrDB9uJEaP73RhyUkcbZBUt_OT5IzdojMPtmF_Q8Xwilr9QGyA5GjNSFdyRjVpatBSN_dC9hhaYl41spxV8YpRaTsxC0X8C6VAAE7oMvCDLPhj-vB1gOBekLco_XJlwR1SHoAeAM7-NABn--WZkW4t47StpWZcWCAuQut6GPTgCACGzaVU60zWwG72-RlHVuTLv2xtR-ewIKcyu-RAFtweLZr1kBYzlE13EMc63bnTYx6g";
+// Local brandmark served from `public/`; no external image dependency.
+const BRANDMARK_SRC = "/favicon.svg";
 
 type DrawerItem = {
   /** In-page anchor (`#section`) or workspace route (`/guide`). */
