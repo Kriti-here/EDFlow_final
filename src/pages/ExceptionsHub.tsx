@@ -12,7 +12,7 @@ import {
   sections,
 } from '../data/exceptions';
 import { fetchExceptions } from '../services/exceptionsService';
-import type { ExceptionItem, ResolvedException, ExceptionKpi } from '../types/exceptions';
+import type { ExceptionKpi } from '../types/exceptions';
 
 function ExceptionsHub() {
   const [activeFilter, setActiveFilter] = useState<string>('all');
@@ -21,8 +21,8 @@ function ExceptionsHub() {
 
   // Live data state
   const [kpiMetrics, setKpiMetrics] = useState<ExceptionKpi[]>([]);
-  const [exceptions, setExceptions] = useState<ExceptionItem[]>([]);
-  const [resolvedExceptions, setResolvedExceptions] = useState<ResolvedException[]>([]);
+  const [exceptions, setExceptions] = useState<any[]>([]);
+  const [resolvedExceptions, setResolvedExceptions] = useState<any[]>([]);
   const [totalResolved, setTotalResolved] = useState<number>(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
