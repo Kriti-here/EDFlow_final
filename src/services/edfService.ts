@@ -1,17 +1,48 @@
-// Service to fetch EDF packs from backend API
-// Backend: GET /edf-packs         → {count: number, packs: EDFPackRecord[]}
-//          GET /edf-packs/summary → summary counts by status
+// Service for the EDF pack workspace. Every value the page renders comes from
+// the backend; nothing here is defaulted to a plausible-looking placeholder.
 //
-// EDFPack fields (from backend pack_out):
-//   id, period{year,month,start,end}, status, line_count, engine_version,
-//   is_synthetic, pack_ready, validation, totals, exporter,
-//   approved_snapshot_hash, approved_at, approved_by,
-//   exported_at, exported_by, note, created_at, updated_at
+// Backend (backend/app/routers/edf.py):
+//   POST /edf-packs/generate             {year, month, note?}  → pack (idempotent)
+//   GET  /edf-packs                      {count, packs[]}
+//   GET  /edf-packs/summary              {count, by_status{}}
+//   POST /edf-packs/{id}/validate        → pack
+//   POST /edf-packs/{id}/approve         {note?} → pack
+//   POST /edf-packs/{id}/revoke          {note?} → pack
+//   GET  /edf-packs/{id}/export?format=json|csv|pdf
+//
+// A pack is a worksheet, never a filing: the export endpoint drops a file in
+// the browser and never submits anything to a bank or the RBI.
 
-import type { EDFPack, PackMetric, ActiveCompilation } from '../types/edf';
-import { apiUrl } from './api';
+import { apiUrl, fetchJson, postJson, settleResult } from './api';
+import type {
+  ActiveCompilation,
+  ComplianceCheck,
+  EDFPack,
+  EDFPackExportFormat,
+  EDFPackStatus,
+  PackMetric,
+} from '../types/edf';
 
-/** Raw EDF pack record from backend (list form, snapshot omitted) */
+/** One deterministic completeness check emitted by backend/app/services/edf_engine.py. */
+export interface BackendValidationItem {
+  key: string;
+  /** "blocking" | "warning" | "info" */
+  level: string;
+  ok: boolean;
+  message: string;
+}
+
+/** Currency-wise totals from the backend engine's `_totals()`. */
+export interface BackendEDFTotals {
+  line_count: number;
+  by_currency: Record<string, string>;
+  nrv_by_currency: Record<string, string>;
+  total_inr: string;
+  total_inr_simulated: boolean;
+  unconvertible_currencies: string[];
+}
+
+/** Raw EDF pack record from backend `pack_out()` (snapshot omitted in list form). */
 export interface BackendEDFPack {
   id: number;
   period: { year: number; month: number; start: string | null; end: string | null };
@@ -20,8 +51,8 @@ export interface BackendEDFPack {
   engine_version: string | null;
   is_synthetic: boolean;
   pack_ready: boolean;
-  validation: Record<string, unknown> | null;
-  totals: Record<string, unknown> | null;
+  validation: BackendValidationItem[] | null;
+  totals: BackendEDFTotals | null;
   exporter: Record<string, unknown> | null;
   approved_snapshot_hash: string | null;
   approved_at: string | null;
@@ -38,113 +69,244 @@ export interface BackendEDFPackListResponse {
   packs: BackendEDFPack[];
 }
 
-/** Backend /edf-packs/summary response */
+/** Backend /edf-packs/summary response. */
 export interface BackendEDFSummary {
-  total: number;
+  count: number;
   by_status: Record<string, number>;
 }
 
-/** UI-ready response consumed by EDFPacks page */
+export type { EDFPackExportFormat };
+
+/** UI-ready response consumed by the EDFPacks page. */
 export interface EDFPacksResponse {
   metrics: PackMetric[];
   activeCompilation: ActiveCompilation | null;
   packs: EDFPack[];
+  /** Newest pack in the ledger, whatever its status (null when there are none). */
+  latest: EDFPack | null;
+  /** Lifetime pack count straight from GET /edf-packs/summary. */
+  totalPacks: number;
+  /** Engine version stamped on the newest pack, for the header strip. */
+  engineVersion: string | null;
+  /** Readable failure message per endpoint that could not be loaded. */
+  errors: {
+    /** GET /edf-packs (the pack board). */
+    packs: string | null;
+    /** GET /edf-packs/summary (the lifetime count). */
+    summary: string | null;
+  };
 }
 
-/** Map backend status string to UI EDFPackStatus */
-function toPackStatus(status: string): 'ready' | 'draft' | 'blocked' | 'exported' {
+// ---- formatting helpers ------------------------------------------------------
+
+const INR_FORMAT = new Intl.NumberFormat('en-IN');
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+/** Format year+month as a readable label. */
+function periodLabel(period: BackendEDFPack['period']): string {
+  return `${MONTHS[period.month - 1] ?? period.month} ${period.year}`;
+}
+
+/** Parse the integer part of a backend money string (total_inr is quantised to 1). */
+function parseInteger(value: string | null | undefined): bigint {
+  if (typeof value !== 'string') return 0n;
+  const match = value.trim().match(/^-?\d+/);
+  return match ? BigInt(match[0]) : 0n;
+}
+
+/** Sum `totals.total_inr` across packs exactly (bigint, never a float). */
+function sumInr(rows: BackendEDFPack[]): string {
+  let total = 0n;
+  for (const row of rows) total += parseInteger(row.totals?.total_inr);
+  return `₹${INR_FORMAT.format(total)}`;
+}
+
+/** Exporter legal name, falling back to the Section 1 name+address line. */
+function exporterName(exporter: Record<string, unknown> | null): string {
+  const legal = exporter?.['legal_name'];
+  if (typeof legal === 'string' && legal.trim()) return legal;
+  const joined = exporter?.['exporters_name_address'];
+  if (typeof joined === 'string' && joined.trim()) return joined.split(',')[0].trim();
+  return '—';
+}
+
+// ---- backend → UI mapping ----------------------------------------------------
+
+/**
+ * Map the backend lifecycle onto the four board columns.
+ *
+ * `approved` is what the board calls "ready" (frozen and downloadable), a
+ * draft that fails a blocking check reads as "blocked", and a revoked pack
+ * stays visible as `void` rather than masquerading as a draft.
+ */
+function toPackStatus(status: string, ready: boolean): EDFPackStatus {
   switch (status) {
-    case 'approved': return 'ready';
-    case 'exported': return 'exported';
-    case 'blocked':  return 'blocked';
-    default:         return 'draft';
+    case 'approved':
+      return 'ready';
+    case 'exported':
+      return 'exported';
+    case 'void':
+      return 'void';
+    case 'blocked':
+      return 'blocked';
+    default:
+      return ready ? 'draft' : 'blocked';
   }
 }
 
-/** Format year+month as a readable label */
-function periodLabel(p: BackendEDFPack['period']): string {
-  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  return `${months[p.month - 1] ?? p.month} ${p.year}`;
-}
-
-/** Adapt a BackendEDFPack to the UI EDFPack shape */
+/** Adapt a BackendEDFPack to the UI EDFPack shape. */
 function toUIPack(r: BackendEDFPack): EDFPack {
-  const uiStatus = toPackStatus(r.status);
-  const progress =
-    r.validation && typeof r.validation['progress'] === 'number'
-      ? r.validation['progress'] as number
-      : uiStatus === 'ready' || uiStatus === 'exported' ? 100 : 50;
+  const validation = Array.isArray(r.validation) ? r.validation : [];
+  const failedBlocking = validation.filter((item) => item.level === 'blocking' && !item.ok);
+  const passed = validation.filter((item) => item.ok).length;
+  const progress = validation.length > 0 ? Math.round((passed / validation.length) * 100) : 0;
+
+  const checks: ComplianceCheck[] = validation.map((item, index) => ({
+    id: item.key || String(index),
+    icon: item.ok ? 'check_circle' : item.level === 'blocking' ? 'error' : 'warning',
+    label: item.message,
+    status: item.ok ? 'verified' : item.level === 'blocking' ? 'error' : 'pending',
+  }));
 
   return {
     id: String(r.id),
-    packNumber: `#EDF-${r.id}`,
+    packNumber: `#EDF-${r.period.year}-${String(r.period.month).padStart(2, '0')}`,
     title: periodLabel(r.period),
-    invoiceCount: r.line_count !== null ? `${r.line_count} lines` : 'Draft',
+    invoiceCount: r.line_count !== null ? `${r.line_count} invoice lines` : 'Not generated',
     invoiceRefs: [],
-    client: (r.exporter as any)?.legal_name ?? '—',
-    status: uiStatus,
-    value: (r.totals as any)?.total_inr ?? '—',
+    client: exporterName(r.exporter),
+    status: toPackStatus(r.status, r.pack_ready),
+    ready: r.pack_ready,
+    value: r.totals ? `₹${INR_FORMAT.format(parseInteger(r.totals.total_inr))}` : '—',
     currency: 'INR',
     purposeCodes: [],
     progress,
     progressLabel: `${progress}%`,
     validationProgress: progress,
-    validationLabel: `${progress}%`,
-    complianceChecks: [],
+    validationLabel: validation.length
+      ? `${passed}/${validation.length} checks passed`
+      : 'Not validated yet',
+    complianceChecks: checks,
     signOffs: [],
-    edpmsAck: r.approved_snapshot_hash ?? undefined,
+    exceptions: failedBlocking.map((item) => item.message),
+    // The stored hash is the SHA-256 of the approved snapshot, not an EDPMS ack.
+    merkleHash: r.approved_snapshot_hash ?? undefined,
     lodgedDate: r.exported_at ?? undefined,
   };
 }
 
-/** Build summary metric cards from summary counts */
-function buildMetrics(summary: BackendEDFSummary): PackMetric[] {
-  const by = summary.by_status ?? {};
+/** Build the four board metric cards from real pack rows. */
+function buildMetrics(uiPacks: EDFPack[], rows: BackendEDFPack[]): PackMetric[] {
+  const bucket = (status: EDFPackStatus) => {
+    const ids = new Set(uiPacks.filter((pack) => pack.status === status).map((pack) => pack.id));
+    const subset = rows.filter((row) => ids.has(String(row.id)));
+    return { count: subset.length, value: sumInr(subset) };
+  };
+
+  const ready = bucket('ready');
+  const draft = bucket('draft');
+  const blocked = bucket('blocked');
+  const exported = bucket('exported');
+
   return [
-    { label: 'Ready to Export', value: by['approved'] ?? 0,  subtitle: 'Packs', icon: 'rule_folder',  status: 'ready' },
-    { label: 'Drafting',        value: by['draft'] ?? 0,     subtitle: 'Pack',  icon: 'pending',      status: 'draft' },
-    { label: 'Blocked',         value: by['blocked'] ?? 0,   subtitle: 'Alert', icon: 'warning',      status: 'blocked' },
-    { label: 'Filed & Sealed',  value: by['exported'] ?? 0,  subtitle: 'Merkle ✓', icon: 'verified_user', status: 'exported' },
+    { label: 'Ready to Export', value: ready.count, subtitle: 'Packs', icon: 'rule_folder', status: 'ready', caption: `${ready.value} declared` },
+    { label: 'Drafting', value: draft.count, subtitle: 'Pack', icon: 'pending', status: 'draft', caption: `${draft.value} declared` },
+    { label: 'Blocked', value: blocked.count, subtitle: 'Alert', icon: 'warning', status: 'blocked', caption: `${blocked.value} held back` },
+    { label: 'Filed & Sealed', value: exported.count, subtitle: 'Merkle ✓', icon: 'verified_user', status: 'exported', caption: `${exported.value} lodged` },
   ];
 }
 
+/** The newest draft, presented as the pack currently being assembled. */
+function buildActiveCompilation(activeRow: BackendEDFPack): ActiveCompilation {
+  const ui = toUIPack(activeRow);
+  return {
+    packId: ui.id,
+    packNumber: ui.packNumber,
+    client: ui.client,
+    description: ui.invoiceCount,
+    overallProgress: ui.progress,
+    ready: ui.ready,
+    checklist: ui.complianceChecks,
+  };
+}
+
+// ---- reads -------------------------------------------------------------------
+
 /**
- * Fetch EDF packs from backend.
- * Calls GET /edf-packs and GET /edf-packs/summary in parallel.
+ * Fetch the pack board and its summary.
+ * Calls GET /edf-packs and GET /edf-packs/summary in parallel. A failure in
+ * either leaves the other usable: a missing summary only costs the lifetime
+ * count (the fetched rows are the fallback), a missing board is reported as a
+ * board error so the page can show it inside the table slot alone.
  */
 export async function fetchEDFPacks(): Promise<EDFPacksResponse> {
-  const [listRes, summaryRes] = await Promise.all([
-    fetch(apiUrl('/edf-packs', { limit: 200 })),
-    fetch(apiUrl('/edf-packs/summary')),
+  const [listResult, summaryResult] = await Promise.allSettled([
+    fetchJson<BackendEDFPackListResponse>('/edf-packs', { query: { limit: 200 } }),
+    fetchJson<BackendEDFSummary>('/edf-packs/summary'),
   ]);
 
-  if (!listRes.ok) {
-    const text = await listRes.text();
-    throw new Error(`Failed to fetch EDF packs: ${listRes.status} ${text}`);
-  }
-  if (!summaryRes.ok) {
-    const text = await summaryRes.text();
-    throw new Error(`Failed to fetch EDF summary: ${summaryRes.status} ${text}`);
-  }
+  const list = settleResult(listResult);
+  const summary = settleResult(summaryResult);
 
-  const listData: BackendEDFPackListResponse = await listRes.json();
-  const summary: BackendEDFSummary = await summaryRes.json();
+  const rows = list.data?.packs ?? [];
+  const packs = rows.map(toUIPack);
+  const activeRow = rows.find((row) => row.status === 'draft') ?? null;
 
-  const metrics = buildMetrics(summary);
-  const packs = listData.packs.map(toUIPack);
+  return {
+    metrics: buildMetrics(packs, rows),
+    activeCompilation: activeRow ? buildActiveCompilation(activeRow) : null,
+    packs,
+    latest: packs[0] ?? null,
+    totalPacks: summary.data?.count ?? rows.length,
+    engineVersion: rows[0]?.engine_version ?? null,
+    errors: {
+      packs: list.error,
+      summary: summary.error,
+    },
+  };
+}
 
-  // Find the most recent draft pack as the "active compilation"
-  const activePack = listData.packs.find((p) => p.status === 'draft') ?? null;
-  const activeCompilation: ActiveCompilation | null = activePack
-    ? {
-        packId: String(activePack.id),
-        packNumber: `EDF-${activePack.id}`,
-        client: (activePack.exporter as any)?.legal_name ?? '—',
-        description: `${periodLabel(activePack.period)} draft`,
-        overallProgress: 50,
-        checklist: [],
-      }
-    : null;
+// ---- lifecycle actions -------------------------------------------------------
 
-  return { metrics, activeCompilation, packs };
+/** Add or refresh the draft worksheet for a calendar month (idempotent). */
+export function generateEDFPack(
+  year: number,
+  month: number,
+  note?: string,
+): Promise<BackendEDFPack> {
+  return postJson<BackendEDFPack>('/edf-packs/generate', { year, month, note });
+}
+
+/** Re-run the completeness checklist against the current ledger state. */
+export function validateEDFPack(packId: number): Promise<BackendEDFPack> {
+  return postJson<BackendEDFPack>(`/edf-packs/${packId}/validate`);
+}
+
+/** Freeze a ready draft and store the SHA-256 of its snapshot. */
+export function approveEDFPack(packId: number, note?: string): Promise<BackendEDFPack> {
+  return postJson<BackendEDFPack>(`/edf-packs/${packId}/approve`, note ? { note } : {});
+}
+
+/** Void an approved or exported pack so its month can be regenerated. */
+export function revokeEDFPack(packId: number, note?: string): Promise<BackendEDFPack> {
+  return postJson<BackendEDFPack>(`/edf-packs/${packId}/revoke`, note ? { note } : {});
+}
+
+/** Absolute download URL for an approved pack's worksheet. */
+export function edfPackExportUrl(packId: number, format: EDFPackExportFormat): string {
+  return apiUrl(`/edf-packs/${packId}/export`, { format });
+}
+
+/**
+ * Download an approved pack. The browser follows the backend's
+ * `Content-Disposition` header, so the file lands in the user's downloads.
+ */
+export function downloadEDFPack(packId: number, format: EDFPackExportFormat): void {
+  const link = document.createElement('a');
+  link.href = edfPackExportUrl(packId, format);
+  link.rel = 'noopener';
+  link.style.display = 'none';
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
 }

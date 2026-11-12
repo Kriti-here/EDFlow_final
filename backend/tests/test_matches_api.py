@@ -110,6 +110,92 @@ def test_list_filters_by_document(client, db_session):
     assert body["count"] == 4
 
 
+def test_list_reports_by_status_for_the_corpus(client, db_session):
+    _seed_ledger_and_documents(db_session)
+    _run(client)
+    body = client.get("/matches").json()
+    assert body["count"] == 12
+    assert body["by_status"] == {
+        "matched": 6,
+        "matched_with_variance": 2,
+        "duplicate": 1,
+        "exception": 1,
+        "needs_review": 2,
+    }
+
+
+# ---- totals + pagination past the response cap -------------------------------
+
+MATCH_STATUSES = ("matched", "matched_with_variance", "duplicate", "exception", "needs_review")
+
+
+def _seed_many_matches(db_session, total: int) -> dict:
+    """Insert ``total`` synthetic match records directly (distinct FIRA line ids).
+
+    Bypasses the 12-line corpus so the tests can exercise counts past the 500-row
+    response cap. Foreign keys are not enforced on the SQLite test engine.
+    """
+    counts = {status: 0 for status in MATCH_STATUSES}
+    for index in range(total):
+        status = MATCH_STATUSES[index % len(MATCH_STATUSES)]
+        counts[status] += 1
+        db_session.add(
+            MatchRecord(
+                fira_line_id=10_000 + index,
+                match_type="exact",
+                status=status,
+                confidence_bp=9000,
+                confidence_band="high",
+            )
+        )
+    db_session.commit()
+    return counts
+
+
+def test_count_is_the_true_total_not_the_page_length(client, db_session):
+    seeded = _seed_many_matches(db_session, 520)
+
+    body = client.get("/matches").json()
+    # `count` is the real filtered total; the page itself is capped at 200.
+    assert body["count"] == 520
+    assert len(body["matches"]) == 200
+    # `by_status` spans every stored record, so badges stay accurate.
+    assert body["by_status"] == seeded
+
+
+def test_offset_pages_through_the_whole_dataset_without_overlap(client, db_session):
+    _seed_many_matches(db_session, 520)
+
+    seen: list[int] = []
+    offset = 0
+    while True:
+        page = client.get("/matches", params={"limit": 200, "offset": offset}).json()
+        assert page["count"] == 520
+        ids = [row["id"] for row in page["matches"]]
+        if not ids:
+            break
+        seen.extend(ids)
+        offset += len(ids)
+
+    assert len(seen) == 520
+    assert len(set(seen)) == 520  # no page overlaps another
+    assert seen == sorted(seen, reverse=True)  # globally newest first
+
+
+def test_list_rejects_out_of_range_paging(client, db_session):
+    _seed_many_matches(db_session, 5)
+    # The backend caps one response at 500 rows and offset cannot be negative.
+    assert client.get("/matches", params={"limit": 1000}).status_code == 422
+    assert client.get("/matches", params={"offset": -1}).status_code == 422
+
+
+def test_page_limit_never_exceeds_the_backend_maximum(client, db_session):
+    _seed_many_matches(db_session, 520)
+    page = client.get("/matches", params={"limit": 500}).json()
+    assert page["count"] == 520
+    assert len(page["matches"]) == 500
+
+
 # ---- detail ------------------------------------------------------------------
 
 
@@ -155,6 +241,26 @@ def test_confirm_marks_record_and_is_idempotent(client, db_session):
     # exactly one confirmation audit entry despite two calls
     confirms = db_session.query(AuditLog).filter(AuditLog.action == CONFIRM_AUDIT).all()
     assert len(confirms) == 1
+
+
+def test_confirm_settles_a_matched_record(client, db_session):
+    """A settled record (`matched`) is eligible for the UI's confirm action.
+
+    The endpoint is an idempotent confirmation flag; eligibility (only `matched`
+    and `matched_with_variance`) is what the Matching Center checks before showing
+    the button.
+    """
+    _seed_ledger_and_documents(db_session)
+    _run(client)
+    matched = client.get("/matches", params={"status": "matched"}).json()["matches"][0]
+    assert matched["status"] == "matched"
+
+    first = client.post(f"/matches/{matched['id']}/confirm")
+    assert first.status_code == 200
+    assert first.json()["confirmed_at"] is not None
+
+    second = client.post(f"/matches/{matched['id']}/confirm")
+    assert second.json()["confirmed_at"] == first.json()["confirmed_at"]
 
 
 def test_confirm_unknown_match_is_404(client, db_session):

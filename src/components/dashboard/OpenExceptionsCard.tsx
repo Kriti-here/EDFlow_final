@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 
 import MaterialIcon from "../landing/MaterialIcon";
 
@@ -44,28 +44,41 @@ export type OpenExceptionsCardProps = {
   items: ExceptionItemData[];
 };
 
-/** Delay before an in-flight resolution settles, matching the original fade. */
+/** Delay used only when no real resolve handler is supplied. */
 const RESOLVE_DELAY_MS = 250;
 
 /**
- * A single exception row. Clicking the action fades the row out, then swaps it
- * for a settled confirmation — the mockup's inline `resolveException` script,
- * expressed as React state.
+ * A single exception row. When the parent supplies `onResolve`, the action
+ * persists the resolution through the API and only reports success once the
+ * backend confirms it; without a handler the row falls back to a local preview.
  */
-function ExceptionRow({ item }: { item: ExceptionItemData }) {
+function ExceptionRow({
+  item,
+  onResolve,
+}: {
+  item: ExceptionItemData;
+  onResolve?: (id: string) => Promise<void>;
+}) {
   const [pending, setPending] = useState(false);
   const [resolved, setResolved] = useState(false);
-  const timer = useRef<number | undefined>(undefined);
+  const [failure, setFailure] = useState<string | null>(null);
 
-  useEffect(() => () => window.clearTimeout(timer.current), []);
-
-  const resolve = () => {
+  const resolve = async () => {
     if (pending || resolved) return;
     setPending(true);
-    timer.current = window.setTimeout(() => {
-      setPending(false);
+    setFailure(null);
+    try {
+      if (onResolve) {
+        await onResolve(item.id);
+      } else {
+        await new Promise((done) => window.setTimeout(done, RESOLVE_DELAY_MS));
+      }
       setResolved(true);
-    }, RESOLVE_DELAY_MS);
+    } catch (err) {
+      setFailure(err instanceof Error ? err.message : String(err));
+    } finally {
+      setPending(false);
+    }
   };
 
   const surfaceClass = resolved ? "bg-emerald-50" : "bg-surface-container-low";
@@ -129,17 +142,26 @@ function ExceptionRow({ item }: { item: ExceptionItemData }) {
               {item.actionLabel}
             </button>
           </div>
+
+          {failure && (
+            <span className="flex items-center gap-1 font-label-sm text-label-sm text-error">
+              <MaterialIcon name="error" className="text-[14px]" />
+              {failure}
+            </span>
+          )}
         </>
       )}
     </div>
   );
 }
 
-/**
- * High-priority exception queue. Resolutions mutate local view state only —
- * no API calls are made in this build.
- */
-function OpenExceptionsCard({ badge, description, items }: OpenExceptionsCardProps) {
+/** Open exception queue. When `onResolve` is supplied, resolving persists via the API. */
+function OpenExceptionsCard({
+  badge,
+  description,
+  items,
+  onResolve,
+}: OpenExceptionsCardProps & { onResolve?: (id: string) => Promise<void> }) {
   return (
     <div className="flex h-full flex-col gap-space-sm rounded-xl bg-surface-container-lowest p-space-md shadow-sm">
       <div className="flex items-center justify-between">
@@ -157,7 +179,7 @@ function OpenExceptionsCard({ badge, description, items }: OpenExceptionsCardPro
       <span className="font-body-sm text-body-sm text-on-surface-variant">{description}</span>
 
       {items.map((item) => (
-        <ExceptionRow key={item.id} item={item} />
+        <ExceptionRow key={item.id} item={item} onResolve={onResolve} />
       ))}
     </div>
   );

@@ -1,23 +1,38 @@
 type LedgerMetricsProps = {
+  /** Headline open-receivables figure, already formatted with separators. */
   receivables: string;
+  /** Currency code shown next to the receivables figure. */
+  receivablesCurrency: string;
+  /** Indian financial-year quarter the invoices fall in, e.g. "FY 25-26 Q3". */
   fiscalPeriod: string;
+  /** Total invoices on record. */
   invoiceCount: number;
-  compliantPercent: number;
-  matchedCount: number;
-  pendingCount: number;
-  attentionCount: number;
+  /** Share of invoices whose purpose code is verified against the rules file. */
+  purposeVerifiedPercent: number;
+  /** Invoices marked PAID. */
+  settledCount: number;
+  /** Invoices sent and awaiting buyer payment. */
+  awaitingCount: number;
+  /** Invoices still in DRAFT. */
+  draftCount: number;
+  /** Shows the data-source pill; only set this when the rows are not live data. */
+  simulated?: boolean;
 };
 
 function LedgerMetrics({
   receivables,
+  receivablesCurrency,
   fiscalPeriod,
   invoiceCount,
-  compliantPercent,
-  matchedCount,
-  pendingCount,
-  attentionCount,
+  purposeVerifiedPercent,
+  settledCount,
+  awaitingCount,
+  draftCount,
+  simulated = false,
 }: LedgerMetricsProps) {
-  const total = matchedCount + pendingCount + attentionCount;
+  const total = settledCount + awaitingCount + draftCount;
+  // With no invoices there is nothing to divide by, so the bar stays empty.
+  const share = (count: number) => (total > 0 ? (count / total) * 100 : 0);
 
   return (
     <section
@@ -38,9 +53,11 @@ function LedgerMetrics({
           </h2>
         </div>
         <div className="flex items-center gap-space-sm">
-          <span className="rounded-full bg-primary-fixed px-space-sm py-space-2xs font-label-sm text-label-sm font-bold text-on-primary-fixed-variant">
-            SIMULATED DATA
-          </span>
+          {simulated && (
+            <span className="rounded-full bg-primary-fixed px-space-sm py-space-2xs font-label-sm text-label-sm font-bold text-on-primary-fixed-variant">
+              SIMULATED DATA
+            </span>
+          )}
           <span className="font-code-sm text-code-sm text-on-surface-variant">
             {fiscalPeriod}
           </span>
@@ -49,38 +66,38 @@ function LedgerMetrics({
 
       <div className="flex flex-col gap-space-2xs">
         <span className="font-body-sm text-body-sm text-on-surface-variant">
-          Total Export Receivables
+          Open Export Receivables
         </span>
         <div className="flex flex-wrap items-baseline gap-space-xs">
           <span className="font-headline-xl-mobile text-headline-xl-mobile font-bold tracking-tight text-on-surface sm:text-headline-xl">
             {receivables}
           </span>
           <span className="font-code-sm text-code-sm font-semibold text-tertiary-container">
-            USD
+            {receivablesCurrency}
           </span>
         </div>
       </div>
 
       <div className="flex flex-col gap-space-xs">
         <div
-          aria-label={`${matchedCount} matched, ${pendingCount} pending wire, ${attentionCount} needing attention`}
+          aria-label={`${settledCount} paid, ${awaitingCount} sent awaiting payment, ${draftCount} draft`}
           className="flex h-2 w-full overflow-hidden rounded-full bg-surface-container-high"
           role="img"
         >
           <span
             className="h-full bg-tertiary-container transition-all duration-500"
-            style={{ width: `${(matchedCount / total) * 100}%` }}
-            title={`Fully matched (${matchedCount})`}
+            style={{ width: `${share(settledCount)}%` }}
+            title={`Paid (${settledCount})`}
           />
           <span
             className="h-full bg-secondary-container transition-all duration-500"
-            style={{ width: `${(pendingCount / total) * 100}%` }}
-            title={`Awaiting wire (${pendingCount})`}
+            style={{ width: `${share(awaitingCount)}%` }}
+            title={`Sent, awaiting payment (${awaitingCount})`}
           />
           <span
             className="h-full bg-error transition-all duration-500"
-            style={{ width: `${(attentionCount / total) * 100}%` }}
-            title={`Attention needed (${attentionCount})`}
+            style={{ width: `${share(draftCount)}%` }}
+            title={`Draft (${draftCount})`}
           />
         </div>
         <div className="flex flex-wrap items-center justify-between gap-x-space-sm gap-y-space-2xs pt-space-2xs font-label-sm text-label-sm text-on-surface-variant">
@@ -88,15 +105,15 @@ function LedgerMetrics({
             {invoiceCount} Invoices Recorded
           </span>
           <span className="font-medium text-tertiary-container">
-            {compliantPercent}% Compliant Flow
+            {purposeVerifiedPercent}% Purpose Verified
           </span>
         </div>
       </div>
 
       <div className="grid grid-cols-3 gap-space-xs pt-space-xs">
-        <MetricPill count={matchedCount} label="Matched" tone="text-tertiary-container" />
-        <MetricPill count={pendingCount} label="Pending Wire" tone="text-secondary" />
-        <MetricPill count={attentionCount} label="Attention" tone="text-error" />
+        <MetricPill count={settledCount} label="Paid" tone="text-tertiary-container" />
+        <MetricPill count={awaitingCount} label="Sent" tone="text-secondary" />
+        <MetricPill count={draftCount} label="Draft" tone="text-error" />
       </div>
     </section>
   );

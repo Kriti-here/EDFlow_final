@@ -1,14 +1,26 @@
-// Service to fetch match records from backend API
-// Backend: GET /matches → {count: number, matches: MatchRecord[]}
+// Matching service.
+// Backend: POST /matches/run              → run the deterministic matcher globally
+//          GET  /matches                  → {count, by_status, matches: MatchRecord[]}
+//          GET  /matches/{id}              → one match record
+//          POST /matches/{id}/confirm      → idempotent human confirmation
 //
-// MatchRecord fields (from backend match_out):
-//   id, fira_line_id, invoice_id, payment_id, match_type, status,
-//   confidence_bp, confidence_band, candidates, score, rationale,
-//   duplicate_of_line_id, split_group, split_part, split_parts_total,
-//   fx_expected_rate, fx_actual_rate, fx_variance_bp, engine_version,
-//   is_synthetic, confirmed_at, confirmed_by, created_at, updated_at
+// Backend match statuses (match_service): matched | matched_with_variance |
+// duplicate | exception | needs_review.
 
-import { apiUrl } from './api';
+import { fetchJson, postJson, settleResult } from './api';
+import { formatMoney, parseMoney } from './money';
+import {
+  MATCH_STATUSES,
+  autoMatchRate,
+  isConfirmableMatch,
+  normalizeStatusCounts,
+  type MatchStatus,
+} from './reconciliationMath';
+
+export type { MatchStatus } from './reconciliationMath';
+
+/** Records fetched per page. The backend caps a single response at 500. */
+export const MATCH_PAGE_SIZE = 200;
 
 /** Raw match record as returned by GET /matches */
 export interface BackendMatchRecord {
@@ -39,32 +51,52 @@ export interface BackendMatchRecord {
 }
 
 export interface BackendMatchListResponse {
+  /** Filtered total match-record count (not just the length of `matches`). */
   count: number;
+  /** Per-status counts across every stored record, for accurate filter badges. */
+  by_status: Record<string, number>;
   matches: BackendMatchRecord[];
 }
 
-export type MatchStatus = 'matched' | 'unmatched' | 'partial' | 'exception';
+/** Summary returned by POST /matches/run. */
+export interface MatchRunSummary {
+  engine_version: string;
+  lines: number;
+  matched: number;
+  matched_with_variance: number;
+  duplicates: number;
+  exceptions: number;
+  needs_review: number;
+  by_status: Record<string, number>;
+  by_match_type: Record<string, number>;
+}
 
-/** UI-friendly match pair adapted from BackendMatchRecord */
+/** UI-friendly match pair adapted from BackendMatchRecord. */
 export interface MatchPair {
-  id: string;
-  invoiceRef: string;
+  id: number;
   firaRef: string;
+  invoiceRef: string;
   client: string;
   currency: string;
   invoiceAmount: string;
-  receivedAmount: string;
   status: MatchStatus;
+  statusRaw: string;
   confidence: string;
-  matchedAt: string;
-  purposeCode?: string;
+  matchType: string | null;
   variance?: string;
-  bank?: string;
   note?: string;
+  engineVersion: string | null;
+  isSynthetic: boolean;
+  /** Whether the UI may offer the confirm action for this status. */
+  confirmable: boolean;
+  confirmed: boolean;
+  confirmedBy: string | null;
+  createdAt: string | null;
 }
 
 export interface MatchSummary {
-  totalInvoices: number;
+  /** Total match records in the backend (survives the page cap). */
+  total: number;
   matched: number;
   unmatched: number;
   exceptions: number;
@@ -73,79 +105,144 @@ export interface MatchSummary {
 
 export interface MatchingResultsResponse {
   summary: MatchSummary;
+  /** Accurate per-status totals for the whole dataset, not just this page. */
+  statusCounts: Record<MatchStatus, number>;
   pairs: MatchPair[];
+  /** Readable failure message per endpoint that could not be loaded. */
+  errors: {
+    /** GET /matches (the match records themselves). */
+    matches: string | null;
+  };
 }
 
-/** Map backend status values to UI MatchStatus */
-function toMatchStatus(status: string | null): MatchStatus {
-  switch (status) {
-    case 'matched':
-    case 'confirmed':
-      return 'matched';
-    case 'partial':
-    case 'split':
-      return 'partial';
-    case 'exception':
-    case 'duplicate':
-      return 'exception';
-    default:
-      return 'unmatched';
-  }
+/** Optional pagination window for `fetchMatchingResults`. */
+export interface MatchingFetchOptions {
+  offset?: number;
+  limit?: number;
 }
 
-/** Derive a confidence percentage string from confidence_bp (basis points, 0–10000) */
+/** Minimal invoice shape needed to label a match's invoice side. */
+interface InvoiceLookup {
+  id: number;
+  number: string;
+  client: string;
+  currency: string;
+  amount: string;
+}
+
+function toMatchStatus(status: string): MatchStatus {
+  return (MATCH_STATUSES as string[]).includes(status) ? (status as MatchStatus) : 'needs_review';
+}
+
+/** Confidence in basis points (0–10000) rendered as a percentage. */
 function bpToPercent(bp: number | null): string {
   if (bp === null) return '—';
   return `${(bp / 100).toFixed(1)}%`;
 }
 
-/** Adapt raw backend records to the UI response shape */
-function adaptMatches(raw: BackendMatchListResponse): MatchingResultsResponse {
-  const pairs: MatchPair[] = raw.matches.map((r) => {
-    const uiStatus = toMatchStatus(r.status);
-    return {
-      id: String(r.id),
-      invoiceRef: r.invoice_id !== null ? `INV-${r.invoice_id}` : '—',
-      firaRef: r.fira_line_id !== null ? `FIRA-LINE-${r.fira_line_id}` : '—',
-      client: '—',
-      currency: '—',
-      invoiceAmount: '—',
-      receivedAmount: '—',
-      status: uiStatus,
-      confidence: bpToPercent(r.confidence_bp),
-      matchedAt: r.confirmed_at ?? r.created_at ?? '—',
-      variance:
-        r.fx_variance_bp !== null ? `${(r.fx_variance_bp / 100).toFixed(2)} bp` : undefined,
-      note: r.rationale ?? undefined,
-    };
+/** "12 Nov 2026" from an ISO datetime. */
+function humanDateTime(value: string | null): string {
+  if (!value) return '—';
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) return value;
+  return parsed.toLocaleDateString(undefined, {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
   });
+}
 
-  const matched = pairs.filter((p) => p.status === 'matched').length;
-  const unmatched = pairs.filter((p) => p.status === 'unmatched').length;
-  const exceptions = pairs.filter((p) => p.status === 'exception').length;
-  const total = raw.count;
-  const autoMatchRate =
-    total > 0 ? `${((matched / total) * 100).toFixed(1)}%` : '0%';
-
+/** Adapt one raw match record, using the invoice lookup for readable labels. */
+function adaptPair(record: BackendMatchRecord, invoices: Map<number, InvoiceLookup>): MatchPair {
+  const invoice = record.invoice_id !== null ? invoices.get(record.invoice_id) : undefined;
+  const variance =
+    record.fx_variance_bp !== null && record.fx_variance_bp !== 0
+      ? `FX variance ${(record.fx_variance_bp / 100).toFixed(2)}%`
+      : undefined;
   return {
-    summary: {
-      totalInvoices: total,
-      matched,
-      unmatched,
-      exceptions,
-      autoMatchRate,
-    },
-    pairs,
+    id: record.id,
+    firaRef: record.fira_line_id !== null ? `FIRA line #${record.fira_line_id}` : '—',
+    invoiceRef: invoice ? invoice.number : record.invoice_id !== null ? `Invoice #${record.invoice_id}` : 'Unmatched',
+    client: invoice?.client ?? '—',
+    currency: invoice?.currency ?? '—',
+    invoiceAmount: invoice ? formatMoney(parseMoney(invoice.amount)) : '—',
+    status: toMatchStatus(record.status),
+    statusRaw: record.status,
+    confidence: bpToPercent(record.confidence_bp),
+    matchType: record.match_type,
+    variance,
+    note: record.rationale ?? undefined,
+    engineVersion: record.engine_version,
+    isSynthetic: record.is_synthetic,
+    confirmable: isConfirmableMatch(record.status),
+    confirmed: record.confirmed_at !== null,
+    confirmedBy: record.confirmed_by,
+    createdAt: record.confirmed_at ?? record.created_at,
   };
 }
 
-/** Fetch all match records from GET /matches and adapt to UI shape. */
-export async function fetchMatchingResults(): Promise<MatchingResultsResponse> {
-  const response = await fetch(apiUrl('/matches'));
-  if (!response.ok) {
-    const text = await response.text();
-    throw new Error(`Failed to fetch matching results: ${response.status} ${text}`);
-  }
-  const raw: BackendMatchListResponse = await response.json();
-  return adaptMatches(raw);
+export const MATCH_STATUS_LABEL: Record<MatchStatus, string> = {
+  matched: 'Matched',
+  matched_with_variance: 'Variance',
+  duplicate: 'Duplicate',
+  exception: 'Exception',
+  needs_review: 'Needs Review',
+};
+
+/**
+ * Fetch one page of match records from GET /matches and adapt them for the UI.
+ *
+ * `count` is the backend's filtered total and `by_status` spans every stored
+ * record, so the summary and the filter badges stay accurate even though
+ * `matches` is capped at one page (500 max, 200 here). Invoice numbers, clients
+ * and amounts are resolved from GET /invoices; if that call fails the matches are
+ * still shown with generic invoice labels, and a `/matches` failure is reported
+ * through `errors.matches` instead of throwing so the page keeps its shell.
+ */
+export async function fetchMatchingResults(
+  options: MatchingFetchOptions = {},
+): Promise<MatchingResultsResponse> {
+  const offset = Math.max(options.offset ?? 0, 0);
+  const limit = options.limit ?? MATCH_PAGE_SIZE;
+  const [matchResult, invoiceResult] = await Promise.allSettled([
+    fetchJson<BackendMatchListResponse>('/matches', { query: { limit, offset } }),
+    fetchJson<InvoiceLookup[]>('/invoices'),
+  ]);
+
+  const matches = settleResult(matchResult);
+  // Invoice labels are cosmetic: drop the lookup silently and keep the pairs.
+  const invoices = settleResult(invoiceResult).data ?? [];
+
+  const lookups = new Map(invoices.map((invoice) => [invoice.id, invoice]));
+  const raw = matches.data;
+  const pairs = (raw?.matches ?? []).map((record) => adaptPair(record, lookups));
+  const statusCounts = normalizeStatusCounts(raw?.by_status ?? {});
+
+  // Auto-matched means the engine resolved the line without human review: only
+  // `matched` and `matched_with_variance`. `duplicate`, `exception` and
+  // `needs_review` all still need a person, so they must not inflate the rate.
+  return {
+    summary: {
+      total: raw?.count ?? 0,
+      matched: statusCounts.matched + statusCounts.matched_with_variance,
+      unmatched: statusCounts.needs_review,
+      exceptions: statusCounts.exception + statusCounts.duplicate,
+      autoMatchRate: autoMatchRate(statusCounts),
+    },
+    statusCounts,
+    pairs,
+    errors: { matches: matches.error },
+  };
 }
+
+/** Run the deterministic matcher over every stored FIRA document. */
+export function runMatches(): Promise<MatchRunSummary> {
+  return postJson<MatchRunSummary>('/matches/run');
+}
+
+/** Confirm one match by id (idempotent). */
+export function confirmMatch(matchId: number): Promise<BackendMatchRecord> {
+  return postJson<BackendMatchRecord>(`/matches/${matchId}/confirm`);
+}
+
+export { humanDateTime };

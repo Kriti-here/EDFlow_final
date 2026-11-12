@@ -14,7 +14,7 @@ const severityToColor: Record<string, { container: string; text: string }> = {
 
 function ExceptionsMetrics({ metrics }: ExceptionsMetricsProps) {
   return (
-    <section className="grid grid-cols-2 sm:grid-cols-5 gap-space-sm">
+    <section className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-space-sm">
       {metrics.map((metric, index) => {
         const color = severityToColor[metric.variant || 'low'];
         const Icon = () => (

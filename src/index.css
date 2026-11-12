@@ -544,3 +544,153 @@
 .invoice-toast {
   animation: invoiceModalBackdropIn 0.2s ease-out both;
 }
+
+/* ------------------------------------------------------------------ */
+/* Dark theme                                                          */
+/*                                                                     */
+/* Every workspace page styles itself through the semantic tokens from  */
+/* `@theme`, and Tailwind compiles those utilities to `var(--color-…)`  */
+/* lookups. Redefining the tokens under `.dark` therefore re-themes the */
+/* whole app without a single `dark:` variant. The block is intentionally*/
+/* unlayered so it outranks the `@layer theme` definitions on `:root`.  */
+/*                                                                      */
+/* Two rules keep the filled controls readable, because the light theme */
+/* already uses the "container is a dark indigo, `on-*` is light"       */
+/* convention that components rely on:                                  */
+/*   - `primary` and `primary-container` stay in the light indigo range */
+/*     so `text-primary` accents read on a near-black surface,          */
+/*   - their `on-*` partners flip to deep indigo, so every filled       */
+/*     button keeps dark-on-light contrast instead of white-on-light.   */
+/* ------------------------------------------------------------------ */
+.dark {
+  color-scheme: dark;
+
+  --color-background: #0f1120;
+  --color-on-background: #e3e3f2;
+  --color-surface: #0f1120;
+  --color-surface-bright: #3a3d52;
+  --color-surface-dim: #0b0d1a;
+  --color-surface-variant: #464555;
+  --color-on-surface: #e3e3f2;
+  --color-on-surface-variant: #c6c4d6;
+  --color-surface-tint: #c3c0ff;
+
+  /* Same ramp direction as the light theme: `lowest` is the raised card
+     surface and `dim` is the deepest recess. */
+  --color-surface-container-lowest: #1e2133;
+  --color-surface-container-low: #191b2b;
+  --color-surface-container: #1c1e2f;
+  --color-surface-container-high: #272a3c;
+  --color-surface-container-highest: #323548;
+
+  --color-outline: #918f9f;
+  --color-outline-variant: #464555;
+
+  --color-primary: #c3c0ff;
+  --color-on-primary: #1f1470;
+  --color-primary-container: #8377f0;
+  --color-on-primary-container: #16104f;
+  --color-primary-fixed: #2f2680;
+  --color-primary-fixed-dim: #4a3fd0;
+  --color-on-primary-fixed: #e2dfff;
+  --color-on-primary-fixed-variant: #c3c0ff;
+  --color-inverse-primary: #3525cd;
+
+  --color-secondary: #4cd7f6;
+  --color-on-secondary: #003640;
+  --color-secondary-container: #004e5c;
+  --color-on-secondary-container: #acedff;
+  /* Read as foreground accents on the light readiness gradient. */
+  --color-secondary-fixed: #06313d;
+  --color-secondary-fixed-dim: #0a4a5a;
+  --color-on-secondary-fixed: #acedff;
+  --color-on-secondary-fixed-variant: #4cd7f6;
+
+  --color-tertiary: #4edea3;
+  --color-on-tertiary: #003825;
+  --color-tertiary-container: #34d399;
+  --color-on-tertiary-container: #002113;
+  --color-tertiary-fixed: #6ffbbe;
+  --color-tertiary-fixed-dim: #4edea3;
+  --color-on-tertiary-fixed: #002113;
+  --color-on-tertiary-fixed-variant: #005236;
+
+  --color-error: #ffb4ab;
+  --color-on-error: #690005;
+  --color-error-container: #93000a;
+  --color-on-error-container: #ffdad6;
+
+  --color-inverse-surface: #e3e3f2;
+  --color-inverse-on-surface: #283044;
+}
+
+/* The app shell paints its own `bg-surface`, but the body behind it needs to
+   follow too so overscrolling never flashes a light band. */
+.dark body {
+  background-color: var(--color-surface);
+}
+
+/* ------------------------------------------------------------------ */
+/* Legacy literals that predate the token layer                        */
+/*                                                                     */
+/* Two kinds of hard-coded colour survive in components: arbitrary      */
+/* Tailwind hex values (`bg-[#ECFDF5]`) and raw palette classes         */
+/* (`bg-emerald-50`, `bg-indigo-600`). Both are light-mode values, so   */
+/* the dark theme recolours those exact class names in place instead of */
+/* rewriting a dozen components and shifting the light theme. Nothing   */
+/* below applies outside `.dark`.                                       */
+/* ------------------------------------------------------------------ */
+
+/* Status pills: emerald = verified, amber = needs review, red = failed. */
+.dark [class*="bg-[#ECFDF5]"],
+.dark [class*="bg-[#D1FAE5]"],
+.dark .bg-emerald-50,
+.dark .bg-emerald-100 {
+  background-color: rgb(16 185 129 / 0.16);
+}
+
+.dark [class*="bg-[#FFFBEB]"],
+.dark .bg-amber-50 {
+  background-color: rgb(245 158 11 / 0.16);
+}
+
+.dark [class*="bg-[#FEF2F2]"],
+.dark .bg-red-50 {
+  background-color: rgb(239 68 68 / 0.16);
+}
+
+.dark [class*="text-[#065F46]"],
+.dark [class*="text-[#10B981]"],
+.dark .text-emerald-700,
+.dark .text-emerald-800 {
+  color: #6ee7b7;
+}
+
+.dark [class*="text-[#92400E]"],
+.dark .text-amber-700,
+.dark .text-amber-800 {
+  color: #fcd34d;
+}
+
+.dark [class*="text-[#991B1B]"] {
+  color: #fca5a5;
+}
+
+.dark [class*="bg-[#10B981]"] {
+  background-color: #34d399;
+}
+
+.dark [class*="bg-[#EF4444]"] {
+  background-color: #ef4444;
+}
+
+.dark [class*="bg-[#F59E0B]"] {
+  background-color: #f59e0b;
+}
+
+/* The landing CTAs fill with `bg-indigo-600` — the light theme's
+   `primary-container` — while their label uses `text-on-primary`, which is
+   deep indigo here. Keep the label white on that one fill. */
+.dark .bg-indigo-600 {
+  color: #ffffff;
+}

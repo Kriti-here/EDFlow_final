@@ -88,12 +88,32 @@ def list_matches(
     match_type: str | None = None,
     document_id: int | None = None,
     limit: int = Query(200, ge=1, le=500),
+    offset: int = Query(0, ge=0),
     db: Session = Depends(get_db),
 ):
-    rows = match_service.list_matches(
-        db, status=status, match_type=match_type, document_id=document_id, limit=limit
+    """One page of match records, newest first, plus the true filtered totals.
+
+    ``count`` is the filtered total across every stored record and ``by_status``
+    is its per-status breakdown, so a caller can page with ``offset`` instead of
+    mistaking the capped ``matches`` page (500 max, 200 by default) for the whole
+    dataset.
+    """
+    stats = match_service.match_stats(
+        db, status=status, match_type=match_type, document_id=document_id
     )
-    return {"count": len(rows), "matches": [match_out(row) for row in rows]}
+    rows = match_service.list_matches(
+        db,
+        status=status,
+        match_type=match_type,
+        document_id=document_id,
+        limit=limit,
+        offset=offset,
+    )
+    return {
+        "count": stats["count"],
+        "by_status": stats["by_status"],
+        "matches": [match_out(row) for row in rows],
+    }
 
 
 @router.get("/matches/{match_id}")

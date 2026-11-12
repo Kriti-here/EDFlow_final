@@ -1,16 +1,7 @@
 export type ExceptionSeverity = 'critical' | 'high' | 'medium' | 'low';
 
-export type ExceptionCategory = 
-  | 'all'
-  | 'critical'
-  | 'purpose'
-  | 'variance'
-  | 'missing-fira'
-  | 'unmatched'
-  | 'medium'
-  | 'high';
-
-export type ExceptionStatus = 'open' | 'resolved' | 'pending';
+/** Backend categories are data-driven (unmatched, missing_fira, orphan_payment…). */
+export type ExceptionCategory = string;
 
 // KPI Metrics for the top banner
 export interface ExceptionKpi {
@@ -29,12 +20,13 @@ export interface FilterPill {
   active: boolean;
 }
 
-// Individual exception record
+// Individual exception record (adapted from the backend exception record)
 export interface ExceptionItem {
   id: string;
   code: string;
   invoiceRef: string;
   title: string;
+  /** Empty strings mean the backend record carries no invoice to link to. */
   client: string;
   country: string;
   currency: string;
@@ -43,6 +35,8 @@ export interface ExceptionItem {
   severity: ExceptionSeverity;
   categories: ExceptionCategory[];
   timestamp: string;
+  /** open | acknowledged */
+  statusLabel?: string;
   deadline?: string;
   description: string;
   aiRecommendation?: {

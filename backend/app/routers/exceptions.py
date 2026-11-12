@@ -93,15 +93,22 @@ def list_exceptions(
     category: str | None = None,
     severity: str | None = None,
     document_id: int | None = None,
+    resolved_since: datetime | None = None,
+    resolved_until: datetime | None = None,
     limit: int = Query(200, ge=1, le=500),
     db: Session = Depends(get_db),
 ):
+    """List exceptions, newest first. ``resolved_since`` is inclusive and
+    ``resolved_until`` is exclusive, so both together select one day's slice
+    using the same UTC bounds the summary reports."""
     rows = exception_service.list_exceptions(
         db,
         status=status,
         category=category,
         severity=severity,
         document_id=document_id,
+        resolved_since=resolved_since,
+        resolved_until=resolved_until,
         limit=limit,
     )
     return {"count": len(rows), "exceptions": [exception_out(row) for row in rows]}

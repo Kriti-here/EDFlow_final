@@ -2,8 +2,10 @@ import { useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
 
 import Reveal from '../components/Reveal';
+import WidgetError from '../components/WidgetError';
 import { MetricCard, ProgressBar } from '../components/aiinsights';
 import { getNavItem } from '../config/navigation';
+import { errorMessage } from '../services/api';
 import {
   fetchAIInsights,
   type AIInsightsData,
@@ -210,7 +212,7 @@ function ErrorState({ message }: { message: string }) {
   return (
     <div className="flex flex-col items-center justify-center py-space-xl gap-space-sm text-error">
       <span className="material-symbols-outlined text-[40px]">error</span>
-      <p className="font-body-md text-body-md">Error: {message}</p>
+      <p className="font-body-md text-body-md text-center max-w-xl break-words">{message}</p>
     </div>
   );
 }
@@ -231,11 +233,20 @@ function AIInsights() {
         setData(res);
         setLoading(false);
       })
-      .catch((err: Error) => {
-        setError(err.message);
+      .catch((err) => {
+        // Each request is settled individually, so this only fires if the whole
+        // load itself failed; a single endpoint failure shows up per section.
+        setError(errorMessage(err));
         setLoading(false);
       });
   }, []);
+
+  // Local aliases so each section can narrow its own data independently.
+  const proposals = data?.proposals ?? null;
+  const purposeMetrics = data?.purpose ?? null;
+  const matchMetrics = data?.matches ?? null;
+  const exceptionMetrics = data?.exceptions ?? null;
+  const errors = data?.errors ?? {};
 
   return (
     <div className="flex flex-col w-full">
@@ -278,40 +289,49 @@ function AIInsights() {
               icon="description"
               delay={0.05}
             >
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-space-sm">
-                <MetricCard
-                  data={tile('p-total', 'Proposals', String(data.proposals.total), 'Stored proposals', 'description')}
+              {proposals ? (
+                <>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-space-sm">
+                    <MetricCard
+                      data={tile('p-total', 'Proposals', String(proposals.total), 'Stored proposals', 'description')}
+                    />
+                    <MetricCard
+                      data={tile('p-accepted', 'Accepted', String(proposals.accepted), 'Human-approved', 'check_circle', 'text-emerald-600')}
+                    />
+                    <MetricCard
+                      data={tile('p-pending', 'Pending', String(proposals.proposed), 'Awaiting decision', 'schedule')}
+                    />
+                    <MetricCard
+                      data={tile('p-rejected', 'Rejected', String(proposals.rejected), 'Declined by human', 'cancel', 'text-error')}
+                    />
+                    <MetricCard
+                      data={tile('p-cache', 'Cache Hit Rate', `${proposals.cacheHitRate}%`, 'Served from replay cache', 'cached')}
+                    />
+                    <MetricCard
+                      data={tile('p-confidence', 'Avg Confidence', `${proposals.avgConfidencePct}%`, 'Mean across proposals', 'speed')}
+                    />
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-space-sm">
+                    <Panel>
+                      <PanelTitle>Confidence Bands</PanelTitle>
+                      <Breakdown
+                        counts={proposals.byBand}
+                        total={proposals.total}
+                        emptyText="No proposal confidence data yet."
+                      />
+                    </Panel>
+                    <Panel>
+                      <PanelTitle>Proposals by Task</PanelTitle>
+                      <CountList counts={proposals.byTask} emptyText="No proposals recorded yet." />
+                    </Panel>
+                  </div>
+                </>
+              ) : (
+                <WidgetError
+                  title="AI proposal metrics"
+                  message={errors.proposals ?? 'AI proposal metrics are unavailable right now.'}
                 />
-                <MetricCard
-                  data={tile('p-accepted', 'Accepted', String(data.proposals.accepted), 'Human-approved', 'check_circle', 'text-emerald-600')}
-                />
-                <MetricCard
-                  data={tile('p-pending', 'Pending', String(data.proposals.proposed), 'Awaiting decision', 'schedule')}
-                />
-                <MetricCard
-                  data={tile('p-rejected', 'Rejected', String(data.proposals.rejected), 'Declined by human', 'cancel', 'text-error')}
-                />
-                <MetricCard
-                  data={tile('p-cache', 'Cache Hit Rate', `${data.proposals.cacheHitRate}%`, 'Served from replay cache', 'cached')}
-                />
-                <MetricCard
-                  data={tile('p-confidence', 'Avg Confidence', `${data.proposals.avgConfidencePct}%`, 'Mean across proposals', 'speed')}
-                />
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-space-sm">
-                <Panel>
-                  <PanelTitle>Confidence Bands</PanelTitle>
-                  <Breakdown
-                    counts={data.proposals.byBand}
-                    total={data.proposals.total}
-                    emptyText="No proposal confidence data yet."
-                  />
-                </Panel>
-                <Panel>
-                  <PanelTitle>Proposals by Task</PanelTitle>
-                  <CountList counts={data.proposals.byTask} emptyText="No proposals recorded yet." />
-                </Panel>
-              </div>
+              )}
             </Section>
 
             {/* 2. Purpose recommendation metrics */}
@@ -321,34 +341,43 @@ function AIInsights() {
               icon="category"
               delay={0.1}
             >
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-space-sm">
-                <MetricCard
-                  data={tile('r-total', 'Recommendations', String(data.purpose.total), 'All purpose suggestions', 'category')}
+              {purposeMetrics ? (
+                <>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-space-sm">
+                    <MetricCard
+                      data={tile('r-total', 'Recommendations', String(purposeMetrics.total), 'All purpose suggestions', 'category')}
+                    />
+                    <MetricCard
+                      data={tile('r-accepted', 'Accepted', String(purposeMetrics.accepted), 'Human-approved', 'check_circle', 'text-emerald-600')}
+                    />
+                    <MetricCard
+                      data={tile('r-rate', 'Acceptance Rate', `${purposeMetrics.acceptanceRate}%`, 'Accepted / total', 'percent')}
+                    />
+                    <MetricCard
+                      data={tile('r-pending', 'Pending', String(purposeMetrics.proposed), 'Awaiting decision', 'schedule')}
+                    />
+                    <MetricCard
+                      data={tile('r-superseded', 'Superseded', String(purposeMetrics.superseded), 'Replaced by newer', 'history')}
+                    />
+                    <MetricCard
+                      data={tile('r-rejected', 'Rejected', String(purposeMetrics.rejected), 'Declined by human', 'cancel', 'text-error')}
+                    />
+                  </div>
+                  <Panel>
+                    <PanelTitle>Confidence Bands</PanelTitle>
+                    <Breakdown
+                      counts={purposeMetrics.byBand}
+                      total={purposeMetrics.total}
+                      emptyText="No purpose recommendation confidence data yet."
+                    />
+                  </Panel>
+                </>
+              ) : (
+                <WidgetError
+                  title="Purpose recommendation metrics"
+                  message={errors.purpose ?? 'Purpose recommendation metrics are unavailable right now.'}
                 />
-                <MetricCard
-                  data={tile('r-accepted', 'Accepted', String(data.purpose.accepted), 'Human-approved', 'check_circle', 'text-emerald-600')}
-                />
-                <MetricCard
-                  data={tile('r-rate', 'Acceptance Rate', `${data.purpose.acceptanceRate}%`, 'Accepted / total', 'percent')}
-                />
-                <MetricCard
-                  data={tile('r-pending', 'Pending', String(data.purpose.proposed), 'Awaiting decision', 'schedule')}
-                />
-                <MetricCard
-                  data={tile('r-superseded', 'Superseded', String(data.purpose.superseded), 'Replaced by newer', 'history')}
-                />
-                <MetricCard
-                  data={tile('r-rejected', 'Rejected', String(data.purpose.rejected), 'Declined by human', 'cancel', 'text-error')}
-                />
-              </div>
-              <Panel>
-                <PanelTitle>Confidence Bands</PanelTitle>
-                <Breakdown
-                  counts={data.purpose.byBand}
-                  total={data.purpose.total}
-                  emptyText="No purpose recommendation confidence data yet."
-                />
-              </Panel>
+              )}
             </Section>
 
             {/* 3. Match confidence metrics */}
@@ -358,31 +387,40 @@ function AIInsights() {
               icon="hub"
               delay={0.15}
             >
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-space-sm">
-                <MetricCard
-                  data={tile('m-total', 'Matches', String(data.matches.total), 'Decided matches', 'hub')}
+              {matchMetrics ? (
+                <>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-space-sm">
+                    <MetricCard
+                      data={tile('m-total', 'Matches', String(matchMetrics.total), 'Decided matches', 'hub')}
+                    />
+                    <MetricCard
+                      data={tile('m-confirmed', 'Confirmed', String(matchMetrics.confirmed), 'Confirmed matches', 'verified', 'text-emerald-600')}
+                    />
+                    <MetricCard
+                      data={tile('m-confidence', 'Avg Confidence', `${matchMetrics.avgConfidencePct}%`, 'Mean across matches', 'speed')}
+                    />
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-space-sm">
+                    <Panel>
+                      <PanelTitle>Confidence Bands</PanelTitle>
+                      <Breakdown
+                        counts={matchMetrics.bands}
+                        total={matchMetrics.total}
+                        emptyText="No match confidence data yet."
+                      />
+                    </Panel>
+                    <Panel>
+                      <PanelTitle>Matches by Status</PanelTitle>
+                      <CountList counts={matchMetrics.byStatus} emptyText="No matches recorded yet." />
+                    </Panel>
+                  </div>
+                </>
+              ) : (
+                <WidgetError
+                  title="Match confidence metrics"
+                  message={errors.matches ?? 'Match confidence metrics are unavailable right now.'}
                 />
-                <MetricCard
-                  data={tile('m-confirmed', 'Confirmed', String(data.matches.confirmed), 'Confirmed matches', 'verified', 'text-emerald-600')}
-                />
-                <MetricCard
-                  data={tile('m-confidence', 'Avg Confidence', `${data.matches.avgConfidencePct}%`, 'Mean across matches', 'speed')}
-                />
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-space-sm">
-                <Panel>
-                  <PanelTitle>Confidence Bands</PanelTitle>
-                  <Breakdown
-                    counts={data.matches.bands}
-                    total={data.matches.total}
-                    emptyText="No match confidence data yet."
-                  />
-                </Panel>
-                <Panel>
-                  <PanelTitle>Matches by Status</PanelTitle>
-                  <CountList counts={data.matches.byStatus} emptyText="No matches recorded yet." />
-                </Panel>
-              </div>
+              )}
             </Section>
 
             {/* 4. Exception trends */}
@@ -392,41 +430,50 @@ function AIInsights() {
               icon="trending_up"
               delay={0.2}
             >
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-space-sm">
-                <MetricCard
-                  data={tile('e-open', 'Open', String(data.exceptions.open), 'Needs attention', 'error', 'text-error')}
+              {exceptionMetrics ? (
+                <>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-space-sm">
+                    <MetricCard
+                      data={tile('e-open', 'Open', String(exceptionMetrics.open), 'Needs attention', 'error', 'text-error')}
+                    />
+                    <MetricCard
+                      data={tile('e-ack', 'Acknowledged', String(exceptionMetrics.acknowledged), 'Seen, not resolved', 'visibility')}
+                    />
+                    <MetricCard
+                      data={tile('e-resolved', 'Resolved', String(exceptionMetrics.resolved), 'Closed out', 'task_alt', 'text-emerald-600')}
+                    />
+                    <MetricCard
+                      data={tile('e-dismissed', 'Dismissed', String(exceptionMetrics.dismissed), 'Dismissed as noise', 'block')}
+                    />
+                    <MetricCard
+                      data={tile('e-opened7', 'Opened (7d)', String(exceptionMetrics.openedLast7), 'Raised in last 7 days', 'add_alert')}
+                    />
+                    <MetricCard
+                      data={tile('e-resolved7', 'Resolved (7d)', String(exceptionMetrics.resolvedLast7), 'Closed in last 7 days', 'task_alt', 'text-emerald-600')}
+                    />
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-space-sm">
+                    <Panel className="md:col-span-2">
+                      <PanelTitle legend={<TrendLegend />}>Last 7 Days</PanelTitle>
+                      <TrendChart trend={exceptionMetrics.trend} />
+                    </Panel>
+                    <Panel>
+                      <PanelTitle>By Severity</PanelTitle>
+                      <Breakdown
+                        counts={exceptionMetrics.bySeverity}
+                        total={exceptionMetrics.total}
+                        emptyText="No exceptions recorded yet."
+                        colorFn={(key) => SEVERITY_COLOR[key] ?? 'bg-outline-variant'}
+                      />
+                    </Panel>
+                  </div>
+                </>
+              ) : (
+                <WidgetError
+                  title="Exception trends"
+                  message={errors.exceptions ?? 'Exception trends are unavailable right now.'}
                 />
-                <MetricCard
-                  data={tile('e-ack', 'Acknowledged', String(data.exceptions.acknowledged), 'Seen, not resolved', 'visibility')}
-                />
-                <MetricCard
-                  data={tile('e-resolved', 'Resolved', String(data.exceptions.resolved), 'Closed out', 'task_alt', 'text-emerald-600')}
-                />
-                <MetricCard
-                  data={tile('e-dismissed', 'Dismissed', String(data.exceptions.dismissed), 'Dismissed as noise', 'block')}
-                />
-                <MetricCard
-                  data={tile('e-opened7', 'Opened (7d)', String(data.exceptions.openedLast7), 'Raised in last 7 days', 'add_alert')}
-                />
-                <MetricCard
-                  data={tile('e-resolved7', 'Resolved (7d)', String(data.exceptions.resolvedLast7), 'Closed in last 7 days', 'task_alt', 'text-emerald-600')}
-                />
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-space-sm">
-                <Panel className="md:col-span-2">
-                  <PanelTitle legend={<TrendLegend />}>Last 7 Days</PanelTitle>
-                  <TrendChart trend={data.exceptions.trend} />
-                </Panel>
-                <Panel>
-                  <PanelTitle>By Severity</PanelTitle>
-                  <Breakdown
-                    counts={data.exceptions.bySeverity}
-                    total={data.exceptions.total}
-                    emptyText="No exceptions recorded yet."
-                    colorFn={(key) => SEVERITY_COLOR[key] ?? 'bg-outline-variant'}
-                  />
-                </Panel>
-              </div>
+              )}
             </Section>
           </>
         ) : null}

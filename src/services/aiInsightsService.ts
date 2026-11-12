@@ -7,7 +7,7 @@
 // Read-only: this module never runs a task, decides a proposal or writes a row,
 // and it adds no new backend endpoints.
 
-import { apiUrl } from './api';
+import { fetchJson, settleResult } from './api';
 
 const TREND_DAYS = 7;
 const MONTHS = [
@@ -67,11 +67,20 @@ export interface ExceptionTrendMetrics {
   resolvedLast7: number;
 }
 
+/** The four independent dashboard sections. */
+export type AiInsightsSection = 'proposals' | 'purpose' | 'matches' | 'exceptions';
+
 export interface AIInsightsData {
-  proposals: AiProposalMetrics;
-  purpose: PurposeMetrics;
-  matches: MatchConfidenceMetrics;
-  exceptions: ExceptionTrendMetrics;
+  /** Null when GET /ai/proposals failed; see `errors.proposals`. */
+  proposals: AiProposalMetrics | null;
+  /** Null when GET /purpose-recommendations/summary failed. */
+  purpose: PurposeMetrics | null;
+  /** Null when GET /matches failed. */
+  matches: MatchConfidenceMetrics | null;
+  /** Null when either the exception list or its summary failed. */
+  exceptions: ExceptionTrendMetrics | null;
+  /** Readable failure message per section that could not be loaded. */
+  errors: Partial<Record<AiInsightsSection, string>>;
 }
 
 // --- raw backend payloads (only the fields this dashboard reads) ---
@@ -130,15 +139,6 @@ interface RawExceptionSummary {
 }
 
 // --- small helpers ---
-
-async function getJson<T>(path: string): Promise<T> {
-  const res = await fetch(path);
-  if (!res.ok) {
-    const text = await res.text();
-    throw new Error(`${path} → ${res.status} ${text}`);
-  }
-  return (await res.json()) as T;
-}
 
 /** Count occurrences, mapping null/undefined keys to "unknown". */
 function countBy(values: (string | null | undefined)[]): Record<string, number> {
@@ -263,22 +263,46 @@ function adaptExceptions(
 }
 
 /**
- * Load every metric the AI Insights dashboard shows, in one parallel round trip.
- * Any failed request aborts the whole load so the page can surface the error.
+ * Load every metric the AI Insights dashboard shows in one parallel round trip.
+ *
+ * Uses `Promise.allSettled` so one failing endpoint leaves the other three
+ * sections intact: a failed section is reported through `errors` and its data is
+ * null, while the page renders the sections that succeeded.
  */
 export async function fetchAIInsights(): Promise<AIInsightsData> {
-  const [proposals, purpose, matches, exceptions, exceptionSummary] = await Promise.all([
-    getJson<RawProposalList>(apiUrl('/ai/proposals', { limit: 500 })),
-    getJson<RawPurposeSummary>(apiUrl('/purpose-recommendations/summary')),
-    getJson<RawMatchList>(apiUrl('/matches', { limit: 500 })),
-    getJson<RawExceptionList>(apiUrl('/exceptions', { limit: 500 })),
-    getJson<RawExceptionSummary>(apiUrl('/exceptions/summary')),
-  ]);
+  const [proposalResult, purposeResult, matchResult, exceptionResult, summaryResult] =
+    await Promise.allSettled([
+      fetchJson<RawProposalList>('/ai/proposals', { query: { limit: 500 } }),
+      fetchJson<RawPurposeSummary>('/purpose-recommendations/summary'),
+      fetchJson<RawMatchList>('/matches', { query: { limit: 500 } }),
+      fetchJson<RawExceptionList>('/exceptions', { query: { limit: 500 } }),
+      fetchJson<RawExceptionSummary>('/exceptions/summary'),
+    ]);
+
+  const proposals = settleResult(proposalResult);
+  const purpose = settleResult(purposeResult);
+  const matches = settleResult(matchResult);
+  const exceptions = settleResult(exceptionResult);
+  const exceptionSummary = settleResult(summaryResult);
+
+  // The trend section needs both requests, so either failure marks it failed.
+  const exceptionsError = exceptions.error ?? exceptionSummary.error;
+  const exceptionsData =
+    exceptions.data && exceptionSummary.data
+      ? adaptExceptions(exceptions.data, exceptionSummary.data)
+      : null;
+
+  const errors: Partial<Record<AiInsightsSection, string>> = {};
+  if (proposals.error) errors.proposals = proposals.error;
+  if (purpose.error) errors.purpose = purpose.error;
+  if (matches.error) errors.matches = matches.error;
+  if (exceptionsError) errors.exceptions = exceptionsError;
 
   return {
-    proposals: adaptProposals(proposals),
-    purpose: adaptPurpose(purpose),
-    matches: adaptMatches(matches),
-    exceptions: adaptExceptions(exceptions, exceptionSummary),
+    proposals: proposals.data ? adaptProposals(proposals.data) : null,
+    purpose: purpose.data ? adaptPurpose(purpose.data) : null,
+    matches: matches.data ? adaptMatches(matches.data) : null,
+    exceptions: exceptionsData,
+    errors,
   };
 }

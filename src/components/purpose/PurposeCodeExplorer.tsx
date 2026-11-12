@@ -4,9 +4,14 @@ import Reveal from '../Reveal';
 
 interface PurposeCodeExplorerProps {
   references: PurposeCodeReference[];
+  /** Rules version from rules/india_export.yaml. */
   version: string;
-  nodeId: string;
-  syncTime: string;
+  /** Where the catalogue was loaded from, e.g. rules/india_export.yaml. */
+  sourcePath: string;
+  /** Date the rules file was last updated. */
+  lastUpdated: string;
+  /** False while any rules entry is still marked unverified. */
+  verified: boolean;
 }
 
 const colorMap: Record<string, string> = {
@@ -16,24 +21,30 @@ const colorMap: Record<string, string> = {
   'on-surface': 'text-on-surface',
 };
 
-function PurposeCodeExplorer({ references, version, nodeId, syncTime }: PurposeCodeExplorerProps) {
+function PurposeCodeExplorer({
+  references,
+  version,
+  sourcePath,
+  lastUpdated,
+  verified,
+}: PurposeCodeExplorerProps) {
   const [searchQuery, setSearchQuery] = useState('');
 
-  const filteredReferences = references.filter(ref => {
-    const query = searchQuery.toLowerCase();
-    return (
+  const query = searchQuery.trim().toLowerCase();
+  const filteredReferences = references.filter(
+    (ref) =>
+      query === '' ||
       ref.code.toLowerCase().includes(query) ||
       ref.label.toLowerCase().includes(query) ||
-      ref.description.toLowerCase().includes(query) ||
-      query === ''
-    );
-  });
+      ref.description.toLowerCase().includes(query),
+  );
+  const unverifiedCount = references.filter((ref) => ref.verified === false).length;
 
   return (
     <section className="flex flex-col gap-space-sm pt-space-xs mb-space-base">
       <Reveal delay={0.5}>
         <div className="p-space-base rounded-xl bg-surface-container-high flex flex-col gap-space-sm">
-          <div className="flex items-start justify-between">
+          <div className="flex items-start justify-between gap-space-sm">
             <div className="flex items-center gap-space-xs">
               <span className="material-symbols-outlined text-secondary text-[22px]">
                 menu_book
@@ -43,13 +54,20 @@ function PurposeCodeExplorer({ references, version, nodeId, syncTime }: PurposeC
                   RBI Purpose Code Index
                 </h3>
                 <p className="font-body-sm text-body-sm text-on-surface-variant">
-                  Master Direction (Inward Services updated 2024)
+                  {references.length} codes loaded from {sourcePath}
                 </p>
               </div>
             </div>
-            <span className="px-space-xs py-0.5 rounded bg-surface-container-lowest font-code-sm text-code-sm text-on-surface font-bold">
-              {version}
-            </span>
+            <div className="flex items-center gap-space-xs">
+              {(unverifiedCount > 0 || !verified) && (
+                <span className="px-space-xs py-0.5 rounded bg-error-container text-on-error-container font-label-sm text-label-sm font-semibold">
+                  {unverifiedCount > 0 ? `${unverifiedCount} unverified` : 'unverified'}
+                </span>
+              )}
+              <span className="px-space-xs py-0.5 rounded bg-surface-container-lowest font-code-sm text-code-sm text-on-surface font-bold">
+                {version}
+              </span>
+            </div>
           </div>
 
           {/* Search Bar */}
@@ -59,7 +77,7 @@ function PurposeCodeExplorer({ references, version, nodeId, syncTime }: PurposeC
             </span>
             <input
               className="w-full h-10 pl-9 pr-space-base rounded-xl bg-surface-container-lowest text-on-surface font-body-sm text-body-sm placeholder:text-on-surface-variant focus:outline-none focus:ring-2 focus:ring-primary shadow-sm"
-              placeholder="Search code or keywords (e.g., P0802, Royalties, SaaS)..."
+              placeholder="Search code or keywords (e.g., P0802, software, hosting)..."
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -72,24 +90,37 @@ function PurposeCodeExplorer({ references, version, nodeId, syncTime }: PurposeC
               <button
                 key={ref.code}
                 className="px-space-sm py-1 rounded-lg bg-surface-container-lowest font-code-sm text-code-sm text-on-surface hover:bg-surface-container transition-colors flex items-center gap-1"
+                onClick={() => setSearchQuery(ref.code)}
+                title={ref.description}
+                type="button"
               >
                 <span className={`font-bold ${colorMap[ref.color] || 'text-on-surface'}`}>
                   {ref.code}
                 </span>
                 <span>{ref.label}</span>
+                {ref.verified === false && (
+                  <span className="text-error font-bold" title="Marked unverified in the rules file">
+                    *
+                  </span>
+                )}
               </button>
             ))}
+            {filteredReferences.length === 0 && (
+              <p className="font-body-sm text-body-sm text-on-surface-variant">
+                No purpose code matches “{searchQuery}”.
+              </p>
+            )}
           </div>
 
-          {/* Regulatory Anchor Stamp */}
-          <div className="flex items-center justify-between pt-space-xs mt-space-2xs text-on-surface-variant font-code-sm text-code-sm">
-            <div className="flex items-center gap-1">
+          {/* Source stamps */}
+          <div className="flex items-center justify-between gap-space-sm pt-space-xs mt-space-2xs text-on-surface-variant font-code-sm text-code-sm">
+            <div className="flex items-center gap-1 min-w-0">
               <span className="material-symbols-outlined text-[15px] text-tertiary">
                 fingerprint
               </span>
-              <span>Node ID: {nodeId}</span>
+              <span className="truncate">Rules: {sourcePath}</span>
             </div>
-            <span>EDPMS Sync: {syncTime}</span>
+            <span className="shrink-0">Last updated: {lastUpdated}</span>
           </div>
         </div>
       </Reveal>

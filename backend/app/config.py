@@ -30,7 +30,17 @@ class Settings(BaseSettings):
     # Local Vite dev server (see DEPLOY.md). Deployed origins (e.g. the Vercel URL)
     # come from CORS_ORIGINS / FRONTEND_URL in the environment, never hardcoded here.
     frontend_url: str = "http://localhost:5173"
-    cors_origins: str = "http://localhost:5173,http://127.0.0.1:5173"
+    # Local Vite dev origins. The dev server sets strictPort: true (vite.config.ts),
+    # so it fails loudly instead of drifting off 5173 — these extra ports are kept
+    # only as an explicit allowlist for developers who deliberately start Vite on a
+    # fallback port. An untrusted origin makes every request fail CORS and the whole
+    # SPA render zeros with no visible cause. This stays an explicit allowlist —
+    # deployed origins come from CORS_ORIGINS in the environment, never hardcoded here.
+    cors_origins: str = (
+        "http://localhost:5173,http://127.0.0.1:5173,"
+        "http://localhost:5174,http://127.0.0.1:5174,"
+        "http://localhost:5175,http://127.0.0.1:5175"
+    )
     database_url: str = f"sqlite:///{ROOT / 'edflow.sqlite'}"
     demo_admin_key: str = ""
 

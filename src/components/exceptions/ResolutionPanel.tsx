@@ -30,11 +30,11 @@ function ResolutionPanel({ resolvedExceptions, totalResolved }: ResolutionPanelP
                 Resolved Today
               </h2>
               <span className="px-2 py-0.5 rounded-full bg-[#ECFDF5] text-[#065F46] font-label-sm text-label-sm font-semibold">
-                {totalResolved} items
+                {totalResolved} total resolved
               </span>
             </div>
             <p className="font-body-sm text-body-sm text-on-surface-variant">
-              Cleared and ready for EDPMS batch upload
+              Resolved today, kept in the audit trail
             </p>
           </div>
         </div>
@@ -49,6 +49,11 @@ function ResolutionPanel({ resolvedExceptions, totalResolved }: ResolutionPanelP
 
       {isExpanded && (
         <div className="flex flex-col gap-space-xs transition-all duration-300">
+          {resolvedExceptions.length === 0 && (
+            <p className="p-space-md rounded-xl bg-surface-container-lowest/80 shadow-sm font-body-sm text-body-sm text-on-surface-variant">
+              No exceptions have been resolved today.
+            </p>
+          )}
           {resolvedExceptions.map((exception, index) => (
             <Reveal key={exception.id} delay={index * 0.05}>
               <div className="p-space-md rounded-xl bg-surface-container-lowest/80 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-space-xs">
@@ -61,7 +66,7 @@ function ResolutionPanel({ resolvedExceptions, totalResolved }: ResolutionPanelP
                       {exception.invoiceRef}
                     </span>
                     <span className="text-on-surface-variant font-body-sm text-body-sm">
-                      \u2022 {exception.amount}
+                      • {exception.amount}
                     </span>
                     <p className="font-body-sm text-body-sm text-on-surface-variant">
                       {exception.description}
@@ -76,7 +81,7 @@ function ResolutionPanel({ resolvedExceptions, totalResolved }: ResolutionPanelP
                         : 'bg-surface-container text-on-surface-variant'
                     } font-label-sm text-label-sm font-medium`}
                   >
-                    {exception.resolutionType === 'auto' ? 'AI Auto-Rule' : 'Manual Auth'}
+                    {exception.resolutionType === 'auto' ? 'Auto-closed' : 'Manual'}
                   </span>
                   <span className="font-label-sm text-label-sm text-on-surface-variant">
                     {exception.timestamp}

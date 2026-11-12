@@ -8,6 +8,8 @@ type InvoiceTableProps = {
   onIngest: () => void;
   onClearFilters: () => void;
   onNotify: (message: string) => void;
+  /** Runs the row's primary action (send invoice / payment link) via the backend. */
+  onRowAction: (invoice: InvoiceRecord) => void;
 };
 
 function InvoiceTable({
@@ -16,6 +18,7 @@ function InvoiceTable({
   onIngest,
   onClearFilters,
   onNotify,
+  onRowAction,
 }: InvoiceTableProps) {
   const [query, setQuery] = useState("");
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
@@ -63,7 +66,7 @@ function InvoiceTable({
 
   const exportVisibleInvoices = () => {
     if (visibleInvoices.length === 0) {
-      onNotify("There are no sample invoices to export.");
+      onNotify("There are no invoices to export.");
       return;
     }
 
@@ -88,10 +91,10 @@ function InvoiceTable({
     );
     const link = document.createElement("a");
     link.href = downloadUrl;
-    link.download = "edflow-sample-invoices.csv";
+    link.download = "edflow-invoices.csv";
     link.click();
     URL.revokeObjectURL(downloadUrl);
-    onNotify(`Exported ${visibleInvoices.length} simulated invoices to CSV.`);
+    onNotify(`Exported ${visibleInvoices.length} invoices to CSV.`);
   };
 
   return (
@@ -145,9 +148,7 @@ function InvoiceTable({
             <button
               className="rounded-lg bg-surface-container-high px-space-sm py-1 font-label-sm text-label-sm text-on-surface transition-colors hover:bg-surface-container-highest"
               onClick={() =>
-                onNotify(
-                  "Batch settlement is unavailable in this simulated ledger.",
-                )
+                onNotify("Batch settlement is not available.")
               }
               type="button"
             >
@@ -155,10 +156,10 @@ function InvoiceTable({
             </button>
           )}
           <button
-            aria-label="Export visible sample invoices to CSV"
+            aria-label="Export visible invoices to CSV"
             className="flex h-8 w-8 items-center justify-center rounded-lg bg-surface-container-lowest text-on-surface-variant shadow-sm transition-colors hover:bg-surface-container hover:text-on-surface"
             onClick={exportVisibleInvoices}
-            title="Export sample ledger to CSV"
+            title="Export ledger to CSV"
             type="button"
           >
             <MaterialIcon name="ios_share" className="text-[18px]" />
@@ -172,11 +173,7 @@ function InvoiceTable({
             <li key={invoice.id}>
               <InvoiceCard
                 invoice={invoice}
-                onAction={() =>
-                  onNotify(
-                    `${invoice.id} is sample data. This action is not connected.`,
-                  )
-                }
+                onAction={() => onRowAction(invoice)}
                 onSelect={() => toggleInvoice(invoice.id)}
                 selected={selectedIds.includes(invoice.id)}
               />
@@ -316,6 +313,66 @@ function InvoiceCard({
 
 function InvoiceDetail({ invoice }: { invoice: InvoiceRecord }) {
   switch (invoice.detail.kind) {
+    case "record": {
+      const { detail } = invoice;
+      const overdue =
+        detail.edfDaysRemaining !== null && detail.edfDaysRemaining < 0;
+      return (
+        <div className="flex flex-col gap-space-xs rounded-lg bg-surface-container-low p-space-sm">
+          <div className="flex flex-wrap items-center justify-between gap-x-space-sm gap-y-1 font-code-sm text-code-sm text-on-surface-variant">
+            <span>
+              Purpose:{" "}
+              <strong className="text-on-surface">
+                {detail.purposeCode ?? "not set"}
+              </strong>
+              {detail.purposeVerified === false && (
+                <span className="ml-2 rounded bg-error-container px-1.5 py-0.5 font-label-sm text-label-sm font-bold text-on-error-container">
+                  UNVERIFIED
+                </span>
+              )}
+            </span>
+            <span>
+              Contract:{" "}
+              <strong className="text-on-surface">
+                {detail.contractRef ?? "—"}
+              </strong>
+            </span>
+          </div>
+          <div className="flex flex-wrap items-center gap-x-space-sm gap-y-1 font-label-sm text-label-sm text-on-surface-variant">
+            <span>Issued {detail.issued}</span>
+            <span>Due {detail.due}</span>
+            {detail.edfDue && <span>EDF due {detail.edfDue}</span>}
+            {detail.edfDaysRemaining !== null && (
+              <span
+                className={
+                  overdue ? "font-bold text-error" : "font-bold text-tertiary-container"
+                }
+              >
+                {overdue
+                  ? `${Math.abs(detail.edfDaysRemaining)} days overdue`
+                  : `${detail.edfDaysRemaining} days left`}
+              </span>
+            )}
+          </div>
+          {detail.serviceDescription && (
+            <span className="font-body-sm text-body-sm text-on-surface-variant">
+              {detail.serviceDescription}
+            </span>
+          )}
+          {detail.paypalInvoiceUrl && (
+            <a
+              className="flex items-center gap-1 font-label-sm text-label-sm font-bold text-primary hover:underline"
+              href={detail.paypalInvoiceUrl}
+              rel="noreferrer"
+              target="_blank"
+            >
+              Open PayPal invoice
+              <MaterialIcon name="open_in_new" className="text-[14px]" />
+            </a>
+          )}
+        </div>
+      );
+    }
     case "matched":
       return (
         <div className="flex flex-col gap-space-xs rounded-lg bg-surface-container-low p-space-sm">
@@ -418,6 +475,17 @@ function InvoiceDetail({ invoice }: { invoice: InvoiceRecord }) {
 
 function getStatusNote(invoice: InvoiceRecord) {
   switch (invoice.detail.kind) {
+    case "record":
+      switch (invoice.status) {
+        case "matched":
+          return "Payment received";
+        case "pending":
+          return "Awaiting buyer payment";
+        case "draft":
+          return "Draft — not sent yet";
+        default:
+          return "Needs attention";
+      }
     case "matched":
       return "Dual-reconciled & Locked";
     case "variance":

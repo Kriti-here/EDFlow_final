@@ -2,22 +2,23 @@ import type { ExceptionItem } from '../../types/exceptions';
 import SeverityBadge from './SeverityBadge';
 import Reveal from '../Reveal';
 
+export type ExceptionActionKind = 'primary' | 'secondary';
+
 interface ExceptionRowProps {
   exception: ExceptionItem;
-  onResolve: (id: string, message: string) => void;
-  onSecondaryAction: (id: string, action: string) => void;
+  /** Called with the row and which button was pressed. */
+  onAction: (exception: ExceptionItem, action: ExceptionActionKind) => void;
 }
 
-function ExceptionRow({ exception, onResolve, onSecondaryAction }: ExceptionRowProps) {
-  const handlePrimaryAction = () => {
-    onResolve(exception.id, exception.actions.primary.onClick);
-  };
+/** "United States (USD)" from whichever parts the record actually has. */
+function contextLine(exception: ExceptionItem): string {
+  return [exception.country, exception.currency ? `(${exception.currency})` : '']
+    .filter(Boolean)
+    .join(' ');
+}
 
-  const handleSecondaryAction = () => {
-    if (exception.actions.secondary) {
-      onSecondaryAction(exception.id, exception.actions.secondary.onClick);
-    }
-  };
+function ExceptionRow({ exception, onAction }: ExceptionRowProps) {
+  const context = contextLine(exception);
 
   return (
     <Reveal>
@@ -34,10 +35,15 @@ function ExceptionRow({ exception, onResolve, onSecondaryAction }: ExceptionRowP
               <span className="font-code-sm text-code-sm text-on-surface-variant font-medium">
                 {exception.code}
               </span>
-              <span className="text-outline-variant">\u2022</span>
+              <span className="text-outline-variant">•</span>
               <span className="font-code-sm text-code-sm text-primary font-semibold">
                 {exception.invoiceRef}
               </span>
+              {exception.statusLabel && (
+                <span className="px-2 py-0.5 rounded-full bg-surface-container text-on-surface-variant font-label-sm text-label-sm font-medium">
+                  {exception.statusLabel}
+                </span>
+              )}
             </div>
             {exception.deadline && (
               <span className="font-label-sm text-label-sm text-error bg-error-container/40 px-2 py-0.5 rounded font-medium flex items-center gap-1">
@@ -46,34 +52,35 @@ function ExceptionRow({ exception, onResolve, onSecondaryAction }: ExceptionRowP
               </span>
             )}
             {!exception.deadline && (
-              <span className="font-label-sm text-label-sm text-on-surface-variant bg-surface-container px-2 py-0.5 rounded font-medium">
+              <span className="font-label-sm text-label-sm text-on-surface-variant bg-surface-container px-2 py-0.5 rounded font-medium whitespace-nowrap">
                 {exception.timestamp}
               </span>
             )}
           </div>
 
           <div className="flex items-center justify-between mt-1">
-            <div>
+            <div className="min-w-0">
               <h3 className="font-headline-sm text-headline-sm text-on-surface font-bold">
                 {exception.title}
               </h3>
-              <span className="font-label-sm text-label-sm text-on-surface-variant">
-                {exception.country} ({exception.currency})
-              </span>
-            </div>
-            <div className="text-right">
-              <div className="font-headline-sm text-headline-sm text-on-surface font-bold tracking-tight">
-                {exception.amount}
-              </div>
-              {exception.amountUsd && (
+              {context && (
                 <span className="font-label-sm text-label-sm text-on-surface-variant">
-                  {exception.amountUsd}
+                  {context}
                 </span>
               )}
-              <span className="font-label-sm text-label-sm text-on-surface-variant">
-                {exception.amountUsd ? 'Foreign inward remittance' : 'Inward Nostro Remittance'}
-              </span>
             </div>
+            {exception.amount && (
+              <div className="text-right shrink-0">
+                <div className="font-headline-sm text-headline-sm text-on-surface font-bold tracking-tight whitespace-nowrap">
+                  {exception.amount}
+                </div>
+                {exception.amountUsd && (
+                  <span className="font-label-sm text-label-sm text-on-surface-variant">
+                    {exception.amountUsd}
+                  </span>
+                )}
+              </div>
+            )}
           </div>
         </div>
 
@@ -138,8 +145,9 @@ function ExceptionRow({ exception, onResolve, onSecondaryAction }: ExceptionRowP
           )}
           <div className="flex items-center gap-space-xs w-full sm:w-auto">
             <button
-              onClick={handlePrimaryAction}
               className="flex-1 sm:flex-initial h-10 px-space-base rounded-xl bg-primary-container text-on-primary font-label-md text-label-md font-semibold hover:bg-primary transition-all flex items-center justify-center gap-1 shadow-sm"
+              onClick={() => onAction(exception, 'primary')}
+              type="button"
             >
               <span className="material-symbols-outlined text-[18px]">
                 {exception.actions.primary.icon}
@@ -148,8 +156,9 @@ function ExceptionRow({ exception, onResolve, onSecondaryAction }: ExceptionRowP
             </button>
             {exception.actions.secondary && (
               <button
-                onClick={handleSecondaryAction}
                 className="h-10 px-space-base rounded-xl bg-surface-container-high text-on-surface font-label-md text-label-md font-semibold hover:bg-surface-container transition-colors"
+                onClick={() => onAction(exception, 'secondary')}
+                type="button"
               >
                 {exception.actions.secondary.label}
               </button>

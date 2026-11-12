@@ -15,7 +15,7 @@ import json
 from collections import Counter
 from decimal import Decimal
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from ..models import FiraDocument, FiraLine, Invoice, MatchRecord, Payment, utcnow
@@ -198,16 +198,14 @@ def confirm_match(db: Session, match_id: int, *, actor: str = "user") -> MatchRe
     return record
 
 
-def list_matches(
-    db: Session,
+def _match_query(
     *,
     status: str | None = None,
     match_type: str | None = None,
     document_id: int | None = None,
-    limit: int = 200,
-) -> list[MatchRecord]:
-    """List match records, newest first, optionally filtered."""
-    query = select(MatchRecord).order_by(MatchRecord.id.desc())
+):
+    """Base filtered query shared by the list and the count/status aggregate."""
+    query = select(MatchRecord)
     if status:
         query = query.where(MatchRecord.status == status)
     if match_type:
@@ -216,4 +214,48 @@ def list_matches(
         query = query.join(FiraLine, FiraLine.id == MatchRecord.fira_line_id).where(
             FiraLine.document_id == document_id
         )
-    return list(db.scalars(query.limit(min(max(limit, 1), 500))).all())
+    return query
+
+
+def list_matches(
+    db: Session,
+    *,
+    status: str | None = None,
+    match_type: str | None = None,
+    document_id: int | None = None,
+    limit: int = 200,
+    offset: int = 0,
+) -> list[MatchRecord]:
+    """List one page of match records, newest first, optionally filtered.
+
+    ``offset`` pages through the filtered set (paired with ``match_stats`` for the
+    total), so a caller is never forced to present a capped page as complete.
+    """
+    query = _match_query(
+        status=status, match_type=match_type, document_id=document_id
+    ).order_by(MatchRecord.id.desc())
+    page = min(max(limit, 1), 500)
+    return list(db.scalars(query.limit(page).offset(max(offset, 0))).all())
+
+
+def match_stats(
+    db: Session,
+    *,
+    status: str | None = None,
+    match_type: str | None = None,
+    document_id: int | None = None,
+) -> dict:
+    """Filtered total plus per-status counts, computed over *every* matching row.
+
+    The per-status map lets the UI keep accurate filter badges even when the
+    returned page is capped, instead of counting only the rows it received.
+    """
+    base = _match_query(
+        status=status, match_type=match_type, document_id=document_id
+    ).subquery()
+    total = db.scalar(select(func.count()).select_from(base)) or 0
+    grouped = db.execute(
+        select(base.c.status, func.count()).group_by(base.c.status)
+    ).all()
+    by_status = {row[0]: row[1] for row in grouped}
+    return {"count": total, "by_status": by_status}

@@ -4,6 +4,7 @@ export { default as IngestModal } from "./IngestModal";
 export { default as InvoiceTable } from "./InvoiceTable";
 export { default as InvoiceToast } from "./InvoiceToast";
 export { default as LedgerMetrics } from "./LedgerMetrics";
+export { default as NewInvoiceModal } from "./NewInvoiceModal";
 export type {
   InvoiceFilter,
   InvoiceFilterOption,

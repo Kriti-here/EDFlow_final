@@ -3,9 +3,11 @@ import Reveal from '../Reveal';
 
 interface EDFReadinessCardProps {
   compilation: ActiveCompilation;
+  onApprove?: () => void;
+  busy?: boolean;
 }
 
-function EDFReadinessCard({ compilation }: EDFReadinessCardProps) {
+function EDFReadinessCard({ compilation, onApprove, busy = false }: EDFReadinessCardProps) {
   return (
     <Reveal delay={0.1}>
       <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-primary-container to-primary text-on-primary p-space-base shadow-md">
@@ -22,7 +24,7 @@ function EDFReadinessCard({ compilation }: EDFReadinessCardProps) {
                 Assembling Pack {compilation.packNumber}
               </h2>
               <p className="font-body-sm text-body-sm text-on-primary/80 mt-0.5">
-                {compilation.client} \u2022 {compilation.description}
+                {compilation.client} • {compilation.description}
               </p>
             </div>
             <div className="h-10 w-10 flex items-center justify-center rounded-xl bg-surface-container-lowest/15 backdrop-blur-md">
@@ -65,11 +67,22 @@ function EDFReadinessCard({ compilation }: EDFReadinessCardProps) {
           </div>
 
           <button
-            className="w-full h-11 flex items-center justify-center gap-space-xs rounded-xl bg-surface-container-lowest text-primary font-headline-sm text-headline-sm font-semibold active:scale-[0.99] transition-transform shadow-sm"
+            className="w-full h-11 flex items-center justify-center gap-space-xs rounded-xl bg-surface-container-lowest text-primary font-headline-sm text-headline-sm font-semibold active:scale-[0.99] transition-transform shadow-sm disabled:opacity-60 disabled:active:scale-100"
             type="button"
+            onClick={onApprove}
+            disabled={busy || !onApprove || !compilation.ready}
+            title={
+              compilation.ready
+                ? 'Freeze this draft and store its SHA-256 snapshot hash'
+                : 'Resolve the blocking failures above before approving'
+            }
           >
-            <span className="material-symbols-outlined text-[18px]">verified</span>
-            <span>Finalize & Seal Dossier</span>
+            <span className="material-symbols-outlined text-[18px]">
+              {busy ? 'sync' : 'verified'}
+            </span>
+            <span>
+              {compilation.ready ? 'Approve & Seal Dossier' : 'Blocking failures prevent approval'}
+            </span>
           </button>
         </div>
 

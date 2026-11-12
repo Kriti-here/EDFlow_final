@@ -21,6 +21,7 @@ from __future__ import annotations
 
 import json
 from collections import Counter
+from datetime import datetime, timedelta, timezone
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -312,6 +313,35 @@ def dismiss(
 # ---------------------------------------------------------------------------
 # Reads
 # ---------------------------------------------------------------------------
+# Asia/Kolkata is UTC+05:30 all year (no daylight saving), so a constant offset
+# converts an IST midnight into a UTC instant exactly without a timezone database.
+_IST_OFFSET = timedelta(hours=5, minutes=30)
+_ONE_DAY = timedelta(days=1)
+
+
+def _ist_day_bounds(moment: datetime | None = None) -> tuple[datetime, datetime]:
+    """The current Indian business day as the UTC interval ``[since, until)``.
+
+    ``since`` is today's IST midnight and ``until`` is the next IST midnight,
+    both expressed in UTC. Stored timestamps stay in UTC; only the day edges are
+    shifted, so a row resolved at (for example) 19:00 UTC belongs to the next
+    Indian day rather than the current UTC one.
+    """
+    reference = (moment if moment is not None else utcnow()).astimezone(timezone.utc)
+    ist_midnight = (reference + _IST_OFFSET).replace(
+        hour=0, minute=0, second=0, microsecond=0
+    )
+    since = (ist_midnight - _IST_OFFSET).astimezone(timezone.utc)
+    return since, since + _ONE_DAY
+
+
+def _as_utc(value: datetime | None) -> datetime | None:
+    """Treat a naive timestamp (SQLite drops tzinfo) as UTC so comparisons are stable."""
+    if value is None:
+        return None
+    return value if value.tzinfo is not None else value.replace(tzinfo=timezone.utc)
+
+
 def list_exceptions(
     db: Session,
     *,
@@ -319,9 +349,17 @@ def list_exceptions(
     category: str | None = None,
     severity: str | None = None,
     document_id: int | None = None,
+    resolved_since: datetime | None = None,
+    resolved_until: datetime | None = None,
     limit: int = 200,
 ) -> list[ExceptionRecord]:
-    """List exceptions, newest first, optionally filtered."""
+    """List exceptions, newest first, optionally filtered.
+
+    ``resolved_since`` (inclusive) and ``resolved_until`` (exclusive) bound the
+    ``resolved_at`` timestamp, so a caller can fetch one calendar-day slice by
+    date instead of scanning by row id (which is what made "resolved today"
+    depend on the newest N records).
+    """
     query = select(ExceptionRecord).order_by(ExceptionRecord.id.desc())
     if status:
         query = query.where(ExceptionRecord.status == status)
@@ -331,20 +369,44 @@ def list_exceptions(
         query = query.where(ExceptionRecord.severity == severity)
     if document_id is not None:
         query = query.where(ExceptionRecord.fira_document_id == document_id)
+    if resolved_since is not None:
+        query = query.where(ExceptionRecord.resolved_at >= resolved_since)
+    if resolved_until is not None:
+        query = query.where(ExceptionRecord.resolved_at < resolved_until)
     return list(db.scalars(query.limit(min(max(limit, 1), 500))).all())
 
 
 def summary(db: Session) -> dict:
-    """Aggregate counts by status, category and severity (plus the open total)."""
+    """Aggregate counts by status, category and severity.
+
+    ``resolved_today`` counts rows resolved on the current **Indian business day**
+    (Asia/Kolkata), derived from the same UTC ``[since, until)`` bounds the
+    frontend uses, not from row order, so it stays correct no matter how many
+    older records exist. ``active_by_severity`` and ``active_by_category`` cover
+    the whole active queue (open + acknowledged), so the UI never has to estimate
+    them from a capped page. Every pre-existing key is unchanged.
+    """
     rows = db.scalars(select(ExceptionRecord)).all()
     by_status = Counter(row.status for row in rows)
+    active = [row for row in rows if row.status in _OPEN_STATUSES]
+    day_start, day_end = _ist_day_bounds()
+    resolved_today = 0
+    for row in rows:
+        if row.status != RESOLVED:
+            continue
+        resolved_at = _as_utc(row.resolved_at)
+        if resolved_at is not None and day_start <= resolved_at < day_end:
+            resolved_today += 1
     return {
         "total": len(rows),
         "open": by_status.get(OPEN, 0),
         "acknowledged": by_status.get(ACKNOWLEDGED, 0),
         "resolved": by_status.get(RESOLVED, 0),
         "dismissed": by_status.get(DISMISSED, 0),
+        "resolved_today": resolved_today,
         "by_status": dict(by_status),
         "by_category": dict(Counter(row.category for row in rows)),
         "by_severity": dict(Counter(row.severity for row in rows)),
+        "active_by_severity": dict(Counter(row.severity for row in active)),
+        "active_by_category": dict(Counter(row.category for row in active)),
     }

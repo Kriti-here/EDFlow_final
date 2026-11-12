@@ -2,6 +2,7 @@ import { useState } from "react";
 import type { ReactNode } from "react";
 import { Link } from "react-router-dom";
 
+import { useTheme } from "../../hooks/useTheme";
 import MaterialIcon from "./MaterialIcon";
 
 // Local brandmark served from `public/`; no external image dependency.
@@ -59,6 +60,8 @@ const ROW_CLASS =
  */
 function LandingHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const { theme, toggleTheme } = useTheme();
+  const isDark = theme === "dark";
 
   const closeMenu = () => setMenuOpen(false);
 
@@ -92,10 +95,13 @@ function LandingHeader() {
         </div>
         <div className="flex shrink-0 items-center gap-1.5">
           <button
-            aria-label="Toggle Dark or Light Theme"
+            aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}
+            aria-pressed={isDark}
+            title={isDark ? "Switch to light theme" : "Switch to dark theme"}
             className="flex h-9 w-9 items-center justify-center rounded-lg text-on-surface-variant transition-all hover:bg-surface-container hover:text-on-surface active:scale-95"
+            onClick={toggleTheme}
           >
-            <MaterialIcon name="dark_mode" className="text-[19px]" />
+            <MaterialIcon name={isDark ? "light_mode" : "dark_mode"} className="text-[19px]" />
           </button>
           <Link
             to="/dashboard"

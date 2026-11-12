@@ -52,6 +52,13 @@ def test_cors_allows_local_vite_dev_origin(client):
     assert r.headers.get("access-control-allow-origin") == "http://localhost:5173"
 
 
+def test_cors_allows_vite_fallback_ports(client):
+    """Explicitly allowlisted fallback ports stay trusted (Vite uses strictPort)."""
+    for origin in ("http://localhost:5174", "http://localhost:5175", "http://127.0.0.1:5175"):
+        r = client.get("/healthz", headers={"Origin": origin})
+        assert r.headers.get("access-control-allow-origin") == origin
+
+
 def test_cors_rejects_unconfigured_origin(client):
     r = client.get("/healthz", headers={"Origin": "https://not-allowed.example"})
     assert "access-control-allow-origin" not in r.headers

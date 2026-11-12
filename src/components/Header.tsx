@@ -1,6 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 
 import { WORKSPACE_NAV } from "../config/navigation";
+import { useTheme } from "../hooks/useTheme";
 import MaterialIcon from "./landing/MaterialIcon";
 
 type HeaderProps = {
@@ -10,11 +11,13 @@ type HeaderProps = {
 
 /**
  * Workspace top bar: mobile nav trigger, the current module title resolved from
- * the route, and a link back to the landing page.
+ * the route, the theme switch and a link back to the landing page.
  */
 function Header({ onOpenNav }: HeaderProps) {
   const location = useLocation();
   const current = WORKSPACE_NAV.find((item) => item.path === location.pathname);
+  const { theme, toggleTheme } = useTheme();
+  const isDark = theme === "dark";
 
   return (
     <header className="sticky top-0 z-30 border-b border-surface-container-high/70 bg-surface/90 backdrop-blur-xl">
@@ -38,6 +41,17 @@ function Header({ onOpenNav }: HeaderProps) {
         </div>
 
         <div className="ml-auto flex items-center gap-1.5">
+          <button
+            type="button"
+            aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}
+            aria-pressed={isDark}
+            title={isDark ? "Switch to light theme" : "Switch to dark theme"}
+            onClick={toggleTheme}
+            className="flex h-9 w-9 items-center justify-center rounded-lg text-on-surface-variant transition-all hover:bg-surface-container hover:text-on-surface active:scale-95"
+          >
+            <MaterialIcon name={isDark ? "light_mode" : "dark_mode"} className="text-[20px]" />
+          </button>
+
           <Link
             to="/"
             className="hidden items-center gap-1.5 rounded-full border border-surface-container-high bg-surface-container-lowest px-3 py-1.5 font-label-md text-label-md font-semibold text-on-surface-variant transition-all hover:text-on-surface active:scale-95 sm:inline-flex"

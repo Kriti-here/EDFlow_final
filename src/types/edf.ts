@@ -1,4 +1,10 @@
-export type EDFPackStatus = 'ready' | 'draft' | 'blocked' | 'exported';
+export type EDFPackStatus = 'ready' | 'draft' | 'blocked' | 'exported' | 'void';
+
+/** Lifecycle transitions the pack board can trigger through the backend. */
+export type EdfPackAction = 'validate' | 'approve' | 'revoke';
+
+/** Formats served by GET /edf-packs/{id}/export. */
+export type EDFPackExportFormat = 'json' | 'csv' | 'pdf';
 
 export type ComplianceCheck = {
   id: string;
@@ -22,6 +28,8 @@ export type EDFPack = {
   invoiceRefs: string[];
   client: string;
   status: EDFPackStatus;
+  /** Backend `pack_ready`: no blocking validation check has failed. */
+  ready?: boolean;
   value: string;
   valueInr?: string;
   currency: string;
@@ -47,6 +55,8 @@ export type PackMetric = {
   subtitle: string;
   icon: string;
   status?: 'ready' | 'draft' | 'blocked' | 'exported';
+  /** Optional real, derived sub-figure (never a placeholder). */
+  caption?: string;
 };
 
 export type ActiveCompilation = {
@@ -55,6 +65,8 @@ export type ActiveCompilation = {
   client: string;
   description: string;
   overallProgress: number;
+  /** Backend `pack_ready` for the draft being assembled. */
+  ready?: boolean;
   checklist: ComplianceCheck[];
 };
 

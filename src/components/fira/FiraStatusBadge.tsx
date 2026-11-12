@@ -1,6 +1,25 @@
-import type { FiraStatusBadgeProps } from '../../types/fira';
+/** Backend FIRA verification statuses plus the legacy UI-only values. */
+export type FiraStatusBadgeProps = {
+  status: string;
+  label: string;
+};
 
 const statusConfig: Record<string, { bg: string; text: string; dot?: string }> = {
+  verified: {
+    bg: 'bg-[#ECFDF5]',
+    text: 'text-[#065F46]',
+    dot: 'bg-[#10B981]',
+  },
+  needs_review: {
+    bg: 'bg-[#FFFBEB]',
+    text: 'text-[#92400E]',
+    dot: 'bg-[#F59E0B]',
+  },
+  failed: {
+    bg: 'bg-[#FEF2F2]',
+    text: 'text-[#991B1B]',
+    dot: 'bg-error',
+  },
   'fully-linked': {
     bg: 'bg-[#ECFDF5]',
     text: 'text-[#065F46]',
@@ -16,7 +35,7 @@ const statusConfig: Record<string, { bg: string; text: string; dot?: string }> =
     text: 'text-primary',
     dot: 'bg-primary',
   },
-  'unlinked': {
+  unlinked: {
     bg: 'bg-[#FEF2F2]',
     text: 'text-[#991B1B]',
     dot: 'bg-error',
@@ -24,7 +43,7 @@ const statusConfig: Record<string, { bg: string; text: string; dot?: string }> =
 };
 
 function FiraStatusBadge({ status, label }: FiraStatusBadgeProps) {
-  const config = statusConfig[status] || statusConfig['pending-purpose'];
+  const config = statusConfig[status] ?? statusConfig['needs_review'];
 
   return (
     <span

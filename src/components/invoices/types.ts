@@ -1,7 +1,20 @@
-export type InvoiceStatus = "matched" | "pending" | "exception";
-export type InvoiceFilter = "all" | InvoiceStatus | "draft";
+/** UI bucket for a backend invoice status (DRAFT / SENT / PAID). */
+export type InvoiceStatus = "matched" | "pending" | "draft" | "exception";
+export type InvoiceFilter = "all" | InvoiceStatus;
 
 type InvoiceDetail =
+  | {
+      kind: "record";
+      serviceDescription: string;
+      purposeCode: string | null;
+      purposeVerified: boolean | null;
+      contractRef: string | null;
+      issued: string;
+      due: string;
+      edfDue: string | null;
+      edfDaysRemaining: number | null;
+      paypalInvoiceUrl: string | null;
+    }
   | {
       kind: "matched";
       shippingBill: string;

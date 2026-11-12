@@ -9,6 +9,23 @@
     />
     <meta name="shell-type" content="mobile_tab" />
     <title>EDFlow Compliance Platform</title>
+    <script>
+      // Applies the saved (or OS-preferred) theme before first paint so a dark
+      // workspace never flashes a light page. Keep "edflow-theme" in sync with
+      // THEME_STORAGE_KEY in src/hooks/useTheme.ts.
+      (function () {
+        try {
+          var stored = localStorage.getItem("edflow-theme");
+          var dark =
+            stored === "dark" ||
+            (stored === null &&
+              window.matchMedia("(prefers-color-scheme: dark)").matches);
+          if (dark) document.documentElement.classList.add("dark");
+        } catch (error) {
+          // Storage blocked: the workspace renders in light mode.
+        }
+      })();
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
