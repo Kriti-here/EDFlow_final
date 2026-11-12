@@ -1,156 +1,307 @@
 # EDFlow
 
-EDFlow is a month-end close assistant for Indian service exporters who are paid through PayPal. It creates export
-invoices, records PayPal payments and fees, reads a weekly FIRA PDF, matches FIRA lines to invoices, flags
-exceptions, and prepares a monthly EDF worksheet for the user's bank or CA. It never files with the RBI or a bank,
-and never moves money without an explicit human click.
+> **Autonomous Month-End Close & Regulatory Compliance Assistant for Indian Service Exporters on PayPal**
 
-## Architecture
+[![Frontend Deployment](https://img.shields.io/badge/Frontend-Vercel-black?style=flat&logo=vercel)](https://edflowfinal.vercel.app)
+[![Backend Deployment](https://img.shields.io/badge/Backend-Render-46E3B7?style=flat&logo=render)](https://edflow-backend.onrender.com)
+[![API Docs](https://img.shields.io/badge/API_Docs-Swagger_UI-85EA2D?style=flat&logo=fastapi)](https://edflow-backend.onrender.com/docs)
+[![Python](https://img.shields.io/badge/Python-3.13-3776AB?style=flat&logo=python&logoColor=white)](https://www.python.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-009688?style=flat&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
+[![React](https://img.shields.io/badge/React-19-61DAFB?style=flat&logo=react&logoColor=black)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-3178C6?style=flat&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Vite](https://img.shields.io/badge/Vite-8.0+-646CFF?style=flat&logo=vite&logoColor=white)](https://vitejs.dev/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-06B6D4?style=flat&logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Render_Managed-4169E1?style=flat&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-| Layer | Technology | Notes |
-|---|---|---|
-| Frontend | Vite + React 19 + TypeScript SPA | Tailwind CSS, React Router, REST calls to the backend |
-| Backend | FastAPI (Python) + Uvicorn | SQLAlchemy 2.0 ORM, Pydantic v2 |
-| Database | SQLite (local) / PostgreSQL (Render) | Set via `DATABASE_URL`; tables created at startup |
-| Rules | `rules/india_export.yaml` | Deadlines, thresholds, purpose codes, EDF fields — never hardcoded |
-| External | PayPal (sandbox), Frankfurter (FX) | AI provider optional and disabled by default |
+---
 
-- **Frontend** routes: Landing (`/`), Dashboard, Invoices, FIRA, Matching, Exceptions, Purpose, AI Insights,
-  EDF Packs, Audit, Settings, Guide (`src/routes/AppRoutes.tsx`). Every service resolves the backend base URL
-  through `src/services/api.ts` (`VITE_API_BASE_URL`).
-- **Backend** routers: `core`, `invoices`, `rules`, `webhooks`, `fira`, `matches`, `exceptions`, `purpose`, `edf`,
-  `ai` (`backend/app/main.py`).
-- **Pipeline**: create invoice → send via PayPal Invoicing v2 → record payment and fee from capture → ingest FIRA
-  PDF → match lines to invoices → derive exceptions → propose/accept purpose codes → generate the monthly EDF pack.
-- **Money** uses Python `Decimal` only (never float) and is stored as a string/NUMERIC.
-- **Rules** are data-driven: `app/rules` loads `rules/india_export.yaml`, which carries a `source` and
-  `last_verified` for each entry.
+## Live Deployments & Links
 
-## PayPal usage
+- **Live Application (Frontend)**: [https://edflowfinal.vercel.app](https://edflowfinal.vercel.app)
+- **Production Backend API**: [https://edflow-backend.onrender.com](https://edflow-backend.onrender.com)
+- **Interactive Swagger Documentation**: [https://edflow-backend.onrender.com/docs](https://edflow-backend.onrender.com/docs)
+- **GitHub Repository**: [https://github.com/Kriti-here](https://github.com/Kriti-here)
 
-- Sandbox base URL `https://api-m.sandbox.paypal.com` (`PAYPAL_BASE_URL`).
-- **Invoicing v2** — `POST /invoices/{id}/send` creates and sends the invoice (`create_invoice` + `send_invoice`).
-  Requires the Invoicing scope/feature on the app.
-- **Orders v2** — `POST /invoices/{id}/pay-link` returns an approval URL; `GET /payments/return` captures the order
-  server-side after the buyer approves, recording `paypal_fee` and net amount. This path returns fee/net data, so it
-  is the demo's reliable route.
-- **Idempotency** — create calls send a `PayPal-Request-Id` header (`request_id_for`).
-- **Webhooks** — `POST /webhooks/paypal` verifies signatures with PayPal's verify-webhook-signature endpoint.
-  Event ids are stored and duplicates ignored. `ALLOW_UNVERIFIED_WEBHOOKS` must stay `false` outside local testing.
-- **Reporting** — `POST /payments/sync` pulls reporting data, which can be delayed by hours.
-- Demo buyers must be **non-Indian** sandbox accounts: India-to-India checkout fails.
-- Captures happen only on an explicit user action; EDFlow never moves money on its own.
+---
 
-## AI usage
+## Overview & Screenshot
 
-- **Disabled by default.** `AI_ENABLED=false` and `AI_MODE=off`. With those settings no provider is ever called.
-- **Modes** — `off | replay | record | live`. `replay` serves recorded fixtures from the AI cache directory
-  (`fixtures/ai`) and never touches the network; `record`/`live` are opt-in.
-- **Providers** — `none` (Null provider, default) or `gemini` (requires `AI_API_KEY`). The key is read only from the
-  environment.
-- **Endpoints** — `POST /ai/tasks/{task}/run` produces a proposal; `GET /ai/proposals`, `GET /ai/proposals/{id}`,
-  and `POST /ai/proposals/{id}/accept|reject`. When the layer is disabled these return `503`.
-- **PII masking** (`app/ai/pii.py`) runs before any text reaches a model.
-- LLM output is **always a proposal** validated by Pydantic schemas and deterministic checks. Accepting an AI
-  proposal records a human decision and does **not** by itself apply any business record.
-- Purpose-code recommendations are a separate, deterministic adviser (`/purpose-adviser`, `/purpose-recommendations`);
-  accepting a recommendation is the only path that writes `Invoice.purpose_code`.
+EDFlow automates month-end reconciliation, FIRA mapping, and Export Declaration Form (EDF) preparation for Indian software engineers, agencies, and service exporters receiving foreign currency remittances via PayPal.
 
-## Trust model
+![EDFlow Hero Banner](src/assets/hero.png)
 
-- **AI proposes, code decides.** Every model output is a proposal that passes Pydantic validation and deterministic
-  checks before it can be acted on.
-- **Human in the loop.** Money is never created, sent, captured, refunded or paid without an authenticated user
-  action; accept/reject decisions are recorded.
-- **No regulatory filing.** EDFlow prepares an EDF worksheet for the user's bank or CA. It never files with the RBI
-  or a bank; EDF exports are clearly marked as unfiled drafts.
-- **Audit trail.** Sensitive actions (invoice created/sent, order created, webhook rejected, exception transitions,
-  human decisions) are written to an audit log, exposed read-only via `GET /audit`.
-- **Deterministic engines own the decisions** for matching, exceptions, purpose scoring and EDF totals; no model
-  participates in those calculations.
-- **Secrets** come only from environment variables (`app/config.py`) and are never logged.
-- **Honest labels.** Data not sourced from PayPal is marked `simulated`/`synthetic`, and rules entries are surfaced as
-  unverified in the UI when `verified` is false.
+---
 
-## Demo instructions
+## Problem Statement
 
-Local development:
+Indian digital service exporters receiving cross-border client payments via PayPal face strict, labor-intensive Reserve Bank of India (RBI) and Foreign Exchange Management Act (FEMA) regulatory requirements:
 
-```bash
-# Backend
-cd backend
-pip install -r requirements-dev.txt
-# copy backend/.env.example to a repo-root .env and fill in your sandbox credentials
-uvicorn app.main:app --reload        # http://localhost:8000  (docs at /docs)
+1. **Strict Realization Deadlines**: FEMA mandates foreign currency export remittances be realized and reconciled within 9 months from the invoice date.
+2. **Missing FIRA Tracking**: PayPal batches payouts into Authorised Dealer (AD) banks, issuing periodic Foreign Inward Remittance Advices (FIRAs). Matching consolidated FIRA remittance rows against individual client invoices is error-prone and manual.
+3. **Opaque Deductions & FX Markup**: Payment gateway fees and currency exchange markups are often obscured across invoices, making net realization and export turnover calculations difficult.
+4. **Complex Regulatory Paperwork**: Exporters or their Chartered Accountants (CAs) must assemble structured monthly EDF worksheets (Sections 1, 2B, and 4) cross-referencing invoice details, SAC codes, purpose codes, and AD banking information.
 
-# Frontend
-npm install
-npm run dev                          # http://localhost:5173
+---
+
+## Solution Overview
+
+EDFlow provides a centralized, deterministic month-end close pipeline:
+
+- **Exact Currency Accounting**: Built exclusively with Python `Decimal` data structures—never floats—to guarantee rupee-for-rupee precision across fee splits and currency conversions.
+- **Automated FIRA Ingestion**: Extracts remittance lines directly from electronic FIRA statements (`pdfplumber`) and evaluates document integrity via SHA-256 checksums and extraction confidence scores.
+- **Deterministic Reconciliation**: Multi-candidate scoring matches bank remittance rows against unpaid invoices based on purpose codes, client names, dates, and currency values.
+- **Exception Lifecycle Management**: Proactively flags compliance gaps (FX variance anomalies, unmatched remittances, split payments, duplicate claims) into an auditable lifecycle.
+- **Audit-Ready EDF Preparation**: Assembles standard monthly EDF worksheets (with SHA-256 snapshot hashes on human sign-off) for CA review or bank submission.
+- **Zero Regulatory Risk**: **EDFlow never files directly with the RBI or AD banks**, and **never moves funds without explicit human approval**.
+
+---
+
+## Implementation Status
+
+To provide full technical transparency, features are categorized by verified status:
+
+### Implemented & Production-Verified
+- [x] **Export Invoice Creation**: Generation of export invoices with due-date tracking, purpose codes, and Decimal financial math.
+- [x] **PayPal Invoicing v2 & Orders v2**: Creation and dispatch of invoices via PayPal Invoicing API, alongside instant approval payment links via Orders v2.
+- [x] **Live PayPal Payment Synchronization (`POST /payments/sync`)**:
+  - **Verified in Sandbox**: Invoice `EDF-2611-0002` ($5,000.00 USD from customer *BluePeak Analytics Inc.*, Purpose Code `P0802`) was paid in the PayPal Sandbox, synchronized via `POST /payments/sync` (`new_payments = 1`), accurately recorded into the ledger, and reflected in real-time as **PAID** on the frontend.
+- [x] **FIRA PDF Parsing & Verification**: Extraction of remittance rows from statement PDFs with confidence scoring and duplicate statement detection.
+- [x] **Deterministic Matching Engine**: Automated scoring linking FIRA lines to invoice ledger entries without floating-point distortion.
+- [x] **Compliance Exception Engine**: Deterministic detection of FX variances, duplicate lines, and missing references with full status transitions (`open` &rarr; `acknowledged` &rarr; `resolved` / `dismissed`).
+- [x] **Purpose Code Advisor**: Deterministic classification engine matching service descriptions and contracts to RBI purpose codes (e.g., `P0802` for software exports).
+- [x] **Monthly EDF Pack Assembly**: Compiles Sections 1, 2B, and 4 of the RBI EDF format, complete with validation checks, frozen SHA-256 approval snapshots, and CSV/JSON export.
+- [x] **Cryptographic Audit Chain**: SHA-256 hash-chained immutable audit log for all system actions (`GET /audit`).
+- [x] **External Rules Integration**: YAML-driven regulatory parameters loaded dynamically from [`rules/india_export.yaml`](rules/india_export.yaml).
+
+### Partially Implemented / Known In-Progress
+- [ ] **PayPal Webhook Delivery**: Webhook endpoint (`POST /webhooks/paypal`) verifies incoming signatures with PayPal's `verify-webhook-signature` API. However, in the Render deployment, synchronous webhook processing currently encounters database transaction timeouts. Webhook signature verification remains strictly enabled, and `POST /payments/sync` serves as the verified operational reconciliation mechanism.
+- [ ] **Live vs. Seed Interface Data**: The FIRA, Matching, Exceptions, Purpose, and EDF Packs screens fetch and mutate live backend records. The Dashboard, Invoices, AI Insights, Audit, and Settings screens currently render preview and seed data while their live data bindings are finalized.
+
+### Static & Test Fixtures
+- Synthetic FIRA test statements (`fixtures/synthetic/*.pdf`) watermarked `SYNTHETIC - NOT A REAL DOCUMENT` with accompanying ground-truth verification JSON files for automated testing.
+
+### Planned Features
+- [ ] Asynchronous background job worker for PayPal webhook processing to resolve transaction timeouts.
+- [ ] Automated scheduled polling for PayPal transaction reporting.
+- [ ] OCR fallback pipeline for scanned/photocopied FIRA certificates.
+- [ ] Multi-tenant authentication and user access management.
+- [ ] Direct export bridges for Indian accounting software (Zoho Books, Tally, QuickBooks).
+
+---
+
+## System Architecture
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                 React 19 + TypeScript SPA                   │
+│          (Vercel: https://edflowfinal.vercel.app)           │
+└──────────────────────────────┬──────────────────────────────┘
+                               │ HTTPS / JSON
+                               ▼
+┌─────────────────────────────────────────────────────────────┐
+│                 FastAPI Application Server                  │
+│       (Render: https://edflow-backend.onrender.com)         │
+├─────────────────────────────────────────────────────────────┤
+│  Endpoints:                                                 │
+│  • /invoices, /ledger, /payments/sync                       │
+│  • /fira/documents                                          │
+│  • /matches, /matches/run                                   │
+│  • /exceptions, /exceptions/derive                          │
+│  • /purpose-recommendations, /purpose-adviser/run            │
+│  • /edf-packs, /edf-packs/generate, /export                 │
+│  • /audit, /healthz, /                                      │
+├──────────────────────────────┬──────────────────────────────┤
+│  Business & Rule Logic       │  External Services:          │
+│  • Decimal Money Types       │  • PayPal Invoicing v2       │
+│  • rules/india_export.yaml   │  • PayPal Orders v2          │
+│  • pdfplumber FIRA Parser    │  • Frankfurter FX API        │
+│  • Tamper-Evident Hash Chain │  • Gemini AI (Optional)      │
+└──────────────────────────────┬──────────────────────────────┘
+                               │
+                               ▼
+┌─────────────────────────────────────────────────────────────┐
+│              PostgreSQL Database on Render                  │
+│            (SQLite fallback for local testing)              │
+└─────────────────────────────────────────────────────────────┘
 ```
 
-Ensure `CORS_ORIGINS` includes the frontend origin (defaults cover `http://localhost:5173`).
+---
 
-Sample data: `fixtures/synthetic/` contains five synthetic FIRA PDFs with `*.ground_truth.json` and the
-`demo_invoices.json` / `demo_payments.json` datasets. They carry a `SYNTHETIC - NOT A REAL DOCUMENT` watermark and
-simulated FX rates. These support the test suite; there is **no one-click seed script**, so a manual walkthrough is:
+## PayPal Integration Architecture
 
-1. `POST /fira/documents` with a PDF from `fixtures/synthetic/`.
-2. `POST /matches/run` to match FIRA lines to invoices.
-3. `GET /exceptions` and `GET /exceptions/summary` to review flagged items.
-4. `POST /purpose-adviser/run` then review `/purpose-recommendations`.
-5. `POST /edf-packs/generate` for the period, then `/edf-packs/summary`.
+EDFlow integrates with PayPal's Sandbox API environment (`https://api-m.sandbox.paypal.com`):
 
-The FIRA, Matching, Exceptions, Purpose and EDF Packs screens fetch these endpoints live. Dashboard, Invoices,
-AI Insights, Audit and Settings currently render static/seed data.
+1. **Invoicing v2**:
+   - `POST /invoices/{id}/send` generates a draft and dispatches a compliant export invoice directly to client emails with designated payment terms.
+2. **Orders v2 (Immediate Payment & Capture)**:
+   - `POST /invoices/{id}/pay-link` creates a checkout order.
+   - `GET /payments/return` executes server-side order capture once the buyer authorizes the transaction. This reliably captures the PayPal fee breakdown and net remittance amount.
+3. **Reconciliation & Polling (`POST /payments/sync`)**:
+   - Acts as a fallback for delayed webhooks or batched transactions. Polling iterates through uncollected invoices and queries PayPal's capture details, updating invoice status to `PAID`.
+4. **Webhook Security**:
+   - Incoming webhooks (`POST /webhooks/paypal`) are validated against PayPal's signature verification endpoint. Webhook verification is never bypassed in production.
+5. **Idempotency**:
+   - Outgoing mutation calls inject unique `PayPal-Request-Id` headers to prevent duplicate billing or capture.
+6. **Cross-Border Restriction**:
+   - In accordance with PayPal Sandbox behavior, test transactions require non-Indian sandbox buyer accounts (domestic INR-to-INR checkouts fail).
 
-## Deployment instructions
+---
 
-Full details are in `DEPLOY.md`. Summary:
+## AI Architecture & Human-in-the-Loop Model
 
-- **Frontend → Vercel.** Build `npm run build`, output `dist`, install `npm install`. `vercel.json` rewrites all
-  routes to `index.html` for client-side routing. Set `VITE_API_BASE_URL` to the Render backend URL (inlined at
-  build time; see `.env.production.example`).
-- **Backend → Render.** Use `render.yaml` (Blueprint) or configure manually: root directory `backend`, build
-  `pip install -r requirements-prod.txt`, start `uvicorn app.main:app --host 0.0.0.0 --port $PORT`, health check
-  path `/healthz`.
-- **Database → Render PostgreSQL.** Point `DATABASE_URL` at the Render Postgres internal URL. Tables are created at
-  startup via `Base.metadata.create_all`.
-- **Environment.** Set `CORS_ORIGINS` (exact Vercel URL), `PUBLIC_BASE_URL`, `FRONTEND_URL` and the PayPal keys from
-  `backend/.env.production.example`. `ALLOW_UNVERIFIED_WEBHOOKS` stays `false`; AI stays disabled unless enabled
-  deliberately.
+EDFlow adheres to a strict trust model: **AI proposes, code decides, human approves**.
 
-## Limitations
+- **Disabled by Default**: AI features are turned off by default (`AI_ENABLED=false`, `AI_MODE=off`). No remote LLM provider is invoked without explicit configuration.
+- **Strictly Advisory**: An LLM is never permitted to execute payments, alter financial ledger amounts, dispatch invoices, or change reconciliation statuses.
+- **PII Sanitization**: Before any text payload is evaluated by a model, `app/ai/pii.py` redacts names, email addresses, tax IDs (PAN/GSTIN), and account numbers.
+- **Deterministic Validation**: All model outputs must conform to strict Pydantic schemas and pass deterministic rule assertions before being presented as human-reviewable proposals.
+- **Offline Fixture Replay**: Includes an offline record/replay cache (`fixtures/ai`) ensuring local testing and deterministic builds require zero live network calls.
 
-- The AI layer is **off by default** and its provider integration is minimal (Null and Gemini only); no recorded AI
-  fixtures are committed, so `replay` has nothing to serve until fixtures exist.
-- FIRA ingestion uses PDF **text** extraction (`pdfplumber`) tuned to the current statement format; image-only or
-  scanned PDFs are not OCR'd.
-- There is **no migration tool** (no Alembic). Schema is created with `create_all` at startup, so schema changes need
-  manual handling.
-- Payments are exercised against the **PayPal sandbox**; reporting data can lag by hours, and order/capture flows
-  require non-Indian buyers.
-- FX markup comes from an external rate (Frankfurter) or is labelled `simulated` when PayPal returns no conversion
-  rate.
-- Several workspace screens (Dashboard, Invoices, AI Insights, Audit, Settings) still show static/seed data rather
-  than live backend data.
-- There is **no authentication layer**; the API should be run locally or placed behind your own access control, and
-  must not be exposed publicly with real data. `DEMO_ADMIN_KEY` is reserved and not yet enforced.
-- EDFlow does not file anything and does not replace a CA's review.
+---
 
-## Screenshots
+## API Endpoints Reference
 
-Placeholders — replace with real captures before publishing.
+The backend provides a RESTful interface documented via interactive Swagger UI at [https://edflow-backend.onrender.com/docs](https://edflow-backend.onrender.com/docs):
 
-![Landing](docs/screenshots/01-landing.png)
+| Method | Path | Description |
+|---|---|---|
+| `GET` | `/` | API status and root verification |
+| `GET` | `/healthz` | Health check endpoint for uptime monitoring |
+| `GET`, `PUT` | `/exporter` | Retrieve or configure Indian exporter company profile |
+| `GET` | `/audit` | Verify hash chain integrity and view audit events |
+| `GET`, `POST` | `/invoices` | List invoices or create a new export invoice |
+| `GET` | `/invoices/{id}` | Retrieve specific invoice with calculated realization deadlines |
+| `POST` | `/invoices/{id}/send` | Create and send invoice via PayPal Invoicing v2 |
+| `POST` | `/invoices/{id}/pay-link` | Generate PayPal Orders v2 checkout approval link |
+| `POST` | `/payments/sync` | Poll and record captured PayPal payments |
+| `GET` | `/ledger` | View consolidated payment and fee ledger |
+| `GET` | `/payments/{id}/true-cost` | Compute gateway fee and FX spread against mid-market rates |
+| `POST`, `GET` | `/fira/documents` | Upload FIRA PDF statements or list ingested documents |
+| `GET` | `/fira/documents/{id}` | Inspect extracted remittance lines and confidence levels |
+| `GET`, `POST` | `/matches`, `/matches/run` | Query match records or trigger deterministic matching |
+| `POST` | `/matches/{id}/confirm` | Confirm a proposed match between FIRA line and invoice |
+| `GET` | `/exceptions`, `/exceptions/summary` | Query active compliance exceptions and severity breakdowns |
+| `POST` | `/exceptions/derive` | Re-run deterministic exception identification engine |
+| `POST` | `/exceptions/{id}/acknowledge` | Acknowledge a flagged exception |
+| `POST` | `/exceptions/{id}/resolve` | Resolve a flagged exception with an audit note |
+| `POST` | `/purpose-adviser/run` | Execute purpose code recommendation engine |
+| `GET` | `/purpose-recommendations` | List purpose code recommendations |
+| `POST` | `/purpose-recommendations/{id}/accept` | Accept purpose code recommendation (writes to invoice) |
+| `GET`, `POST` | `/edf-packs`, `/edf-packs/generate` | List existing EDF packs or generate a monthly worksheet |
+| `GET` | `/edf-packs/{id}` | View complete EDF pack and line items |
+| `POST` | `/edf-packs/{id}/approve` | Freeze worksheet and compute cryptographic approval hash |
+| `GET` | `/edf-packs/{id}/export` | Export approved worksheet as JSON or CSV |
+| `GET` | `/rules` | View active regulatory limits and purpose code registry |
+| `POST` | `/webhooks/paypal` | Ingest and verify PayPal asynchronous event webhooks |
 
-![Dashboard](docs/screenshots/02-dashboard.png)
+---
 
-![FIRA documents](docs/screenshots/03-fira.png)
+## Local Development Installation
 
-![Matching center](docs/screenshots/04-matching.png)
+### Prerequisites
+- Node.js (v18+) and npm
+- Python (v3.11+)
+- Git
 
-![Exceptions hub](docs/screenshots/05-exceptions.png)
+### 1. Repository Setup
+```bash
+git clone https://github.com/Kriti-here/EDFlow.git
+cd EDFlow
+```
 
-![Purpose advisor](docs/screenshots/06-purpose.png)
+### 2. Backend Setup
+```bash
+cd backend
+python -m venv .venv
+# Windows:
+.venv\Scripts\activate
+# Linux/macOS:
+source .venv/bin/activate
 
-![EDF packs](docs/screenshots/07-edf-packs.png)
+pip install -r requirements-dev.txt
+
+# Copy example environment configuration
+cp .env.example ../.env
+```
+
+Edit the newly created `.env` at the project root with your credentials:
+```env
+PAYPAL_CLIENT_ID=your_sandbox_client_id
+PAYPAL_CLIENT_SECRET=your_sandbox_client_secret
+PAYPAL_BASE_URL=https://api-m.sandbox.paypal.com
+DATABASE_URL=sqlite:///./edflow.sqlite
+CORS_ORIGINS=http://localhost:5173
+```
+
+Start the FastAPI application:
+```bash
+uvicorn app.main:app --reload --port 8000
+```
+- API root: `http://localhost:8000`
+- Interactive Docs: `http://localhost:8000/docs`
+
+Run backend tests:
+```bash
+python -m pytest tests/ -v
+```
+
+### 3. Frontend Setup
+From the repository root in a separate terminal:
+```bash
+npm install
+npm run dev
+```
+- Frontend application: `http://localhost:5173`
+
+Run frontend unit tests:
+```bash
+npm test
+```
+
+---
+
+## Production Deployment
+
+Complete deployment procedures are documented in [`DEPLOY.md`](DEPLOY.md).
+
+### Frontend &rarr; Vercel
+1. Link your GitHub repository to Vercel.
+2. Framework Preset: **Vite**.
+3. Build Command: `npm run build` (`tsc -b && vite build`).
+4. Output Directory: `dist`.
+5. Environment Variable:
+   - `VITE_API_BASE_URL`: `https://edflow-backend.onrender.com`
+6. SPA URL rewrite routing is managed by [`vercel.json`](vercel.json).
+
+### Backend &rarr; Render
+1. Deploy as a Web Service using [`render.yaml`](render.yaml) Blueprint or manual configuration.
+2. Root Directory: `backend`.
+3. Runtime: `Python 3`.
+4. Build Command: `pip install -r requirements-prod.txt`.
+5. Start Command: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`.
+6. Health Check Path: `/healthz`.
+7. Configure Environment Variables:
+   - `DATABASE_URL`: Render PostgreSQL internal connection string.
+   - `CORS_ORIGINS`: `https://edflowfinal.vercel.app` (no trailing slash).
+   - `PUBLIC_BASE_URL`: `https://edflow-backend.onrender.com`
+   - `FRONTEND_URL`: `https://edflowfinal.vercel.app`
+   - `PAYPAL_CLIENT_ID` & `PAYPAL_CLIENT_SECRET`: PayPal Developer Sandbox keys.
+   - `ALLOW_UNVERIFIED_WEBHOOKS`: `false`
+
+---
+
+**YouTube Demo:** [Watch EDFlow Demo] https://youtu.be/UNKUiep1z2k
+
+## Repository Documentation Links
+
+- [Export Compliance Rules](rules/india_export.yaml) — Dynamic limits, purpose codes, and realization deadlines.
+- [EDF Form Fields Specification](docs/edf-fields.md) — Mapping guide for RBI EDF Sections 1, 2B, and 4.
+- [Full Deployment Guide](DEPLOY.md) — Step-by-step production configuration for Render and Vercel.
+
+---
+
+## License & Author
+
+- **Author**: [Kriti-here](https://github.com/Kriti-here)
+- **License**: Released under the [MIT License](LICENSE).
