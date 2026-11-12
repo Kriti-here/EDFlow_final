@@ -32,6 +32,13 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.get("/")
+def root():
+    return {"service": "EDFlow API", "status": "running"}
+
+
 app.include_router(core.router)
 app.include_router(invoices.router)
 app.include_router(rules.router)

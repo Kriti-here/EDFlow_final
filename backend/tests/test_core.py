@@ -62,3 +62,9 @@ def test_cors_allows_vite_fallback_ports(client):
 def test_cors_rejects_unconfigured_origin(client):
     r = client.get("/healthz", headers={"Origin": "https://not-allowed.example"})
     assert "access-control-allow-origin" not in r.headers
+
+
+def test_root_endpoint(client):
+    r = client.get("/")
+    assert r.status_code == 200
+    assert r.json() == {"service": "EDFlow API", "status": "running"}
